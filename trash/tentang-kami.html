@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tentang Kami - PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="img/logo-pmii.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
+
+    <style>
+        :root {
+            --pmii-blue: #005c97;
+            --pmii-darkblue: #004a7c;
+            --pmii-yellow: #fdd835;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --background-light: #f9fafb;
+            --background-page: #f3f4f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --input-bg: white;
+        }
+        body {
+            font-family: 'Poppins', 'Inter', sans-serif;
+            overflow-x: hidden;
+            background-color: var(--background-page);
+            color: var(--text-primary);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: opacity 0.5s ease-out;
+        }
+        body.fade-out-page {
+            opacity: 0;
+        }
+        .main-content-wrapper {
+            flex-grow: 1;
+            padding-top: 1.5rem; /* Space for sticky header */
+        }
+
+        /* Navbar Styling from index.html */
+        .navbar-sticky {
+            position: sticky; top: 0; z-index: 50;
+            transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), backdrop-filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: rgba(0, 92, 151, 0.15); 
+            backdrop-filter: blur(3px);
+        }
+        .navbar-scrolled {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+            padding-top: 0.75rem !important; padding-bottom: 0.75rem !important;
+        }
+        .navbar-scrolled .nav-link, .navbar-scrolled .logo-text, .navbar-scrolled .dropdown-toggle, .navbar-scrolled #auth-link-main { color: var(--pmii-darkblue) !important; }
+        .navbar-scrolled .menu-icon i { color: var(--pmii-darkblue) !important; }
+
+        .nav-link, .dropdown-toggle, #auth-link-main {
+            transition: color 0.25s ease-out, transform 0.2s ease-out;
+            position: relative; padding-bottom: 6px;
+            font-weight: 500;
+        }
+        .nav-link.active-nav-link {
+            color: var(--pmii-yellow) !important;
+            font-weight: 700;
+        }
+        .nav-link.active-nav-link::after { width: 80% !important; background-image: linear-gradient(to right, var(--pmii-yellow), #f5b300); }
+        .navbar-scrolled .nav-link.active-nav-link { color: var(--pmii-blue) !important; }
+        .navbar-scrolled .nav-link.active-nav-link::after { background-image: linear-gradient(to right, var(--pmii-blue), var(--pmii-darkblue)); }
+
+        .nav-link::after, .dropdown-toggle::after {
+            content: ''; position: absolute; width: 0; height: 2px; bottom: -2px; left: 50%;
+            transform: translateX(-50%); background-image: linear-gradient(to right, var(--pmii-yellow), #fbc02d);
+            border-radius: 1px;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-link:hover::after, .dropdown-toggle:hover::after { width: 80%; }
+        .nav-link:hover, .dropdown-toggle:hover, #auth-link-main:hover { color: var(--pmii-yellow) !important; transform: translateY(-1px); }
+        .navbar-scrolled .nav-link:hover, .navbar-scrolled .dropdown-toggle:hover, .navbar-scrolled #auth-link-main:hover { color: #e6a100 !important; }
+        .navbar-scrolled .nav-link:hover::after, .navbar-scrolled .dropdown-toggle:hover::after { background-image: linear-gradient(to right, #e6a100, #fbc02d); }
+
+        .dropdown-menu {
+            position: absolute; background-color: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.06);
+            z-index: 100; min-width: 280px; border-radius: 0.5rem;
+            opacity: 0; visibility: hidden; transform: translateY(15px) scale(0.98);
+            transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.25s;
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 0;
+        }
+        .dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .dropdown-menu a {
+            color: var(--pmii-blue) !important; padding: 0.75rem 1.25rem;
+            text-decoration: none; display: flex; align-items: center; gap: 0.75rem;
+            font-weight: 500; font-size: 0.875rem;
+        }
+        .dropdown-menu a:hover { background-color: #edf2f7; color: var(--pmii-darkblue) !important; transform: translateX(3px); }
+        .dropdown-menu a i { transition: transform 0.2s, color 0.2s; color: var(--pmii-yellow); font-size: 1rem; }
+        .dropdown-menu a:hover i { transform: scale(1.1); color: #fbc02d; }
+
+        /* Mobile Menu Transitions */
+        #mobile-menu-content { transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+        #mobile-menu-content.hidden { transform: translateX(100%); }
+
+        /* Button Styling */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex; align-items: center; justify-content: center;
+            cursor: pointer; text-decoration: none;
+            box-shadow: var(--shadow-md);
+        }
+        .btn:hover {
+             box-shadow: var(--shadow-lg);
+             transform: translateY(-2px) scale(1.03);
+        }
+        .btn:active {
+            transform: translateY(0px) scale(0.98);
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-primary-pmii {
+            background-color: var(--pmii-blue); color: white;
+        }
+        .btn-primary-pmii:hover { background-color: var(--pmii-darkblue); }
+        .btn-secondary-pmii {
+            background-color: var(--pmii-yellow); color: var(--pmii-darkblue);
+        }
+        .btn-secondary-pmii:hover { background-color: #fbc02d; }
+        
+        /* Section Title Underline Animation */
+        .section-title::after {
+            content: ''; display: block; width: 80px; height: 3.5px;
+            background-image: linear-gradient(to right, var(--pmii-yellow), #fbc02d, #e6a100);
+            margin: 12px auto 0; border-radius: 2px;
+            transform: scaleX(0);
+            transition: transform 0.7s 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .is-visible .section-title::after { transform: scaleX(1); }
+
+        /* Content Section Styling */
+        .page-header-section {
+            background: linear-gradient(135deg, var(--pmii-blue), var(--pmii-darkblue));
+            color: white;
+            padding: 4rem 1rem;
+            text-align: center;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+        }
+        .page-header-section h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+        .page-header-section p {
+            font-size: 1.125rem;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+        .page-content-card {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+        }
+        
+        /* News Item Styling */
+        .news-item {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .news-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        .news-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .news-item-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .news-item-content .category {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--pmii-blue);
+            background-color: var(--pmii-yellow);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            align-self: flex-start;
+            margin-bottom: 0.75rem;
+        }
+        .news-item-content .title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--pmii-darkblue);
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+        .news-item-content .description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            flex-grow: 1;
+            margin-bottom: 1rem;
+            line-clamp: 3; /* For multiline text ellipsis */
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .news-item-content .read-more {
+            font-weight: 600;
+            color: var(--pmii-blue);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            align-self: flex-start;
+            margin-top: auto; /* Push to bottom */
+        }
+        .news-item-content .read-more:hover {
+            color: var(--pmii-darkblue);
+        }
+
+        /* Activity Item Styling */
+        .activity-item {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .activity-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        .activity-item-header {
+            background: linear-gradient(135deg, var(--pmii-blue), var(--pmii-darkblue));
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        .activity-item-header .date-day {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .activity-item-header .date-month-year {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .activity-item-content {
+            padding: 1.5rem;
+        }
+        .activity-item-content .title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--pmii-darkblue);
+            margin-bottom: 0.75rem;
+        }
+        .activity-item-info {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+        .activity-item-info i {
+            color: var(--pmii-yellow);
+            margin-right: 0.5rem;
+        }
+        .activity-item-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+        }
+
+        /* Gallery Item Styling */
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .gallery-item:hover {
+            transform: scale(1.03);
+            box-shadow: var(--shadow-lg);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 180px; /* Fixed height for consistent grid */
+            object-fit: cover;
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.1);
+            filter: brightness(0.8);
+        }
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .gallery-item:hover .gallery-caption {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .fancybox__content img { /* Adjust Fancybox image size */
+            max-width: 90vw;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 antialiased">
+
+    <!-- Navbar -->
+    <nav id="navbar" class="text-white py-3.5 navbar-sticky">
+        <div class="container mx-auto px-4 lg:px-8 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2.5 transform hover:scale-105 transition-transform duration-300">
+                <img src="img/logo-pmii.png"
+                     alt="Logo PMII" class="h-9 w-9 rounded-full shadow-md border-2 border-white/40">
+                <span class="text-lg lg:text-xl font-semibold logo-text tracking-tight">PK PMII UIN SGD Bandung</span>
+            </a>
+            <div class="hidden lg:flex space-x-6 items-center">
+                <a href="index.html#beranda" class="nav-link text-sm">Beranda</a>
+                <a href="tentang-kami.html" class="nav-link text-sm active-nav-link">Tentang Kami</a>
+                <a href="berita-artikel.html" class="nav-link text-sm">Berita</a>
+                <a href="digilib.html" class="nav-link text-sm">📚 Digilib</a>
+                <a href="agenda-kegiatan.html" class="nav-link text-sm">Kegiatan</a>
+                <a href="galeri-foto.html" class="nav-link text-sm">Galeri</a>
+                <!-- New: Kader-specific dropdown for desktop -->
+                <div id="desktop-kader-menu-container" class="relative dropdown hidden">
+                    <button class="dropdown-toggle nav-link focus:outline-none text-sm">
+                        Profil Kader <i class="fas fa-chevron-down text-xs ml-1"></i>
+                    </button>
+                    <div class="dropdown-menu mt-3.5">
+                        <a href="edit-profil-kader.html" id="edit-profil-kader-link-desktop" class="dropdown-item"><i class="fas fa-user-edit"></i> Edit Profil</a>
+                        <a href="pengaturan-akun-kader.html" id="pengaturan-akun-kader-link-desktop" class="dropdown-item"><i class="fas fa-cog"></i> Pengaturan Akun</a>
+                        <a href="akses-ojs.html" id="jurnal-alharokah-link-desktop-kader" class="dropdown-item"><i class="fas fa-book-reader"></i> Jurnal Al Harokah</a>
+                    </div>
+                </div>
+                <!-- Admin-specific dropdown for desktop -->
+                <div id="desktop-admin-menu-container" class="relative dropdown hidden">
+                    <button class="dropdown-toggle nav-link focus:outline-none text-sm">
+                        Sistem Internal <i class="fas fa-chevron-down text-xs ml-1"></i>
+                    </button>
+                    <div class="dropdown-menu mt-3.5">
+                        <a href="manajemen-akun.html" id="manajemen-akun-link-desktop" class="dropdown-item"><i class="fas fa-user-shield"></i>Manajemen Akun</a>
+                        <a href="manajemen-kader.html" id="manajemen-kader-link-desktop" class="dropdown-item"><i class="fas fa-users-cog"></i>Manajemen Kader</a>
+                        <a href="repository-ilmiah.html" id="repository-ilmiah-link-desktop" class="dropdown-item"><i class="fas fa-book-open"></i>Jurnal & Karya Ilmiah</a>
+                        <a href="pengajuan-surat.html" id="pengajuan-surat-link-desktop" class="dropdown-item"><i class="fas fa-file-alt"></i>Pengajuan Surat</a>
+                        <a href="verifikasi-surat.html" id="verifikasi-surat-link-desktop" class="dropdown-item"><i class="fas fa-check-circle"></i>Verifikasi Surat</a>
+                        <a href="admin-dashboard-rayon.html" id="dashboard-rayon-link-desktop" class="dropdown-item"><i class="fas fa-tachometer-alt"></i>Dashboard Admin Rayon</a>
+                        <a href="admin-dashboard-komisariat.html" id="admin-dashboard-link-desktop" class="dropdown-item"><i class="fas fa-tachometer-alt"></i>Dashboard Admin Kom.</a>
+                        <a href="edit-beranda.html" id="edit-beranda-link-desktop" class="dropdown-item"><i class="fas fa-edit"></i>Edit Beranda</a>
+                        <a href="akses-ojs.html" id="jurnal-alharokah-link-desktop-admin" class="dropdown-item"><i class="fas fa-book-reader"></i>Jurnal Al Harokah</a>
+                        <hr class="border-gray-200 my-1">
+                        <a href="verifikasi-konten-rayon.html" id="verifikasi-konten-link-desktop" class="dropdown-item"><i class="fas fa-check-double"></i>Verifikasi Konten Rayon</a>
+                        <a href="rayon-tambah-berita.html" id="tambah-berita-link-desktop" class="dropdown-item"><i class="fas fa-newspaper"></i>Tambah Berita & Artikel</a>
+                        <a href="rayon-tambah-kegiatan.html" id="tambah-kegiatan-link-desktop" class="dropdown-item"><i class="fas fa-calendar-plus"></i>Tambah Kegiatan</a>
+                        <a href="rayon-tambah-galeri.html" id="tambah-galeri-link-desktop" class="dropdown-item"><i class="fas fa-images"></i>Tambah Galeri Kegiatan</a>
+                    </div>
+                </div>
+                <a href="index.html#kontak" class="nav-link text-sm">Kontak</a>
+                <a href="login.html" id="auth-link-main" class="btn bg-pmii-yellow text-pmii-blue hover:bg-yellow-400 text-sm">Login</a>
+            </div>
+            <div class="lg:hidden">
+                <button id="mobile-menu-button" class="menu-icon focus:outline-none p-2 -mr-2"><i class="fas fa-bars text-2xl"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Content -->
+    <div id="mobile-menu-content" class="lg:hidden fixed top-0 right-0 h-full w-4/5 max-w-xs bg-gradient-to-b from-pmii-blue to-pmii-darkblue text-white p-6 shadow-2xl z-40 hidden">
+        <div class="flex justify-between items-center mb-10">
+            <a href="index.html" class="flex items-center space-x-2">
+                <img src="img/logo-pmii.png" alt="Logo PMII Mobile" class="h-9 w-9 rounded-full">
+                <span class="text-lg font-semibold">PK PMII UIN SGD Bandung</span>
+            </a>
+            <button id="close-mobile-menu-button" class="focus:outline-none p-2 -mr-2"><i class="fas fa-times text-2xl"></i></button>
+        </div>
+        <nav class="flex flex-col space-y-3">
+            <a href="index.html#beranda" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 text-base transition-colors">Beranda</a>
+            <a href="index.html#tentang" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 text-base transition-colors">Tentang Kami</a>
+            <a href="berita-artikel.html" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 text-base transition-colors active-nav-link">Berita</a>
+            <a href="digilib.html" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 text-base transition-colors">📚 Digilib</a>
+            <a href="agenda-kegiatan.html" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 text-base transition-colors">Kegiatan</a>
+            <a href="galeri-foto.html" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 text-base transition-colors">Galeri</a>
+            <!-- Kader-specific links for mobile -->
+            <div id="mobile-kader-menu-group" class="hidden">
+                <hr class="border-white/15 my-3">
+                <span class="px-3.5 py-2 text-sm text-pmii-yellow font-semibold">Menu Kader:</span>
+                <a href="edit-profil-kader.html" id="edit-profil-kader-link-mobile" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 ml-1.5 text-base transition-colors"><i class="fas fa-user-edit mr-2"></i> Edit Profil</a>
+                <a href="pengaturan-akun-kader.html" id="pengaturan-akun-kader-link-mobile" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 ml-1.5 text-base transition-colors"><i class="fas fa-cog mr-2"></i> Pengaturan Akun</a>
+                <a href="akses-ojs.html" id="jurnal-alharokah-link-mobile-kader" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 ml-1.5 text-base transition-colors">Jurnal Al Harokah</a>
+            </div>
+            <a href="index.html#kontak" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 text-base transition-colors">Kontak</a>
+            <hr class="border-white/15 my-3">
+            <div id="mobile-admin-menu-group" class="hidden">
+                <span class="px-3.5 py-2 text-sm text-pmii-yellow font-semibold">Sistem Internal:</span>
+                <a href="manajemen-akun.html" id="manajemen-akun-link-mobile" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 ml-1.5 text-base transition-colors">Manajemen Akun</a>
+                <a href="manajemen-kader.html" id="manajemen-kader-link-mobile" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 ml-1.5 text-base transition-colors">Manajemen Kader</a>
+                <a href="repository-ilmiah.html" id="repository-ilmiah-link-mobile" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 ml-1.5 text-base transition-colors">Jurnal & Karya Ilmiah</a>
+                <a href="pengajuan-surat.html" id="pengajuan-surat-link-mobile" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 ml-1.5 text-base transition-colors">Pengajuan Surat</a>
+                <a href="verifikasi-surat.html" id="verifikasi-surat-link-mobile" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 ml-1.5 text-base transition-colors">Verifikasi Surat</a>
+                <a href="admin-dashboard-rayon.html" id="dashboard-rayon-link-mobile" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 ml-1.5 text-base transition-colors">Dashboard Admin Rayon</a>
+                <a href="admin-dashboard-komisariat.html" id="admin-dashboard-link-mobile" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 ml-1.5 text-base transition-colors">Dashboard Admin Kom.</a>
+                <a href="edit-beranda.html" id="edit-beranda-link-mobile" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 ml-1.5 text-base transition-colors">Edit Beranda</a>
+                <a href="akses-ojs.html" id="jurnal-alharokah-link-mobile-admin" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 ml-1.5 text-base transition-colors">Jurnal Al Harokah</a>
+                <a href="verifikasi-konten-rayon.html" id="verifikasi-konten-link-mobile" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 ml-1.5 text-base transition-colors"><i class="fas fa-check-double mr-2"></i>Verifikasi Konten Rayon</a>
+                <a href="rayon-tambah-berita.html" id="tambah-berita-link-mobile" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 ml-1.5 text-base transition-colors"><i class="fas fa-newspaper mr-2"></i>Tambah Berita & Artikel</a>
+                <a href="rayon-tambah-kegiatan.html" id="tambah-kegiatan-link-mobile" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 ml-1.5 text-base transition-colors"><i class="fas fa-calendar-plus mr-2"></i>Tambah Kegiatan</a>
+                <a href="rayon-tambah-galeri.html" id="tambah-galeri-link-mobile" class="mobile-nav-link block py-3 px-3.5 rounded-md hover:bg-white/10 ml-1.5 text-base transition-colors"><i class="fas fa-images mr-2"></i>Tambah Galeri Kegiatan</a>
+            </div>
+            <a href="login.html" id="auth-link-mobile" class="mobile-nav-link block py-3 px-3.5 rounded-md bg-pmii-yellow text-pmii-blue font-semibold text-center mt-6 text-base">Login</a>
+        </nav>
+    </div>
+    <div id="mobile-menu-overlay" class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-30 hidden opacity-0 transition-opacity duration-300"></div>
+
+    <div class="main-content-wrapper">
+        <main class="container mx-auto px-4 py-8 lg:py-12">
+            <!-- Tombol Kembali -->
+            <div class="mb-6">
+                <a href="index.html" class="btn-primary-pmii btn inline-flex items-center">
+                    <i class="fas fa-arrow-left mr-2"></i> Kembali ke Beranda
+                </a>
+            </div>
+
+            <section id="tentang-kami-page-content">
+                <div class="page-header-section">
+                    <h1>Tentang Kami</h1>
+                    <p>Mengenal lebih jauh tentang Pergerakan Mahasiswa Islam Indonesia Komisariat UIN Sunan Gunung Djati Bandung.</p>
+                </div>
+                
+                <div class="page-content-card">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+                        <div>
+                            <img src="https://placehold.co/700x450/005c97/FFFFFF?text=PMII+Activity" alt="Gambar Kegiatan PMII" class="rounded-xl shadow-lg w-full mb-6 md:mb-0">
+                        </div>
+                        <div class="space-y-6 text-text-secondary leading-relaxed">
+                            <p id="about-us-content-p1">
+                                Pergerakan Mahasiswa Islam Indonesia (PMII) Komisariat UIN Sunan Gunung Djati Bandung adalah organisasi kemahasiswaan Islam yang berlandaskan Ahlussunnah wal Jama'ah an-Nahdliyah. Kami berkomitmen untuk mencetak kader-kader Ulul Albab yang memiliki kedalaman spiritual, keluasan ilmu pengetahuan, dan kepedulian sosial yang tinggi.
+                            </p>
+                            <p>
+                                Sebagai organisasi kemahasiswaan, kami memiliki sejarah panjang dalam mengawal nilai-nilai keislaman dan keindonesiaan. Kami percaya bahwa setiap kader memiliki potensi luar biasa yang harus diasah demi kemajuan bangsa.
+                            </p>
+                            <p>
+                                Kami menyelenggarakan berbagai program mulai dari diskusi intelektual, kegiatan sosial, hingga pengembangan potensi diri untuk menciptakan lulusan yang tidak hanya cerdas secara akademik, tetapi juga berakhlak mulia dan memiliki jiwa kepemimpinan.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-12 text-center">
+                        <h2 class="text-2xl font-bold text-pmii-darkblue border-b-2 border-pmii-yellow pb-2 mb-8 inline-block section-title">Visi dan Misi Kami</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+                            <div class="bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200">
+                                <h3 class="text-xl font-semibold text-pmii-blue mb-3"><i class="fas fa-eye mr-2 text-pmii-yellow"></i> Visi</h3>
+                                <p class="text-text-secondary">
+                                    Sesuai dengan Anggaran Dasar Anggaran Rumah Tangga Bab IV Pasal 4 <br><br>
+                                    Terbentuknya pribadi muslim Indonesia yang bertakwa kepada Allah SWT, berbudi luhur, berilmu, cakap dan
+                                    bertanggung jawab dalam mengamalkan ilmunya serta komitmen memperjuangkan cita-cita kemerdekaan
+                                    Indonesia.
+                                </p>
+                            </div>
+                            <div class="bg-gray-50 p-6 rounded-lg shadow-sm border border-gray-200">
+                                <h3 class="text-xl font-semibold text-pmii-blue mb-3"><i class="fas fa-bullseye mr-2 text-pmii-yellow"></i> Misi</h3>
+                                <ul class="list-disc pl-5 text-text-secondary space-y-2">
+                                    <li>Sesuai dengan Anggaran Dasar Anggaran Rumah Tangga Bab IV Pasal 5</li>
+                                    <li>Menghimpun dan membina mahasiswa Islam Indonesia sesuai dengan sifat dan tujuan PMII serta
+                                    peraturan perundang-undangan dan NDP PMII yang berlaku;</li>
+                                    <li>Melaksanakan kegiatan-kegiatan dalam berbagai bidang sesuai dengan asas, tujuan, dan paradigma PMII
+                                    serta mewujudkan pribadi insan ulul albab.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- FOOTER DARI DIGILIB.HTML -->
+    <footer class="internal-footer py-10 mt-auto">
+        <div class="container mx-auto px-4 text-center">
+            <img src="img/logo-pmii.png" alt="Logo PMII Footer" class="h-12 w-12 mx-auto mb-2.5 rounded-full">
+            <p class="text-md font-semibold footer-title">PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung</p>
+            <p class="text-xs mt-3">&copy; <span id="tahun-footer-digilib"></span> PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung. All Rights Reserved.</p>
+        </div>
+    </footer>
+    
+    <button id="scrollToTopBtn" title="Kembali ke atas" class="hidden fixed bottom-6 right-6 z-50 items-center justify-center hover:bg-yellow-300 focus:outline-none">
+        <i class="fas fa-arrow-up text-lg"></i>
+    </button>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Global State & Elements (from index.html) ---
+            let loggedInUser = null; 
+            const authLinkMain = document.getElementById('auth-link-main');
+            const authLinkMobile = document.getElementById('auth-link-mobile');
+            const desktopKaderMenuContainer = document.getElementById('desktop-kader-menu-container');
+            const mobileKaderMenuGroup = document.getElementById('mobile-kader-menu-group');
+            const desktopAdminMenuContainer = document.getElementById('desktop-admin-menu-container');
+            const mobileAdminMenuGroup = document.getElementById('mobile-admin-menu-group');
+            const mobileAdminMenuSeparator = document.getElementById('mobile-admin-menu-separator');
+
+            const adminMenuLinks = {
+                manajemenAkun: { desktop: document.getElementById('manajemen-akun-link-desktop'), mobile: document.getElementById('manajemen-akun-link-mobile') },
+                manajemenKader: { desktop: document.getElementById('manajemen-kader-link-desktop'), mobile: document.getElementById('manajemen-kader-link-mobile') },
+                repositoryIlmiah: { desktop: document.getElementById('repository-ilmiah-link-desktop'), mobile: document.getElementById('repository-ilmiah-link-mobile') },
+                pengajuanSurat: { desktop: document.getElementById('pengajuan-surat-link-desktop'), mobile: document.getElementById('pengajuan-surat-link-mobile') },
+                verifikasiSurat: { desktop: document.getElementById('verifikasi-surat-link-desktop'), mobile: document.getElementById('verifikasi-surat-link-mobile') },
+                dashboardRayon: { desktop: document.getElementById('dashboard-rayon-link-desktop'), mobile: document.getElementById('dashboard-rayon-link-mobile') },
+                adminDashboard: { desktop: document.getElementById('admin-dashboard-link-desktop'), mobile: document.getElementById('admin-dashboard-link-mobile') },
+                editBeranda: { desktop: document.getElementById('edit-beranda-link-desktop'), mobile: document.getElementById('edit-beranda-link-mobile') },
+                jurnalAlharokahAdmin: { desktop: document.getElementById('jurnal-alharokah-link-desktop-admin'), mobile: document.getElementById('jurnal-alharokah-link-mobile-admin') },
+                editProfilKader: { desktop: document.getElementById('edit-profil-kader-link-desktop'), mobile: document.getElementById('edit-profil-kader-link-mobile') },
+                pengaturanAkunKader: { desktop: document.getElementById('pengaturan-akun-kader-link-desktop'), mobile: document.getElementById('pengaturan-akun-kader-link-mobile') },
+                jurnalAlharokahKader: { desktop: document.getElementById('jurnal-alharokah-link-desktop-kader'), mobile: document.getElementById('jurnal-alharokah-link-mobile-kader') },
+                verifikasiKontenRayon: { desktop: document.getElementById('verifikasi-konten-link-desktop'), mobile: document.getElementById('verifikasi-konten-link-mobile') },
+                tambahBeritaRayon: { desktop: document.getElementById('tambah-berita-link-desktop'), mobile: document.getElementById('tambah-berita-link-mobile') },
+                tambahKegiatanRayon: { desktop: document.getElementById('tambah-kegiatan-link-desktop'), mobile: document.getElementById('tambah-kegiatan-link-mobile') },
+                tambahGaleriRayon: { desktop: document.getElementById('tambah-galeri-link-desktop'), mobile: document.getElementById('tambah-galeri-link-mobile') }
+            };
+
+            // --- Auth & UI Logic (from index.html) ---
+            if (localStorage.getItem('loggedInUser')) {
+                try {
+                    loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+                    if (typeof loggedInUser !== 'object' || loggedInUser === null || !loggedInUser.role) {
+                        loggedInUser = null; 
+                        localStorage.removeItem('loggedInUser');
+                    }
+                } catch (e) {
+                    console.error("Error parsing loggedInUser from localStorage:", e);
+                    loggedInUser = null;
+                    localStorage.removeItem('loggedInUser');
+                }
+            }
+
+            function updateAdminUI() {
+                const loginText = "Login";
+                const logoutText = "Logout";
+                const loggedInStylesAuthLink = "logout-active";
+                const loggedOutStylesAuthLinkClasses = ["bg-pmii-yellow", "text-pmii-blue", "hover:bg-yellow-400"];
+
+                const allAdminAndKaderLinks = Object.values(adminMenuLinks).flatMap(links => [links.desktop, links.mobile]);
+                allAdminAndKaderLinks.forEach(link => { if (link) link.style.display = 'none'; });
+
+                if(desktopAdminMenuContainer) desktopAdminMenuContainer.style.display = 'none';
+                if(mobileAdminMenuGroup) mobileAdminMenuGroup.style.display = 'none';
+                if(mobileAdminMenuSeparator) mobileAdminMenuSeparator.classList.add('hidden');
+                if(desktopKaderMenuContainer) desktopKaderMenuContainer.style.display = 'none';
+                if(mobileKaderMenuGroup) mobileKaderMenuGroup.style.display = 'none';
+
+                if (loggedInUser) {
+                    [authLinkMain, authLinkMobile].forEach(link => {
+                        if (link) {
+                            link.textContent = logoutText;
+                            link.href = "#";
+                            link.classList.remove(...loggedOutStylesAuthLinkClasses);
+                            link.classList.add(loggedInStylesAuthLink);
+                        }
+                    });
+
+                    if (loggedInUser.role === "rayon") {
+                        if(desktopAdminMenuContainer) desktopAdminMenuContainer.style.display = 'block';
+                        if(mobileAdminMenuGroup) mobileAdminMenuGroup.style.display = 'block';
+                        if(mobileAdminMenuSeparator) mobileAdminMenuSeparator.classList.remove('hidden');
+                        
+                        ['manajemenKader', 'repositoryIlmiah', 'pengajuanSurat', 'dashboardRayon', 'jurnalAlharokahAdmin', 'tambahBeritaRayon', 'tambahKegiatanRayon', 'tambahGaleriRayon'].forEach(key => {
+                            if (adminMenuLinks[key]) {
+                                if (adminMenuLinks[key].desktop) adminMenuLinks[key].desktop.style.display = 'flex';
+                                if (adminMenuLinks[key].mobile) adminMenuLinks[key].mobile.style.display = 'block';
+                            }
+                        });
+
+                    } else if (loggedInUser.role === "komisariat") {
+                        if(desktopAdminMenuContainer) desktopAdminMenuContainer.style.display = 'block';
+                        if(mobileAdminMenuGroup) mobileAdminMenuGroup.style.display = 'block';
+                        if(mobileAdminMenuSeparator) mobileAdminMenuSeparator.classList.remove('hidden');
+
+                        Object.keys(adminMenuLinks).filter(key => key.includes('Admin') || key.includes('manajemen') || key.includes('verifikasi') || key === 'editBeranda' || key === 'pengaturanSitus' || key === 'dashboardStatistik' || key === 'kelolaNotifikasi' || key === 'laporanAnalisis').forEach(key => {
+                            if (adminMenuLinks[key]) {
+                                if (adminMenuLinks[key].desktop) adminMenuLinks[key].desktop.style.display = 'flex';
+                                if (adminMenuLinks[key].mobile) adminMenuLinks[key].mobile.style.display = 'block';
+                            }
+                        });
+                        
+                    } else if (loggedInUser.role === "kader") {
+                        if(desktopKaderMenuContainer) desktopKaderMenuContainer.style.display = 'block';
+                        if(mobileKaderMenuGroup) mobileKaderMenuGroup.style.display = 'block';
+
+                        ['editProfilKader', 'pengaturanAkunKader', 'jurnalAlharokahKader'].forEach(key => {
+                            if (adminMenuLinks[key]) {
+                                if (adminMenuLinks[key].desktop) adminMenuLinks[key].desktop.style.display = 'flex';
+                                if (adminMenuLinks[key].mobile) adminMenuLinks[key].mobile.style.display = 'block';
+                            }
+                        });
+                    }
+
+                } else {
+                    [authLinkMain, authLinkMobile].forEach(link => {
+                        if(link) {
+                            link.textContent = loginText;
+                            link.href = "login.html";
+                            link.classList.remove(loggedInStylesAuthLink);
+                            link.classList.add(...loggedOutStylesAuthLinkClasses);
+                        }
+                    });
+                }
+            }
+
+            function handleLogout(e) {
+                if (loggedInUser) { 
+                    e.preventDefault(); 
+                    document.body.classList.add('fade-out-page');
+                    setTimeout(() => {
+                        localStorage.removeItem('isAdminLoggedIn'); 
+                        localStorage.removeItem('loggedInUser'); 
+                        localStorage.removeItem('isKaderLoggedIn'); 
+                        window.location.assign('index.html'); 
+                    }, 500); 
+                }
+            }
+            if(authLinkMain) authLinkMain.addEventListener('click', handleLogout);
+            if(authLinkMobile) authLinkMobile.addEventListener('click', handleLogout);
+
+            updateAdminUI(); // Initial UI update
+
+            // --- Logika Halaman Tentang Kami ---
+            const aboutUsContentP1 = document.getElementById('about-us-content-p1');
+            const aboutUsPageImage = document.querySelector('#about-us-page-content img');
+            const visiContent = document.getElementById('visi-content');
+            const misiContent = document.getElementById('misi-content');
+
+
+            function loadAboutUsContent() {
+                const homepageContent = JSON.parse(localStorage.getItem('homepageContent')) || {};
+                
+                // Set the main paragraph content
+                if (aboutUsContentP1) {
+                    aboutUsContentP1.innerHTML = homepageContent.aboutP1 || 
+                        `Pergerakan Mahasiswa Islam Indonesia (PMII) Komisariat UIN Sunan Gunung Djati Bandung adalah organisasi kemahasiswaan Islam yang berlandaskan Ahlussunnah wal Jama'ah an-Nahdliyah. Kami berkomitmen untuk mencetak kader-kader Ulul Albab yang memiliki kedalaman spiritual, keluasan ilmu pengetahuan, dan kepedulian sosial yang tinggi.`;
+                }
+
+                // Set Visi content
+                if (visiContent) {
+                    visiContent.innerHTML = `
+                        Sesuai dengan Anggaran Dasar Anggaran Rumah Tangga Bab IV Pasal 4 <br><br>
+                        Terbentuknya pribadi muslim Indonesia yang bertakwa kepada Allah SWT, berbudi luhur, berilmu, cakap dan
+                        bertanggung jawab dalam mengamalkan ilmunya serta komitmen memperjuangkan cita-cita kemerdekaan
+                        Indonesia.
+                    `;
+                }
+
+                // Set Misi content
+                if (misiContent) {
+                    misiContent.innerHTML = `
+                        <li>Sesuai dengan Anggaran Dasar Anggaran Rumah Tangga Bab IV Pasal 5</li>
+                        <li>Menghimpun dan membina mahasiswa Islam Indonesia sesuai dengan sifat dan tujuan PMII serta
+                        peraturan perundang-undangan dan NDP PMII yang berlaku;</li>
+                        <li>Melaksanakan kegiatan-kegiatan dalam berbagai bidang sesuai dengan asas, tujuan, dan paradigma PMII
+                        serta mewujudkan pribadi insan ulul albab.</li>
+                    `;
+                }
+
+                // Set the image src (if available) - assuming default image in HTML if not specified
+                if (aboutUsPageImage) {
+                    // No specific image field for about us in homepageContent for now,
+                    // so it will use the default placeholder from the HTML or you can add a field in homepageContent.
+                }
+            }
+
+            loadAboutUsContent();
+
+
+            // --- General UI (from index.html) ---
+            const navbar = document.getElementById('navbar');
+            const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+            window.addEventListener('scroll', () => {
+                if(navbar) navbar.classList.toggle('navbar-scrolled', window.scrollY > 50);
+                if (scrollToTopBtn) {
+                    scrollToTopBtn.classList.toggle('hidden', window.pageYOffset <= 300);
+                    scrollToTopBtn.classList.toggle('flex', window.pageYOffset > 300);
+                }
+            });
+            if (scrollToTopBtn) scrollToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+            
+            // Set current year in footer - using the digilib.html's footer ID
+            const tahunFooterDigilib = document.getElementById('tahun-footer-digilib');
+            if (tahunFooterDigilib) {
+                tahunFooterDigilib.textContent = new Date().getFullYear();
+            }
+
+
+            // Intersection Observer for section animations (if any sections are animated)
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.animated-section').forEach(section => observer.observe(section));
+        });
+    </script>
+</body>
+</html>

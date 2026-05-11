@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Makalah Kader - PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="img/logo-pmii.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Variabel CSS dari file yang diberikan (admin-dashboard-komisariat.html, manajemen-kader.html) */
+        :root {
+            --pmii-blue: #005c97;
+            --pmii-darkblue: #004a7c;
+            --pmii-yellow: #fdd835;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --input-bg: #f9fafb;
+            --background-light: #f9fafb;
+            --background-page: #f3f4f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --danger-color: #ef4444;
+            --danger-hover-color: #dc2626;
+            --success-color: #22c55e;
+            --success-hover-color: #16a34a;
+            --warning-color: #f59e0b;
+            --warning-hover-color: #d97706;
+        }
+        html { scroll-behavior: smooth; }
+        body { 
+            font-family: 'Poppins', 'Inter', sans-serif; 
+            overflow-x: hidden; 
+            background-color: var(--background-page);
+            color: var(--text-primary); 
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: background-color 0.3s;
+            line-height: 1.6;
+        }
+        .main-content-wrapper { 
+            flex-grow: 1;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: pageFadeInUp 0.7s 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
+        @keyframes pageFadeInUp { to { opacity: 1; transform: translateY(0); } }
+        
+        /* Header Internal (adapted from admin-dashboard-komisariat.html) */
+        .internal-header {
+            background-color: white;
+            box-shadow: var(--shadow-md);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky; top: 0; z-index: 1000; 
+        }
+        .internal-header .logo-text { color: var(--pmii-blue); font-weight: 700; }
+        .internal-header #admin-name-header { color: var(--text-secondary); font-weight: 500; }
+        .internal-header #auth-info-header {
+            background-color: var(--pmii-blue); color: white;
+            padding: 0.6rem 1.2rem; border-radius: 0.5rem; 
+            transition: background-color 0.25s, transform 0.2s, box-shadow 0.25s; 
+            text-decoration: none; font-weight: 500; box-shadow: var(--shadow-sm);
+        }
+        .internal-header #auth-info-header:hover {
+            background-color: var(--pmii-darkblue); transform: translateY(-2px); box-shadow: var(--shadow-md);
+        }
+        .internal-header #auth-info-header.logout-active { background-color: #ef4444 !important; } 
+        .internal-header #auth-info-header.logout-active:hover { background-color: #dc2626 !important; } 
+
+        /* Page Title (adapted from admin-dashboard-komisariat.html) */
+        .page-title { color: var(--pmii-darkblue); font-weight: 800; text-shadow: 1px 1px 2px rgba(0,0,0,0.05); }
+        
+        /* Content Section (adapted from admin-dashboard-komisariat.html) */
+        .content-section { 
+            background-color: white; padding: 2rem; border-radius: 0.75rem; 
+            box-shadow: var(--shadow-md); border: 1px solid var(--border-color);
+        }
+        .content-section h2, .content-section h3 {
+            color: var(--pmii-darkblue); border-bottom: 2px solid var(--pmii-yellow);
+            padding-bottom: 0.5rem; display: inline-block; font-weight: 700;
+        }
+
+        /* Form Modern (adapted from manajemen-akun.html) */
+        .input-group-modern { position: relative; margin-bottom: 1.5rem; }
+        .form-input-modern, select.form-input-modern, textarea.form-input-modern, input[type="file"].form-input-modern { 
+            width: 100%; padding: 0.875rem 1rem; padding-top: 1.25rem; 
+            border: 1px solid var(--border-color); border-radius: 0.5rem; 
+            font-size: 0.875rem; color: var(--text-primary);
+            background-color: var(--input-bg);
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+        }
+        select.form-input-modern { 
+             padding-top: 0.875rem; padding-bottom: 0.875rem; appearance: none; 
+             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E"); 
+             background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.25em 1.25em; 
+        }
+        textarea.form-input-modern { padding-top: 1.25rem; min-height: 80px; resize: vertical; }
+        .form-input-modern:focus, select.form-input-modern:focus, textarea.form-input-modern:focus, input[type="file"].form-input-modern:focus {
+            border-color: var(--pmii-blue); background-color: white;
+            box-shadow: 0 0 0 3px rgba(0, 92, 151, 0.15); outline: none;
+        }
+        .form-label-modern { 
+            position: absolute; left: 1rem; top: 0.875rem; 
+            color: var(--text-muted); font-size: 0.875rem; 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none; background-color: transparent; padding: 0 0.25rem;
+        }
+        .form-input-modern:focus + .form-label-modern,
+        .form-input-modern.has-value + .form-label-modern,
+        select.form-input-modern:focus + .form-label-modern, 
+        select.form-input-modern.has-value + .form-label-modern,
+        textarea.form-input-modern:focus + .form-label-modern,
+        textarea.form-input-modern.has-value + .form-label-modern,
+        input[type="file"].form-input-modern:focus + .form-label-modern,
+        input[type="file"].form-input-modern.has-value + .form-label-modern { 
+            top: 0.375rem; left: 0.75rem; font-size: 0.75rem; 
+            color: var(--pmii-blue); background-color: white; border-radius: 0.25rem;
+        }
+
+        /* Button Modern (adapted from manajemen-akun.html) */
+        .btn-modern {
+            padding: 0.625rem 1.25rem; border-radius: 0.5rem; font-weight: 500;
+            font-size: 0.875rem; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+            display: inline-flex; align-items: center; justify-content: center; 
+            cursor: pointer; border: none; text-decoration: none;
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-modern:hover { transform: translateY(-2px) scale(1.02); box-shadow: var(--shadow-md); }
+        .btn-modern:active { transform: translateY(0px) scale(0.98); }
+        .btn-primary-modern { background-color: var(--pmii-blue); color: white; }
+        .btn-primary-modern:hover { background-color: var(--pmii-darkblue); }
+        .btn-danger-modern { background-color: var(--danger-color); color: white; }
+        .btn-danger-modern:hover { background-color: var(--danger-hover-color); }
+        .btn-outline-modern {
+            background-color: transparent; color: var(--pmii-blue); border: 1px solid var(--pmii-blue);
+        }
+        .btn-outline-modern:hover { background-color: rgba(0,92,151,0.05); }
+        .btn-success-modern { background-color: var(--success-color); color: white; }
+        .btn-success-modern:hover { background-color: var(--success-hover-color); }
+        .btn-warning-modern { background-color: var(--warning-color); color: white; }
+        .btn-warning-modern:hover { background-color: var(--warning-hover-color); }
+
+        /* Form Message (adapted from manajemen-akun.html) */
+        .form-message-success { background-color: #dcfce7; color: #166534; border: 1px solid #86efac; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; }
+        .form-message-error { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; }
+        .form-message-info { background-color: #bfdbfe; color: #1e40af; border: 1px solid #93c5fd; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; }
+
+        /* Table Styling (adapted from manajemen-kader.html) */
+        .table-modern-wrapper { overflow-x: auto; border: 1px solid var(--border-color); border-radius: 0.5rem; box-shadow: var(--shadow-sm); }
+        .table-modern { min-width: 100%; border-collapse: collapse; }
+        .table-modern th, .table-modern td { 
+            padding: 0.75rem 1rem; text-align: left; 
+            border-bottom: 1px solid var(--border-color); font-size: 0.875rem; 
+        }
+        .table-modern thead th { 
+            background-color: var(--background-light); color: var(--text-secondary); 
+            font-weight: 600; white-space: nowrap;
+        }
+        .table-modern tbody tr:hover { background-color: #eff6ff; /* blue-50 */ }
+        .table-modern .action-icon {
+            color: var(--text-muted); margin-right: 0.5rem; cursor: pointer;
+            transition: color 0.2s, transform 0.2s;
+        }
+        .table-modern .action-icon:hover { transform: scale(1.15); }
+        .table-modern .action-icon.fa-edit:hover { color: var(--pmii-blue); }
+        .table-modern .action-icon.fa-trash-alt:hover { color: var(--danger-color); }
+        .table-modern .status-badge { /* Re-use from existing files if possible */
+            padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 500; text-transform: capitalize;
+            border: 1px solid; display: inline-flex; align-items: center; gap: 0.4rem;
+        }
+        .status-badge.pending { border-color: var(--warning-color); color: var(--warning-color); background-color: rgba(245, 158, 11, 0.15); }
+        .status-badge.approved { border-color: var(--success-color); color: var(--success-color); background-color: rgba(34, 197, 94, 0.15); }
+        .status-badge.rejected { border-color: var(--danger-color); color: var(--danger-color); background-color: rgba(239, 68, 68, 0.15); }
+
+        /* Modal Styling (adapted from manajemen-akun.html) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0,0,0,0.6);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
+            z-index: 2000; padding: 1rem;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-content {
+            background-color: white; padding: 2rem; border-radius: 0.75rem;
+            box-shadow: var(--shadow-lg); width: 100%; max-width: 600px; /* Adjust max-width for detail modal */
+            transform: scale(0.95); opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s;
+            max-height: 90vh; /* Allow scrolling for long content */
+            overflow-y: auto;
+        }
+        .modal-overlay.active .modal-content { transform: scale(1); opacity: 1; }
+        .modal-header { border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;}
+        .modal-title { font-size: 1.25rem; font-weight: 600; color: var(--pmii-darkblue); }
+        .modal-footer { border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.75rem; }
+        .modal-body p { margin-bottom: 0.5rem; } /* Spacing for paragraphs in modal */
+        .modal-body strong { color: var(--text-primary); }
+
+        /* Footer (adapted from admin-dashboard-komisariat.html) */
+        .internal-footer {
+            background-color: var(--pmii-darkblue); color: #cbd5e1; 
+            padding: 2.5rem 1rem; 
+        }
+        .internal-footer p { color: #e5e7eb; }
+        .internal-footer .footer-title { color: white; font-weight: 600; }
+        .internal-footer img { filter: brightness(0) invert(1) opacity(0.8); }
+
+        /* Scroll to Top Button (adapted from admin-dashboard-komisariat.html) */
+        #scrollToTopBtnMakalah {
+            background-color: var(--pmii-yellow); color: var(--pmii-darkblue);
+            width: 2.75rem; height: 2.75rem; border-radius: 50%; 
+            box-shadow: var(--shadow-lg); transition: background-color 0.2s, transform 0.2s;
+        }
+        #scrollToTopBtnMakalah:hover { background-color: #fbc02d; transform: scale(1.1) translateY(-2px); }
+
+        /* Custom Alert/Message Box (adapted from manajemen-kader.html) */
+        #customMessageBox { transition: all 0.3s ease-in-out; }
+    </style>
+</head>
+<body>
+
+    <header class="internal-header py-3 sticky top-0 z-50">
+        <div class="container mx-auto px-4 lg:px-8 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2.5">
+                <img src="img/logo-pmii.png" alt="Logo PMII" class="h-9 w-9 rounded-full">
+                <span class="text-sm md:text-base font-semibold logo-text">PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung - Sistem Internal</span>
+            </a>
+            <div class="flex items-center space-x-3 md:space-x-4">
+                <span id="admin-name-header" class="text-xs sm:text-sm font-medium hidden"></span>
+                <a href="#" id="auth-info-header" class="text-xs sm:text-sm">Logout</a>
+                <a href="index.html" class="text-xs sm:text-sm text-pmii-blue hover:text-pmii-darkblue font-medium hidden md:flex items-center">
+                    <i class="fas fa-arrow-left mr-1"></i>Kembali ke Beranda
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content-wrapper">
+        <main class="container mx-auto px-4 py-8 lg:py-12">
+            <!-- Tombol Kembali -->
+            <div class="mb-6">
+                <a href="#" id="back-to-dashboard-link" class="btn-modern btn-outline-modern">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Kembali
+                </a>
+            </div>
+
+            <section id="manajemen-makalah-kader-content">
+                <div class="text-center mb-10 md:mb-14">
+                    <h1 class="text-3xl lg:text-4xl page-title" id="page-main-title">Manajemen Makalah Kader</h1>
+                    <p class="text-md text-text-muted mt-2" id="page-subtitle">Kelola dan verifikasi karya ilmiah kader.</p>
+                </div>
+
+                <!-- Form Unggah/Edit Makalah (Tampak untuk Admin Rayon dan Komisariat, Sembunyi untuk Publik) -->
+                <div id="makalah-form-section" class="content-section mb-8 max-w-2xl mx-auto">
+                    <h3 class="text-lg font-semibold mb-6" id="form-section-title">Ajukan / Edit Makalah Kader</h3>
+                    <div id="form-response" class="hidden form-message-info mb-5"></div>
+                    <form id="makalahForm" class="space-y-6">
+                        <input type="hidden" id="makalahId" name="makalahId">
+                        
+                        <!-- Penulis (untuk Admin Komisariat bisa diedit, untuk Admin Rayon/Kader otomatis) -->
+                        <div class="input-group-modern">
+                            <input type="text" id="makalahPenulis" name="penulis" class="form-input-modern" required placeholder=" ">
+                            <label for="makalahPenulis" class="form-label-modern">Nama Penulis</label>
+                        </div>
+
+                        <!-- Rayon (untuk Admin Komisariat bisa diedit, untuk Admin Rayon/Kader otomatis) -->
+                        <div id="rayon-input-group" class="input-group-modern">
+                            <select id="makalahRayon" name="rayon" class="form-input-modern" required>
+                                <option value="" disabled selected></option>
+                                <option value="PMII Rayon Fakultas Ushuluddin">PMII Rayon Fakultas Ushuluddin</option>
+                                <option value="PMII Rayon Fakultas Tarbiyah dan Keguruan">PMII Rayon Fakultas Tarbiyah dan Keguruan</option>
+                                <option value="PMII Rayon Fakultas Syariah dan Hukum">PMII Rayon Fakultas Syariah dan Hukum</option>
+                                <option value="PMII Rayon Fakultas Dakwah dan Komunikasi">PMII Rayon Fakultas Dakwah dan Komunikasi</option>
+                                <option value="PMII Rayon Fakultas Adab dan Humaniora">PMII Rayon Fakultas Adab dan Humaniora</option>
+                                <option value="PMII Rayon Fakultas Sains dan Teknologi">PMII Rayon Fakultas Sains dan Teknologi</option>
+                                <option value="PMII Rayon Fakultas Psikologi">PMII Rayon Fakultas Psikologi</option>
+                                <option value="PMII Rayon Fakultas Ilmu Sosial dan Ilmu Politik">PMII Rayon Fakultas Ilmu Sosial dan Ilmu Politik</option>
+                                <option value="PMII Rayon Fakultas Ekonomi dan Bisnis Islam">PMII Rayon Fakultas Ekonomi dan Bisnis Islam</option>
+                            </select>
+                            <label for="makalahRayon" class="form-label-modern">Rayon Asal</label>
+                        </div>
+
+                        <div class="input-group-modern">
+                            <input type="text" id="makalahJudul" name="judul" class="form-input-modern" required placeholder=" ">
+                            <label for="makalahJudul" class="form-label-modern">Judul Makalah</label>
+                        </div>
+                        <div class="input-group-modern">
+                            <textarea id="makalahAbstrak" name="abstrak" class="form-input-modern" rows="5" required placeholder=" "></textarea>
+                            <label for="makalahAbstrak" class="form-label-modern">Abstrak</label>
+                        </div>
+                        <div>
+                            <label for="makalahFile" class="block text-sm font-medium text-text-secondary mb-1">Unggah File Makalah (PDF/DOCX, Maks. 5MB)</label>
+                            <input type="file" id="makalahFile" name="file" class="form-input-modern" accept=".pdf,.doc,.docx">
+                            <p id="fileNamePreview" class="text-xs text-text-muted mt-1">Tidak ada file dipilih.</p>
+                        </div>
+                        <div class="flex justify-end space-x-3">
+                            <button type="reset" class="btn-modern btn-outline-modern" id="resetFormButton">Reset Form</button>
+                            <button type="submit" class="btn-modern btn-primary-modern" id="submitFormButton">
+                                <i class="fas fa-upload mr-2"></i> Unggah Makalah
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Filter & Daftar Makalah -->
+                <div class="content-section">
+                    <h3 class="text-lg font-semibold mb-4">Daftar Makalah Kader</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                        <div class="lg:col-span-2 input-group-modern">
+                            <input type="text" id="searchMakalah" class="form-input-modern" placeholder=" ">
+                            <label for="searchMakalah" class="form-label-modern">Cari Judul / Penulis...</label>
+                        </div>
+                        <div id="filter-status-container" class="input-group-modern">
+                            <select id="filterStatus" class="form-input-modern">
+                                <option value="all">Semua Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Disetujui</option>
+                                <option value="rejected">Ditolak</option>
+                            </select>
+                            <label for="filterStatus" class="form-label-modern">Filter Status</label>
+                        </div>
+                        <div id="filter-rayon-container" class="input-group-modern hidden">
+                            <select id="filterRayon" class="form-input-modern">
+                                <option value="all">Semua Rayon</option>
+                                <!-- Rayon options populated by JS -->
+                            </select>
+                            <label for="filterRayon" class="form-label-modern">Filter Rayon</label>
+                        </div>
+                    </div>
+
+                    <div class="table-modern-wrapper">
+                        <table class="table-modern">
+                            <thead>
+                                <tr>
+                                    <th>Judul</th>
+                                    <th>Penulis</th>
+                                    <th>Rayon</th>
+                                    <th>Tanggal Unggah</th>
+                                    <th>Status</th>
+                                    <th class="text-center" id="action-header">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="makalahTableBody">
+                                <tr><td colspan="6" class="py-8 text-center text-text-muted">Memuat data makalah...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Detail Makalah -->
+    <div id="detailMakalahModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="detailModalTitle">Detail Makalah</h3>
+                <button type="button" class="text-gray-400 hover:text-gray-600 text-xl" onclick="closeModal('detailMakalahModal')">&times;</button>
+            </div>
+            <div class="modal-body text-sm text-text-secondary">
+                <p><strong>Judul:</strong> <span id="detailJudul" class="font-medium"></span></p>
+                <p><strong>Penulis:</b> <span id="detailPenulis"></span></p>
+                <p><strong>Rayon:</strong> <span id="detailRayon"></span></p>
+                <p><strong>Tanggal Unggah:</strong> <span id="detailTanggal"></span></p>
+                <p><strong>Status:</strong> <span id="detailStatus" class="status-badge"></span></p>
+                <p id="detailKomentarAdminContainer" class="hidden"><strong>Komentar Admin:</strong> <span id="detailKomentarAdmin"></span></p>
+                <h4 class="font-semibold text-text-primary mt-4 mb-2">Abstrak:</h4>
+                <p id="detailAbstrak"></p>
+                <div class="modal-footer justify-between">
+                    <a href="#" id="detailDownloadLink" target="_blank" class="btn-modern btn-outline-modern">
+                        <i class="fas fa-download mr-2"></i> Unduh File
+                    </a>
+                    <button type="button" class="btn-modern btn-outline-modern" onclick="closeModal('detailMakalahModal')">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Universal -->
+    <div id="customConfirmModal" class="modal-overlay">
+        <div class="modal-content text-center max-w-sm">
+            <p id="confirmMessage" class="text-lg font-semibold text-gray-800 mb-6"></p>
+            <div class="flex justify-center space-x-4">
+                <button type="button" class="btn-modern btn-outline-modern" id="cancelConfirmBtn">Batal</button>
+                <button type="button" class="btn-modern btn-danger-modern" id="confirmActionBtn">Konfirmasi</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="internal-footer py-10 mt-auto">
+        <div class="container mx-auto px-4 text-center">
+            <img src="img/logo-pmii.png" alt="Logo PMII Footer" class="h-12 w-12 mx-auto mb-2.5 rounded-full">
+            <p class="text-md font-semibold footer-title">PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung</p>
+            <p class="text-xs mt-3">&copy; <span id="tahun-footer-makalah"></span> PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung. All Rights Reserved.</p>
+        </div>
+    </footer>
+    
+    <button id="scrollToTopBtnMakalah" title="Kembali ke atas" class="hidden fixed bottom-6 right-6 z-50 items-center justify-center hover:bg-yellow-300 focus:outline-none">
+        <i class="fas fa-arrow-up text-lg"></i>
+    </button>
+
+    <!-- Custom Message Box -->
+    <div id="customMessageBox" class="fixed top-4 right-4 z-[9999] px-6 py-3 rounded-lg shadow-xl text-white text-sm font-semibold transition-all duration-300 transform translate-x-full opacity-0">
+        Pesan kustom di sini!
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- STATE & DATA MANAGEMENT ---
+            const LOCAL_STORAGE_KEY = 'makalahKaderData';
+            const LOCAL_STORAGE_HOMEPAGE_CONTENT_KEY = 'homepageContent';
+            let makalahKader = []; // Main data array for all makalah
+            let loggedInUserPage = null; // Stores info about the currently logged-in user
+            let userRole = 'public'; // 'public', 'kader', 'rayon', 'komisariat'
+
+            // --- DOM ELEMENTS ---
+            const adminNameHeader = document.getElementById('admin-name-header');
+            const authInfoHeader = document.getElementById('auth-info-header');
+            const backToDashboardLink = document.getElementById('back-to-dashboard-link');
+
+            const pageMainTitle = document.getElementById('page-main-title');
+            const pageSubtitle = document.getElementById('page-subtitle');
+            const formSectionTitle = document.getElementById('form-section-title');
+
+            const makalahFormSection = document.getElementById('makalah-form-section');
+            const makalahForm = document.getElementById('makalahForm');
+            const makalahIdInput = document.getElementById('makalahId');
+            const makalahPenulisInput = document.getElementById('makalahPenulis');
+            const makalahRayonSelect = document.getElementById('makalahRayon');
+            const makalahJudulInput = document.getElementById('makalahJudul');
+            const makalahAbstrakTextarea = document.getElementById('makalahAbstrak');
+            const makalahFileInput = document.getElementById('makalahFile');
+            const fileNamePreview = document.getElementById('fileNamePreview');
+            const submitFormButton = document.getElementById('submitFormButton');
+            const resetFormButton = document.getElementById('resetFormButton');
+            const rayonInputGroup = document.getElementById('rayon-input-group');
+
+            const searchMakalahInput = document.getElementById('searchMakalah');
+            const filterStatusSelect = document.getElementById('filterStatus');
+            const filterStatusContainer = document.getElementById('filter-status-container');
+            const filterRayonSelect = document.getElementById('filterRayon');
+            const filterRayonContainer = document.getElementById('filter-rayon-container');
+            const makalahTableBody = document.getElementById('makalahTableBody');
+            const actionHeader = document.getElementById('action-header');
+
+            // Detail Modal Elements
+            const detailMakalahModal = document.getElementById('detailMakalahModal');
+            const detailJudul = document.getElementById('detailJudul');
+            const detailPenulis = document.getElementById('detailPenulis');
+            const detailRayon = document.getElementById('detailRayon');
+            const detailTanggal = document.getElementById('detailTanggal');
+            const detailStatus = document.getElementById('detailStatus');
+            const detailKomentarAdminContainer = document.getElementById('detailKomentarAdminContainer');
+            const detailKomentarAdmin = document.getElementById('detailKomentarAdmin');
+            const detailAbstrak = document.getElementById('detailAbstrak');
+            const detailDownloadLink = document.getElementById('detailDownloadLink');
+
+            // Custom Confirm Modal Elements
+            const customConfirmModal = document.getElementById('customConfirmModal');
+            const confirmMessage = document.getElementById('confirmMessage');
+            const confirmActionBtn = document.getElementById('confirmActionBtn');
+            const cancelConfirmBtn = document.getElementById('cancelConfirmBtn');
+            let confirmCallback = null; // Stores the callback for confirmation
+
+            // All form input elements for floating label logic
+            const allFormInputs = document.querySelectorAll('.form-input-modern');
+
+            // --- AUTHENTICATION & UI SETUP ---
+            function checkAuth() {
+                const isLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true'; // Assumed from login.html
+                const storedUser = localStorage.getItem('loggedInUser');
+
+                if (isLoggedIn && storedUser) {
+                    try {
+                        loggedInUserPage = JSON.parse(storedUser);
+                        if (['komisariat', 'rayon', 'kader'].includes(loggedInUserPage.role)) {
+                            userRole = loggedInUserPage.role;
+                        }
+                    } catch (e) {
+                        console.error("Error parsing loggedInUser from localStorage:", e);
+                        localStorage.removeItem('loggedInUser');
+                        localStorage.removeItem('isAdminLoggedIn');
+                    }
+                }
+                // userRole already defaults to 'public' if no user or invalid role found
+                return true; // Always return true to proceed with UI rendering based on userRole
+            }
+
+            function updateMakalahUI() {
+                // Reset visibility for all elements
+                makalahFormSection.classList.add('hidden');
+                filterStatusContainer.classList.add('hidden');
+                filterRayonContainer.classList.add('hidden');
+                actionHeader.classList.remove('hidden'); // Default to visible, then hide if no actions allowed
+                backToDashboardLink.classList.add('hidden'); // Default to hidden, show based on role
+
+                // Update Header
+                if (userRole === 'public') {
+                    adminNameHeader.classList.add('hidden');
+                    authInfoHeader.textContent = 'Login';
+                    authInfoHeader.href = 'login.html';
+                    authInfoHeader.classList.remove('logout-active');
+                    authInfoHeader.removeEventListener('click', handleLogout);
+                } else {
+                    adminNameHeader.textContent = `Halo, ${loggedInUserPage.nama || 'Pengguna'}`;
+                    adminNameHeader.classList.remove('hidden');
+                    authInfoHeader.textContent = 'Logout';
+                    authInfoHeader.href = '#';
+                    authInfoHeader.classList.add('logout-active');
+                    authInfoHeader.removeEventListener('click', handleLogout);
+                    authInfoHeader.addEventListener('click', handleLogout);
+
+                    if (loggedInUserPage.role === 'komisariat') {
+                        backToDashboardLink.href = 'admin-dashboard-komisariat.html';
+                    } else if (loggedInUserPage.role === 'rayon') {
+                        backToDashboardLink.href = 'admin-dashboard-rayon.html';
+                    } else if (loggedInUserPage.role === 'kader') {
+                        backToDashboardLink.href = 'index.html'; // Kader goes back to homepage
+                    }
+                    backToDashboardLink.classList.remove('hidden'); // Ensure visible for logged-in users
+                }
+
+                // Adjust page titles and subtitles
+                if (userRole === 'public') {
+                    pageMainTitle.textContent = 'Makalah Kader';
+                    pageSubtitle.textContent = 'Lihat koleksi makalah ilmiah kader PMII yang telah disetujui.';
+                } else if (userRole === 'kader') {
+                    pageMainTitle.textContent = 'Makalah Kader';
+                    pageSubtitle.textContent = `Ajukan dan lihat riwayat makalah Anda.`;
+                } else { // Admin Rayon or Komisariat
+                    pageMainTitle.textContent = 'Manajemen Makalah Kader';
+                    pageSubtitle.textContent = 'Kelola dan verifikasi karya ilmiah kader.';
+                }
+
+                // Form and Filters visibility
+                if (userRole === 'rayon' || userRole === 'komisariat' || userRole === 'kader') {
+                    makalahFormSection.classList.remove('hidden');
+                    if (userRole === 'kader') {
+                        formSectionTitle.textContent = 'Unggah Makalah Baru';
+                        // Pre-fill and disable Penulis & Rayon for Kader
+                        makalahPenulisInput.value = loggedInUserPage.nama || '';
+                        makalahPenulisInput.disabled = true;
+                        makalahPenulisInput.classList.add('has-value');
+
+                        makalahRayonSelect.value = loggedInUserPage.rayon || '';
+                        makalahRayonSelect.disabled = true;
+                        makalahRayonSelect.classList.add('has-value');
+                        rayonInputGroup.classList.remove('hidden'); // Ensure rayon dropdown is visible
+                    } else { // Admin Rayon / Komisariat
+                        formSectionTitle.textContent = 'Ajukan / Edit Makalah Kader';
+                        makalahPenulisInput.disabled = false;
+                        makalahPenulisInput.classList.remove('has-value'); // Clear for input
+                        makalahPenulisInput.value = '';
+
+                        makalahRayonSelect.disabled = false;
+                        makalahRayonSelect.classList.remove('has-value'); // Clear for input
+                        makalahRayonSelect.value = '';
+                        rayonInputGroup.classList.remove('hidden'); // Ensure rayon dropdown is visible
+                    }
+
+                    if (userRole === 'komisariat') {
+                        filterStatusContainer.classList.remove('hidden');
+                        filterRayonContainer.classList.remove('hidden');
+                        populateRayonFilter(); // Populate for Komisariat
+                    } else if (userRole === 'rayon') {
+                        filterStatusContainer.classList.remove('hidden'); // Rayon can filter status
+                        filterRayonContainer.classList.add('hidden'); // Rayon admin doesn't filter by rayon
+                    } else { // Kader
+                        filterStatusContainer.classList.add('hidden'); // Kader doesn't filter status
+                        filterRayonContainer.classList.add('hidden'); // Kader doesn't filter by rayon
+                    }
+                } else { // Public/Guest
+                    makalahFormSection.classList.add('hidden');
+                    filterStatusContainer.classList.add('hidden');
+                    filterRayonContainer.classList.add('hidden');
+                }
+
+                // Handle Action Header visibility
+                if (userRole === 'public') {
+                    actionHeader.classList.add('hidden'); // No actions for public
+                } else {
+                    actionHeader.classList.remove('hidden'); // Actions for logged-in users
+                }
+            }
+
+            function handleLogout(e) {
+                e.preventDefault();
+                localStorage.removeItem('isAdminLoggedIn');
+                localStorage.removeItem('loggedInUser');
+                showCustomMessage('Anda telah logout.', 'info');
+                window.location.reload(); // Refresh the page immediately after showing message
+            }
+
+            // --- INITIAL DATA LOAD ---
+            function loadMakalahData() {
+                makalahKader = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [
+                    // Dummy Data
+                    {
+                        id: 1,
+                        judul: "Peran PMII dalam Pembentukan Karakter Kader di Era Digital",
+                        penulis: "Mahbub Junaidi",
+                        rayon: "PMII Rayon Fakultas Ushuluddin",
+                        abstrak: "Makalah ini menganalisis peran PMII dalam membentuk karakter kader yang relevan dengan tantangan era digital, mencakup aspek-aspek moral, intelektual, dan sosial. Penelitian ini menggunakan pendekatan kualitatif dengan studi kasus di beberapa rayon...",
+                        fileUrl: "https://www.africau.edu/images/default/sample.pdf", // Placeholder
+                        fileName: "Peran_PMII_Digital.pdf",
+                        tanggalUnggah: "2024-01-10",
+                        status: "approved",
+                        komentarAdmin: ""
+                    },
+                    {
+                        id: 2,
+                        judul: "Analisis Strategi Dakwah PMII di Kalangan Mahasiswa Gen Z",
+                        penulis: "Siti Nurjanah",
+                        rayon: "PMII Rayon Fakultas Dakwah dan Komunikasi",
+                        abstrak: "Penelitian ini mengkaji efektivitas strategi dakwah PMII dalam menjangkau dan membina mahasiswa Generasi Z yang memiliki karakteristik unik dalam penggunaan media sosial dan preferensi komunikasi...",
+                        fileUrl: "https://www.africau.edu/images/default/sample.pdf",
+                        fileName: "Strategi_Dakwah_GenZ.pdf",
+                        tanggalUnggah: "2024-02-15",
+                        status: "pending",
+                        komentarAdmin: ""
+                    },
+                    {
+                        id: 3,
+                        judul: "Tinjauan Kritis Terhadap Isu Moderasi Beragama di Lingkungan Kampus",
+                        penulis: "Muhammad Fikri",
+                        rayon: "PMII Rayon Fakultas Syariah dan Hukum",
+                        abstrak: "Makalah ini meninjau secara kritis berbagai perspektif dan tantangan dalam mengimplementasikan konsep moderasi beragama di lingkungan perguruan tinggi, dengan fokus pada peran organisasi kemahasiswaan...",
+                        fileUrl: "https://www.africau.edu/images/default/sample.pdf",
+                        fileName: "Moderasi_Beragama.pdf",
+                        tanggalUnggah: "2024-03-20",
+                        status: "rejected",
+                        komentarAdmin: "Abstrak kurang jelas dan perlu diperbaiki. Mohon sertakan metodologi penelitian yang lebih rinci."
+                    },
+                    {
+                        id: 4,
+                        judul: "Pengembangan Ekonomi Kreatif Berbasis Pesantren: Studi Kasus di Jawa Barat",
+                        penulis: "Dewi Lestari",
+                        rayon: "PMII Rayon Fakultas Ekonomi dan Bisnis Islam",
+                        abstrak: "Penelitian ini mengeksplorasi potensi pengembangan ekonomi kreatif di lingkungan pesantren sebagai upaya peningkatan kemandirian ekonomi umat, dengan studi kasus di beberapa pesantren di Jawa Barat...",
+                        fileUrl: "https://www.africau.edu/images/default/sample.pdf",
+                        fileName: "Ekonomi_Pesantren.pdf",
+                        tanggalUnggah: "2024-04-01",
+                        status: "approved",
+                        komentarAdmin: ""
+                    },
+                    {
+                        id: 5,
+                        judul: "Perbandingan Kurikulum Pendidikan Karakter antara PMII dan Organisasi Mahasiswa Lain",
+                        penulis: "Rizky Pratama",
+                        rayon: "PMII Rayon Fakultas Tarbiyah dan Keguruan",
+                        abstrak: "Makalah ini membandingkan pendekatan dan efektivitas kurikulum pendidikan karakter yang diterapkan oleh PMII dengan beberapa organisasi mahasiswa lainnya di kampus yang sama...",
+                        fileUrl: "https://www.africau.edu/images/default/sample.pdf",
+                        fileName: "Kurikulum_Karakter.pdf",
+                        tanggalUnggah: "2024-05-05",
+                        status: "pending",
+                        komentarAdmin: ""
+                    },
+                    {
+                        id: 6,
+                        judul: "Implementasi Fiqh Lingkungan dalam Gerakan Mahasiswa",
+                        penulis: "Farah Adila",
+                        rayon: "PMII Rayon Fakultas Syariah dan Hukum",
+                        abstrak: "Kajian ini menelaah bagaimana prinsip-prinsip fiqh lingkungan dapat diintegrasikan ke dalam gerakan mahasiswa untuk mendorong kesadaran dan aksi nyata terhadap isu-isu lingkungan hidup...",
+                        fileUrl: "https://www.africau.edu/images/default/sample.pdf",
+                        fileName: "Fiqh_Lingkungan.pdf",
+                        tanggalUnggah: "2024-06-01",
+                        status: "pending",
+                        komentarAdmin: ""
+                    },
+                     {
+                        id: 7,
+                        judul: "Dampak Media Sosial terhadap Partisipasi Politik Mahasiswa",
+                        penulis: "Putri Indah",
+                        rayon: "PMII Rayon Fakultas Ilmu Sosial dan Ilmu Politik",
+                        abstrak: "Makalah ini mengkaji bagaimana penggunaan media sosial memengaruhi tingkat dan bentuk partisipasi politik di kalangan mahasiswa, serta dampaknya terhadap kesadaran berdemokrasi.",
+                        fileUrl: "https://www.africau.edu/images/default/sample.pdf",
+                        fileName: "Dampak_Media_Sosial.pdf",
+                        tanggalUnggah: "2024-05-20",
+                        status: "approved",
+                        komentarAdmin: ""
+                    },
+                    {
+                        id: 8,
+                        judul: "Aspek Psikologis dalam Pendampingan Komunitas Berbasis Agama",
+                        penulis: "Yoga Prasetya",
+                        rayon: "PMII Rayon Fakultas Psikologi",
+                        abstrak: "Penelitian ini menggali aspek-aspek psikologis yang relevan dalam proses pendampingan dan pemberdayaan komunitas yang dilakukan oleh organisasi keagamaan, dengan fokus pada peran empati dan resiliensi.",
+                        fileUrl: "https://www.africau.edu/images/default/sample.pdf",
+                        fileName: "Psikologi_Agama.pdf",
+                        tanggalUnggah: "2024-06-05",
+                        status: "pending",
+                        komentarAdmin: ""
+                    }
+                ];
+                saveMakalahData(); // Ensure initial data is saved to localStorage
+            }
+
+            function saveMakalahData() {
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(makalahKader));
+                // Also update the homepage content for public display
+                const approvedWorks = makalahKader.filter(m => m.status === 'approved');
+                let homepageContent = JSON.parse(localStorage.getItem(LOCAL_STORAGE_HOMEPAGE_CONTENT_KEY)) || {};
+                homepageContent.scientificWorks = approvedWorks; // Assuming 'scientificWorks' is the key for approved works
+                localStorage.setItem(LOCAL_STORAGE_HOMEPAGE_CONTENT_KEY, JSON.stringify(homepageContent));
+            }
+
+            // Populate Rayon Filter (for Komisariat Admin)
+            function populateRayonFilter() {
+                const rayons = new Set(makalahKader.map(m => m.rayon));
+                filterRayonSelect.innerHTML = '<option value="all">Semua Rayon</option>';
+                rayons.forEach(rayon => {
+                    const option = document.createElement('option');
+                    option.value = rayon;
+                    option.textContent = rayon;
+                    filterRayonSelect.appendChild(option);
+                });
+                // Ensure floating label updates
+                updateLabelClass(filterRayonSelect);
+            }
+
+            // --- CRUD OPERATIONS ---
+            function renderMakalahTable() {
+                makalahTableBody.innerHTML = ''; // Clear existing table rows
+                
+                let filteredData = makalahKader;
+
+                // Filter by role
+                if (userRole === 'kader') {
+                    // Kader only sees their own approved makalahs, and their own pending/rejected ones.
+                    filteredData = filteredData.filter(m => 
+                        m.penulis === (loggedInUserPage.nama || '') && (m.status === 'approved' || m.status === 'pending' || m.status === 'rejected')
+                    );
+                } else if (userRole === 'rayon') {
+                    filteredData = filteredData.filter(m => m.rayon === loggedInUserPage.namaRayon);
+                } else if (userRole === 'public') {
+                    filteredData = filteredData.filter(m => m.status === 'approved');
+                }
+
+                // Apply search filter
+                const searchTerm = searchMakalahInput.value.toLowerCase();
+                if (searchTerm) {
+                    filteredData = filteredData.filter(m => 
+                        m.judul.toLowerCase().includes(searchTerm) || 
+                        m.penulis.toLowerCase().includes(searchTerm)
+                    );
+                }
+
+                // Apply status filter (only visible for admins, not kader/public)
+                if (userRole === 'rayon' || userRole === 'komisariat') {
+                    const selectedStatus = filterStatusSelect.value;
+                    if (selectedStatus !== 'all') {
+                        filteredData = filteredData.filter(m => m.status === selectedStatus);
+                    }
+                }
+
+                // Apply rayon filter (Komisariat only)
+                if (userRole === 'komisariat') {
+                    const selectedRayonFilter = filterRayonSelect.value;
+                    if (selectedRayonFilter !== 'all') {
+                        filteredData = filteredData.filter(m => m.rayon === selectedRayonFilter);
+                    }
+                }
+                
+                if (filteredData.length === 0) {
+                    makalahTableBody.innerHTML = '<tr><td colspan="6" class="py-8 text-center text-text-muted">Tidak ada makalah yang cocok.</td></tr>';
+                    return;
+                }
+
+                // Sort by date (newest first)
+                filteredData.sort((a, b) => new Date(b.tanggalUnggah) - new Date(a.tanggalUnggah));
+
+                filteredData.forEach(makalah => {
+                    let statusClass = '';
+                    let statusIcon = '';
+                    if (makalah.status === 'pending') { statusClass = 'pending'; statusIcon = 'fa-clock'; }
+                    else if (makalah.status === 'approved') { statusClass = 'approved'; statusIcon = 'fa-check-circle'; }
+                    else { statusClass = 'rejected'; statusIcon = 'fa-times-circle'; }
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${makalah.judul}</td>
+                        <td>${makalah.penulis}</td>
+                        <td>${makalah.rayon}</td>
+                        <td>${new Date(makalah.tanggalUnggah).toLocaleDateString('id-ID')}</td>
+                        <td><span class="status-badge status-${statusClass}"><i class="fas ${statusIcon}"></i> ${makalah.status}</span></td>
+                        <td class="text-center whitespace-nowrap">
+                            <button title="Lihat Detail" class="btn-modern btn-outline-modern btn-sm view-btn" data-id="${makalah.id}"><i class="fas fa-eye"></i></button>
+                            ${(userRole === 'komisariat' || (userRole === 'rayon' && makalah.rayon === loggedInUserPage.namaRayon && makalah.status === 'pending') || (userRole === 'kader' && makalah.penulis === loggedInUserPage.nama && makalah.status === 'pending')) ? // Only editable if admin or their own pending
+                                `<button title="Edit" class="btn-modern btn-outline-modern btn-sm edit-btn" data-id="${makalah.id}"><i class="fas fa-edit"></i></button>` : ''
+                            }
+                            ${userRole === 'komisariat' ? `
+                                <button title="Setujui" class="btn-modern btn-success-modern btn-sm approve-btn" data-id="${makalah.id}" ${makalah.status === 'approved' ? 'disabled' : ''}><i class="fas fa-check"></i></button>
+                                <button title="Tolak" class="btn-modern btn-danger-modern btn-sm reject-btn" data-id="${makalah.id}" ${makalah.status === 'rejected' ? 'disabled' : ''}><i class="fas fa-times"></i></button>
+                            ` : ''}
+                            ${(userRole === 'komisariat' || (userRole === 'rayon' && makalah.rayon === loggedInUserPage.namaRayon && makalah.status === 'pending') || (userRole === 'kader' && makalah.penulis === loggedInUserPage.nama && (makalah.status === 'pending' || makalah.status === 'rejected'))) ? // Allow deletion for komisariat, or rayon/kader if it's their own and pending/rejected
+                                `<button title="Hapus" class="btn-modern btn-danger-modern btn-sm delete-btn" data-id="${makalah.id}"><i class="fas fa-trash-alt"></i></button>` : ''
+                            }
+                        </td>
+                    </tr>
+                    `;
+                    makalahTableBody.appendChild(row);
+                });
+
+                // Adjust colspan for action header if it's hidden
+                if (userRole === 'public') {
+                    actionHeader.classList.add('hidden');
+                    makalahTableBody.querySelectorAll('tr').forEach(row => {
+                        const actionCell = row.querySelector('td:last-child');
+                        if (actionCell) actionCell.classList.add('hidden');
+                    });
+                } else {
+                    actionHeader.classList.remove('hidden');
+                    makalahTableBody.querySelectorAll('tr').forEach(row => {
+                        const actionCell = row.querySelector('td:last-child');
+                        if (actionCell) actionCell.classList.remove('hidden');
+                    });
+                }
+
+
+                attachTableButtonListeners();
+            }
+
+            function attachTableButtonListeners() {
+                makalahTableBody.querySelectorAll('.view-btn').forEach(button => {
+                    button.addEventListener('click', (e) => viewMakalah(parseInt(e.currentTarget.dataset.id)));
+                });
+                makalahTableBody.querySelectorAll('.edit-btn').forEach(button => {
+                    button.addEventListener('click', (e) => editMakalah(parseInt(e.currentTarget.dataset.id)));
+                });
+                makalahTableBody.querySelectorAll('.approve-btn').forEach(button => {
+                    button.addEventListener('click', (e) => showCustomConfirm('Apakah Anda yakin ingin MENYETUJUI makalah ini?', 'Setujui', () => approveMakalah(parseInt(e.currentTarget.dataset.id))));
+                });
+                makalahTableBody.querySelectorAll('.reject-btn').forEach(button => {
+                    button.addEventListener('click', (e) => showCustomConfirm('Apakah Anda yakin ingin MENOLAK makalah ini? Anda bisa menambahkan komentar revisi.', 'Tolak', () => rejectMakalah(parseInt(e.currentTarget.dataset.id))));
+                });
+                makalahTableBody.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', (e) => showCustomConfirm('Apakah Anda yakin ingin MENGHAPUS makalah ini? Aksi ini tidak dapat dibatalkan.', 'Hapus', () => deleteMakalah(parseInt(e.currentTarget.dataset.id))));
+                });
+            }
+
+            // --- FORM HANDLING ---
+            function populateFormForEdit(makalah) {
+                makalahIdInput.value = makalah.id;
+                makalahJudulInput.value = makalah.judul;
+                makalahAbstrakTextarea.value = makalah.abstrak;
+                fileNamePreview.textContent = makalah.fileName || 'Tidak ada file dipilih.'; // Show current file name
+
+                if (userRole === 'komisariat') {
+                    makalahPenulisInput.value = makalah.penulis;
+                    makalahPenulisInput.disabled = false;
+                    makalahRayonSelect.value = makalah.rayon;
+                    makalahRayonSelect.disabled = false;
+                } else if (userRole === 'rayon' || userRole === 'kader') {
+                    makalahPenulisInput.value = makalah.penulis; // Pre-filled with their name
+                    makalahPenulisInput.disabled = true; // Disabled for rayon admin/kader
+                    makalahRayonSelect.value = makalah.rayon; // Pre-filled with their rayon
+                    makalahRayonSelect.disabled = true; // Disabled for rayon admin/kader
+                }
+                
+                submitFormButton.innerHTML = '<i class="fas fa-save mr-2"></i> Perbarui Makalah';
+                // Update floating labels after populating form
+                allFormInputs.forEach(input => updateLabelClass(input));
+            }
+
+            function resetForm() {
+                makalahForm.reset();
+                makalahIdInput.value = '';
+                fileNamePreview.textContent = 'Tidak ada file dipilih.';
+                makalahFileInput.value = ''; // Clear file input
+                submitFormButton.innerHTML = '<i class="fas fa-upload mr-2"></i> Unggah Makalah';
+                
+                // Reset author and rayon fields based on role after reset
+                if (userRole === 'rayon' || userRole === 'kader') {
+                    makalahPenulisInput.value = loggedInUserPage.nama || '';
+                    makalahPenulisInput.disabled = true;
+                    makalahRayonSelect.value = loggedInUserPage.rayon || loggedInUserPage.namaRayon || ''; // Use rayon or namaRayon
+                    makalahRayonSelect.disabled = true;
+                } else { // Komisariat
+                    makalahPenulisInput.value = '';
+                    makalahPenulisInput.disabled = false;
+                    makalahRayonSelect.value = ''; // Should allow selecting
+                    makalahRayonSelect.disabled = false;
+                }
+
+                // Update floating labels after reset
+                allFormInputs.forEach(input => updateLabelClass(input));
+            }
+
+            makalahForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const id = makalahIdInput.value ? parseInt(makalahIdInput.value) : null;
+                const file = makalahFileInput.files[0];
+
+                // Validate required file for new uploads
+                if (!id && !file) {
+                    showCustomMessage('Mohon unggah file makalah.', 'error');
+                    return;
+                }
+                // Validate file size and type
+                if (file) {
+                    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                        showCustomMessage('Ukuran file terlalu besar. Maksimal 5MB.', 'error');
+                        return;
+                    }
+                    if (!['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file.type)) {
+                        showCustomMessage('Format file tidak didukung. Mohon gunakan PDF atau DOCX.', 'error');
+                        return;
+                    }
+                }
+
+                let penulisValue = makalahPenulisInput.value;
+                let rayonValue = makalahRayonSelect.value;
+                let statusValue = 'pending'; // Default status for new uploads
+
+                // Adjust based on role
+                if (userRole === 'kader' || userRole === 'rayon') {
+                    penulisValue = loggedInUserPage.nama || penulisValue;
+                    rayonValue = loggedInUserPage.rayon || loggedInUserPage.namaRayon || rayonValue;
+                }
+                // If editing, keep existing status. Otherwise, it's pending.
+                if (id) {
+                    const existingMakalah = makalahKader.find(m => m.id === id);
+                    if (existingMakalah) {
+                        statusValue = existingMakalah.status;
+                    }
+                }
+
+
+                // Create new makalah object
+                const newMakalah = {
+                    id: id || (makalahKader.length > 0 ? Math.max(...makalahKader.map(m => m.id)) + 1 : 1),
+                    judul: makalahJudulInput.value,
+                    penulis: penulisValue,
+                    rayon: rayonValue,
+                    abstrak: makalahAbstrakTextarea.value,
+                    fileName: file ? file.name : (id ? makalahKader.find(m => m.id === id).fileName : ''), // Keep old filename if no new file
+                    fileUrl: file ? URL.createObjectURL(file) : (id ? makalahKader.find(m => m.id === id).fileUrl : 'https://www.africau.edu/images/default/sample.pdf'), // Simulate URL
+                    tanggalUnggah: id ? makalahKader.find(m => m.id === id).tanggalUnggah : new Date().toISOString().slice(0, 10),
+                    status: statusValue,
+                    komentarAdmin: id ? makalahKader.find(m => m.id === id).komentarAdmin : ''
+                };
+
+                if (id) {
+                    // Update existing
+                    const index = makalahKader.findIndex(m => m.id === id);
+                    if (index > -1) {
+                        makalahKader[index] = newMakalah;
+                        showCustomMessage('Makalah berhasil diperbarui!', 'success');
+                    }
+                } else {
+                    // Add new
+                    makalahKader.push(newMakalah);
+                    showCustomMessage('Makalah berhasil diajukan untuk verifikasi!', 'success');
+                }
+
+                saveMakalahData();
+                renderMakalahTable();
+                resetForm();
+            });
+
+            resetFormButton.addEventListener('click', resetForm);
+
+            // --- ACTION FUNCTIONS ---
+            function viewMakalah(id) {
+                const makalah = makalahKader.find(m => m.id === id);
+                if (!makalah) return;
+
+                detailJudul.textContent = makalah.judul;
+                detailPenulis.textContent = makalah.penulis;
+                detailRayon.textContent = makalah.rayon;
+                detailTanggal.textContent = new Date(makalah.tanggalUnggah).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+                
+                detailStatus.textContent = makalah.status;
+                detailStatus.className = `status-badge status-${makalah.status}`; // Apply status styling
+                
+                if (makalah.komentarAdmin) {
+                    detailKomentarAdminContainer.classList.remove('hidden');
+                    detailKomentarAdmin.textContent = makalah.komentarAdmin;
+                } else {
+                    detailKomentarAdminContainer.classList.add('hidden');
+                    detailKomentarAdmin.textContent = '';
+                }
+                
+                detailAbstrak.textContent = makalah.abstrak;
+
+                // Handle download link based on user role
+                if (userRole === 'public') {
+                    detailDownloadLink.removeAttribute('href'); // Remove direct link
+                    detailDownloadLink.onclick = (e) => { // Add click handler to redirect
+                        e.preventDefault();
+                        closeModal('detailMakalahModal'); // Close detail modal first
+                        showCustomMessage('Silakan login untuk mengunduh makalah.', 'info', () => {
+                            window.location.assign('login.html');
+                        });
+                    };
+                } else {
+                    // For logged-in users, allow direct download
+                    detailDownloadLink.href = makalah.fileUrl;
+                    detailDownloadLink.download = makalah.fileName;
+                    detailDownloadLink.onclick = null; // Remove previous onclick handler if any
+                }
+
+                openModal('detailMakalahModal');
+            }
+
+            function editMakalah(id) {
+                const makalah = makalahKader.find(m => m.id === id);
+                if (!makalah) return;
+                
+                // Permissions check for editing
+                let canEdit = false;
+                if (userRole === 'komisariat') {
+                    canEdit = true;
+                } else if (userRole === 'rayon') {
+                    // Rayon admin can only edit their own pending makalah
+                    if (makalah.rayon === loggedInUserPage.namaRayon && makalah.status === 'pending') {
+                        canEdit = true;
+                    }
+                } else if (userRole === 'kader') {
+                    // Kader can only edit their own pending makalah
+                    if (makalah.penulis === loggedInUserPage.nama && makalah.status === 'pending') {
+                        canEdit = true;
+                    }
+                }
+
+                if (!canEdit) {
+                    showCustomMessage('Anda tidak memiliki izin untuk mengedit makalah ini.', 'error');
+                    return;
+                }
+
+                populateFormForEdit(makalah);
+                // Scroll to top of the form
+                makalahFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            function approveMakalah(id) {
+                if (userRole !== 'komisariat') {
+                    showCustomMessage('Anda tidak memiliki izin untuk menyetujui makalah.', 'error');
+                    return;
+                }
+                const makalah = makalahKader.find(m => m.id === id);
+                if (makalah) {
+                    makalah.status = 'approved';
+                    makalah.komentarAdmin = ''; // Clear any previous comments
+                    saveMakalahData();
+                    renderMakalahTable();
+                    showCustomMessage(`Makalah "${makalah.judul}" berhasil disetujui!`, 'success');
+                }
+            }
+
+            function rejectMakalah(id) {
+                if (userRole !== 'komisariat') {
+                    showCustomMessage('Anda tidak memiliki izin untuk menolak makalah.', 'error');
+                    return;
+                }
+                const makalah = makalahKader.find(m => m.id === id);
+                if (makalah) {
+                    let comment = prompt("Masukkan komentar (opsional) untuk penolakan makalah:");
+                    makalah.status = 'rejected';
+                    makalah.komentarAdmin = comment || '';
+                    saveMakalahData();
+                    renderMakalahTable();
+                    showCustomMessage(`Makalah "${makalah.judul}" berhasil ditolak.`, 'info');
+                }
+            }
+
+            function deleteMakalah(id) {
+                const makalahToDelete = makalahKader.find(m => m.id === id);
+                if (!makalahToDelete) return;
+
+                let canDelete = false;
+                if (userRole === 'komisariat') {
+                    canDelete = true;
+                } else if (userRole === 'rayon') {
+                    // Rayon admin can only delete their own pending/rejected makalah
+                    if (makalahToDelete.rayon === loggedInUserPage.namaRayon && (makalahToDelete.status === 'pending' || makalahToDelete.status === 'rejected')) {
+                        canDelete = true;
+                    }
+                } else if (userRole === 'kader') {
+                    // Kader can only delete their own pending/rejected makalah
+                    if (makalahToDelete.penulis === loggedInUserPage.nama && (makalahToDelete.status === 'pending' || makalahToDelete.status === 'rejected')) {
+                        canDelete = true;
+                    }
+                }
+
+                if (!canDelete) {
+                    showCustomMessage('Anda tidak memiliki izin untuk menghapus makalah ini.', 'error');
+                    return;
+                }
+
+                makalahKader = makalahKader.filter(m => m.id !== id);
+                saveMakalahData();
+                renderMakalahTable();
+                showCustomMessage(`Makalah "${makalahToDelete.judul}" berhasil dihapus.`, 'success');
+            }
+
+
+            // --- UI UTILITIES ---
+            // Floating label logic (copied from other files for consistency)
+            function updateLabelClass(input) {
+                const label = input.nextElementSibling;
+                if (label && label.classList.contains('form-label-modern')) {
+                    if (input.value.trim() !== '' || (input.tagName === 'SELECT' && input.value !== '')) {
+                        input.classList.add('has-value');
+                    } else {
+                        input.classList.remove('has-value');
+                    }
+                }
+            }
+
+            allFormInputs.forEach(input => {
+                updateLabelClass(input);
+                input.addEventListener('input', () => updateLabelClass(input));
+                input.addEventListener('change', () => updateLabelClass(input));
+                input.addEventListener('blur', () => updateLabelClass(input));
+                input.addEventListener('focus', () => {
+                    const label = input.nextElementSibling;
+                    if(label && label.classList.contains('form-label-modern')) label.classList.add('active-label-style');
+                });
+                input.addEventListener('blur', () => {
+                    const label = input.nextElementSibling;
+                    updateLabelClass(input);
+                    if(label && label.classList.contains('form-label-modern')) label.classList.remove('active-label-style');
+                });
+            });
+
+            // Handle file input label
+            makalahFileInput.addEventListener('change', function() {
+                fileNamePreview.textContent = this.files[0] ? this.files[0].name : 'Tidak ada file dipilih.';
+                updateLabelClass(this);
+            });
+
+            // Modal functions (copied from other files for consistency)
+            window.openModal = function(modalId) {
+                const modal = document.getElementById(modalId);
+                if(modal) modal.classList.add('active');
+            }
+
+            window.closeModal = function(modalId) {
+                const modal = document.getElementById(modalId);
+                if(modal) modal.classList.remove('active');
+            }
+            
+            // Custom Confirmation Modal (adapted from manajemen-kader.html)
+            function showCustomConfirm(message, onConfirm, onCancel = null) {
+                confirmMessage.textContent = message;
+                confirmActionBtn.onclick = () => {
+                    onConfirm();
+                    closeModal('customConfirmModal');
+                };
+                cancelConfirmBtn.onclick = () => {
+                    closeModal('customConfirmModal');
+                    if (onCancel) onCancel();
+                };
+                openModal('customConfirmModal');
+            }
+
+            // Custom Message Box (adapted from manajemen-kader.html)
+            function showCustomMessage(message, type) {
+                const messageBox = document.getElementById('customMessageBox');
+                messageBox.textContent = message;
+                messageBox.classList.remove('bg-green-500', 'bg-red-500', 'bg-blue-500'); // Clear previous colors
+                messageBox.classList.remove('form-message-success', 'form-message-error', 'form-message-info'); // Clear semantic classes
+
+                if (type === 'success') {
+                    messageBox.classList.add('bg-green-500');
+                    messageBox.classList.add('form-message-success'); // Add semantic class if needed for consistency
+                } else if (type === 'error') {
+                    messageBox.classList.add('bg-red-500');
+                    messageBox.classList.add('form-message-error');
+                } else { // info / warning
+                    messageBox.classList.add('bg-blue-500');
+                    messageBox.classList.add('form-message-info');
+                }
+
+                messageBox.classList.remove('translate-x-full', 'opacity-0');
+                messageBox.classList.add('translate-x-0', 'opacity-100');
+
+                setTimeout(() => {
+                    messageBox.classList.remove('translate-x-0', 'opacity-100');
+                    messageBox.classList.add('translate-x-full', 'opacity-0');
+                }, 5000);
+            }
+
+            // Scroll to Top Button
+            const scrollToTopBtnMakalah = document.getElementById('scrollToTopBtnMakalah');
+            if (scrollToTopBtnMakalah) {
+                window.addEventListener('scroll', () => {
+                    if (window.pageYOffset > 200) {
+                        scrollToTopBtnMakalah.classList.remove('hidden');
+                        scrollToTopBtnMakalah.classList.add('flex');
+                    } else {
+                        scrollToTopBtnMakalah.classList.add('hidden');
+                        scrollToTopBtnMakalah.classList.remove('flex');
+                    }
+                });
+                scrollToTopBtnMakalah.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            // Tahun di footer
+            const tahunFooterMakalah = document.getElementById('tahun-footer-makalah');
+            if (tahunFooterMakalah) {
+                tahunFooterMakalah.textContent = new Date().getFullYear();
+            }
+
+            // --- INITIALIZATION ---
+            checkAuth(); // Determine user role first
+            loadMakalahData(); // Load data based on role
+            updateMakalahUI(); // Adjust UI based on user role
+            renderMakalahTable(); // Initial render of the table
+
+            // Add event listeners for filters
+            searchMakalahInput.addEventListener('input', renderMakalahTable);
+            filterStatusSelect.addEventListener('change', renderMakalahTable);
+            filterRayonSelect.addEventListener('change', renderMakalahTable);
+        });
+    </script>
+</body>
+</html>

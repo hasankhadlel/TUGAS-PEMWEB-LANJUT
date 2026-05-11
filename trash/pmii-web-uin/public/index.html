@@ -1,0 +1,1976 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung</title>
+    <!-- Memuat Tailwind CSS dari CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Memuat Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Memuat ikon situs -->
+    <link rel="icon" href="img/logo-pmii.png" type="image/png" onerror="this.onerror=null;this.src='https://placehold.co/100x100/005c97/FFFFFF?text=P';">
+    <!-- Memuat font Google Poppins dan Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Memuat Fancybox untuk galeri gambar -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
+
+    <style>
+        /* CSS Variables for consistent theming based on PMII colors and general UI elements */
+        :root {
+            --pmii-blue: #005c97;
+            --pmii-darkblue: #004a7c;
+            --pmii-yellow: #fdd835;
+            --pmii-purple: #6A0DAD; /* Added purple color variable */
+            --text-primary: #111827; /* Dark text for light backgrounds */
+            --text-secondary: #374151; /* Medium dark text */
+            --text-muted: #6b7280; /* Lighter text for subtle info */
+            --border-color: #e5e7eb; /* Light gray border */
+            --background-light: #f9fafb; /* Very light background */
+            --background-page: #f3f4f6; /* Default page background */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --input-bg: white; /* Default for input fields */
+            --navbar-height: 70px; /* Estimated height of your navbar */
+        }
+
+        /* Base body styles, enabling smooth scrolling, Inter font preference, and fade-out transition */
+        body {
+            font-family: 'Inter', 'Poppins', sans-serif; /* Prioritize Inter */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            background-color: transparent; /* Makes hero background visible behind header */
+            color: var(--text-primary);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            transition: opacity 0.5s ease-out; /* Smooth fade-out for page transitions */
+        }
+
+        /* Class for fading out the page content */
+        body.fade-out-page {
+            opacity: 0;
+        }
+        
+        /* Main content wrapper to correctly position content below the potentially transparent/sticky navbar */
+        .main-content-wrapper {
+            flex-grow: 1; /* Allows content to push footer to bottom */
+            margin-top: calc(-1 * var(--navbar-height)); /* Pulls content up under the fixed/sticky navbar */
+            position: relative; /* Establishes stacking context */
+            z-index: 1; /* Ensures content is above elements rendered below it */
+        }
+
+        /* Hero Section Enhancements for visual appeal and responsiveness */
+        .hero-bg-enhanced {
+            background: linear-gradient(135deg, var(--pmii-blue) 0%, var(--pmii-purple) 100%); /* Pure gradient background */
+            position: relative; /* Needed for absolute positioning of the images */
+            overflow: hidden;
+            min-height: calc(100vh - var(--navbar-height)); /* Ensure hero section takes remaining height */
+            padding-top: var(--navbar-height); /* Push content down to start below the navbar */
+            display: flex; /* Use flexbox to center content vertically */
+            align-items: center; /* Center content vertically */
+            justify-content: flex-start; /* Align content container to left */
+            padding-left: 2rem; /* Initial padding for content from left edge */
+        }
+
+        /* Image on the left side of the hero section */
+        .hero-left-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%; /* Fill height of the hero section */
+            width: auto; /* Maintain aspect ratio */
+            object-fit: cover; /* Cover the area, cropping if necessary */
+            z-index: 2; /* ABOVE the main gradient and overlay */
+            /* Add a mask to blend the right side into transparency */
+            mask-image: linear-gradient(to right, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%); /* Webkit support */
+            /* Add a subtle animation for the image */
+            animation: imageSlideInLeft 1.5s ease-out forwards;
+            opacity: 0; /* Start hidden */
+            transform: translateX(-100px); /* Start slightly off-screen to the left */
+        }
+
+        @keyframes imageSlideInLeft {
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Image on the right side of the hero section */
+        .hero-right-image {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%; /* Fill height of the hero section */
+            width: auto; /* Maintain aspect ratio */
+            object-fit: cover; /* Cover the area, cropping if necessary */
+            z-index: 2; /* ABOVE the main gradient and overlay */
+            /* Add a mask to blend the left side into transparency */
+            mask-image: linear-gradient(to left, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%); /* Fade out towards left */
+            -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 70%, rgba(0,0,0,0) 100%); /* Webkit support */
+            /* Add a subtle animation for the image */
+            animation: imageSlideInRight 1.5s ease-out forwards;
+            animation-delay: 0.2s; /* Slightly delay right image animation */
+            opacity: 0; /* Start hidden */
+            transform: translateX(100px); /* Start slightly off-screen to the right */
+        }
+
+        @keyframes imageSlideInRight {
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Overlay for the entire hero section, behind the content box, for better text readability */
+        .hero-bg-enhanced::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 74, 124, 0.6); /* Semi-transparent dark blue overlay */
+            z-index: 1; /* Positions it below the actual content but above the background image */
+        }
+
+        /* Container for the hero content, now aligned to the left */
+        .hero-content-container {
+            position: relative; /* Default relative positioning for smaller screens */
+            z-index: 3; /* Ensures content is above the overlay and images */
+            /* padding-top: 5vh; REMOVED */
+            padding-bottom: 5vh;
+            display: flex;
+            justify-content: flex-start; /* Align to the start (left) */
+            align-items: center; /* Center vertically */
+            min-height: auto; /* Reset min-height as parent is now managing height */
+            text-align: left; /* Align text content to the left */
+            width: 100%; /* Take full width of parent (hero-bg-enhanced) */
+            max-width: 1200px; /* Constrain content width */
+            margin: 0 auto; /* Center content container horizontally */
+        }
+
+        /* The floating, frosted glass effect box for hero text content */
+        .hero-text-box {
+            background-color: rgba(255, 255, 255, 0.15); /* Semi-transparent white */
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            border-radius: 1.5rem; /* Large rounded corners */
+            padding: 2rem; /* Reduced padding */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.2); /* Stronger shadow and subtle inner border */
+            max-width: 550px; /* Increased max-width for a wider box */
+            margin-left: 0; /* Remove fixed left margin */
+            margin-right: auto; /* Push to left, allow auto on right within flex container */
+            color: white; /* Text color inside the box */
+            animation: floatEffect 5s ease-in-out infinite alternate; /* Subtle floating animation */
+            transform: translateY(0); /* Initial state for animation */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Align internal content (text, button) to the start (left) */
+            text-align: left; /* Ensure text is left-aligned */
+            width: 100%; /* Take full width up to max-width */
+        }
+
+        /* Keyframe animation for the subtle floating effect of the hero text box */
+        @keyframes floatEffect {
+            0% { transform: translateY(0px); box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.2); }
+            100% { transform: translateY(-15px); box-shadow: 0 25px 40px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.25); }
+        }
+
+        /* Animations for elements appearing inside the text box with staggering delays */
+        .hero-text-box > *:nth-child(1) { /* "WEBSITE RESMI" badge */
+            animation: fadeInScale 1s ease-out forwards;
+            animation-delay: 0.8s;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        .hero-text-box > *:nth-child(2) { /* h1 title */
+            animation: fadeInScale 1s ease-out forwards;
+            animation-delay: 1.2s;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        .hero-text-box > *:nth-child(3) { /* "Jelajahi Lebih Lanjut" button */
+            animation: fadeInScale 1.0s ease-out forwards;
+            animation-delay: 1.6s;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        /* Keyframe animation for fading in and scaling up */
+        @keyframes fadeInScale {
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Navbar Styling: sticky position and dynamic appearance on scroll */
+        .navbar-sticky {
+            position: sticky; top: 0; z-index: 50;
+            background-color: transparent; /* Initially transparent */
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Subtle initial shadow */
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Navbar links styling for the glossy/transparent state */
+        .nav-link, .dropdown-toggle, #auth-link-main {
+            color: white !important; /* Always white for glossy state */
+            text-shadow: 0 0 5px rgba(255,255,255,0.3); /* Subtle text shadow for white text */
+            transform: translateY(0); /* Initial state for transform animation */
+            transition: color 0.25s ease-out, text-shadow 0.25s ease-out, transform 0.25s ease-out; /* Include transform in transition */
+        }
+
+        /* Underline effect for nav links, brighter for glossy state */
+        .nav-link::after, .dropdown-toggle::after, #auth-link-main::after {
+            background-color: var(--pmii-yellow); /* Base color */
+            box-shadow: 0 0 10px rgba(253, 216, 53, 0.8); /* Brighter glow */
+        }
+
+        /* Hover effect for nav links */
+        .nav-link:hover, .dropdown-toggle:hover, #auth-link-main:hover {
+            color: var(--pmii-yellow) !important; /* Yellow on hover for glossy state */
+            text-shadow: 0 0 15px var(--pmii-yellow); /* Stronger glow on hover */
+            transform: translateY(-1px); /* Add the subtle lift effect back */
+        }
+
+        /* Dropdown chevron rotation on hover */
+        .dropdown-toggle i {
+            transition: transform 0.2s ease-out;
+        }
+        .dropdown-toggle:hover i {
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        /* Dropdown Menu specific styles for modern look */
+        .dropdown-menu {
+            background-color: rgba(0, 74, 124, 0.8); /* Semi-transparent dark blue background for dropdown menu */
+            backdrop-filter: blur(5px); /* Apply blur to dropdown menus */
+            color: white; /* Ensure text in dropdown is white for good contrast */
+            box-shadow: var(--shadow-lg);
+            z-index: 100; min-width: 280px; border-radius: 0.5rem;
+            opacity: 0; visibility: hidden; transform: translateY(10px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s;
+            position: absolute; /* Ensures it's positioned relative to parent dropdown */
+            min-width: 150px; /* Adjust minimum width as needed */
+            left: 50%; /* Center dropdown under its parent button */
+            transform: translateX(-50%) translateY(10px); /* Center and offset initially */
+            max-height: 300px; /* Added: Max height for scrollable dropdown */
+            overflow-y: auto; /* Added: Enable vertical scrolling */
+        }
+        .dropdown:hover .dropdown-menu,
+        .dropdown.active .dropdown-menu { /* .active class for mobile/JS control */
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0); /* Final state on hover/active */
+        }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: white; /* White text for dropdown items */
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
+            font-size: 0.875rem;
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+        .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* Lighter background on hover */
+            color: var(--pmii-yellow); /* Yellow text on hover */
+        }
+        .dropdown-item i {
+            margin-right: 0.75rem;
+            color: var(--pmii-yellow); /* Icon color matches theme */
+        }
+
+
+        /* Mobile Menu Transitions */
+        #mobile-menu-content { 
+            position: fixed; 
+            top: 0; 
+            right: 0; 
+            height: 100vh; /* Full viewport height */
+            width: calc(100% - 50px); /* Adjust width to leave a small gap on smaller screens */
+            max-width: 320px; /* Max width for larger mobiles */
+            background: linear-gradient(to bottom, var(--pmii-blue), var(--pmii-darkblue)); /* Gradient background */
+            color: white; 
+            padding: 6px; 
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.4); /* Strong shadow */
+            z-index: 40; 
+            transform: translateX(100%); /* Start off-screen */
+            opacity: 0; 
+            visibility: hidden; 
+            pointer-events: none; /* Prevent interaction when hidden */
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease-out, visibility 0.35s;
+            overflow-y: auto; /* Enable scrolling for long content */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+            padding-bottom: 2rem; /* Add padding to the bottom */
+        }
+        /* State when menu is active/open */
+        #mobile-menu-content.menu-active {
+            transform: translateX(0); /* Slide in */
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto; /* Allow interaction when visible */
+        }
+
+        /* Mobile Menu Overlay */
+        #mobile-menu-overlay {
+            position: fixed;
+            inset: 0; /* Cover the whole viewport */
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+            backdrop-filter: blur(5px); /* Blur effect on the overlay */
+            z-index: 30;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease-out, visibility 0.3s;
+        }
+        /* State when overlay is active/open */
+        #mobile-menu-overlay.menu-active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        
+        /* General Button Styling for consistent look and feel */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex; align-items: center; justify-content: center;
+            cursor: pointer; text-decoration: none;
+            box-shadow: var(--shadow-md);
+            z-index: 10; /* Ensure buttons are clickable */
+            position: relative; /* Needed for z-index to work */
+        }
+        .btn:hover {
+             box-shadow: var(--shadow-lg);
+             transform: translateY(-2px) scale(1.03); /* Subtle lift and scale on hover */
+        }
+        .btn:active {
+            transform: translateY(0px) scale(0.98);
+            box-shadow: var(--shadow-sm);
+        }
+        /* Primary button with PMII blue color */
+        .btn-primary-pmii {
+            background-color: var(--pmii-blue); color: white;
+        }
+        .btn-primary-pmii:hover { background-color: var(--pmii-darkblue); }
+        /* Secondary button with PMII yellow color */
+        .btn-secondary-pmii {
+            background-color: var(--pmii-yellow); color: var(--pmii-darkblue);
+        }
+        .btn-secondary-pmii:hover { background-color: #fbc02d; }
+
+        /* Form Input Styling for a clean and modern look */
+        .form-input {
+            width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color);
+            border-radius: 0.5rem; font-size: 0.875rem; color: var(--text-primary);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: var(--input-bg);
+        }
+        .form-input:focus {
+            border-color: var(--pmii-blue); box-shadow: 0 0 0 3px rgba(0, 92, 151, 0.15); outline: none;
+            background-color: white; /* White background on focus */
+        }
+        /* Label for form inputs */
+        .form-label {
+            display: block; font-size: 0.875rem; font-weight: 500;
+            color: var(--text-secondary); margin-bottom: 0.375rem;
+        }
+
+        /* Section Animation: Base styles for elements that will animate into view */
+        .animated-section {
+            opacity: 0;
+            transition-property: opacity, transform;
+            transition-duration: 0.8s;
+            transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Springy effect */
+            will-change: opacity, transform; /* Optimize for animation performance */
+        }
+        /* State when element is visible and animated */
+        .animated-section.is-visible {
+            opacity: 1;
+            transform: translateY(0) translateX(0) scale(1) rotate(0) !important;
+        }
+        /* Staggering delays for elements within an an imated section */
+        .stagger-1 { transition-delay: 0.1s !important; }
+        .stagger-2 { transition-delay: 0.2s !important; }
+        .stagger-3 { transition-delay: 0.3s !important; }
+        .stagger-4 { transition-delay: 0.4s !important; }
+
+
+        /* Auth Link Styling (Login/Logout button in navbar) */
+        #auth-link-main, #auth-link-mobile { 
+            transition: all 0.25s ease; /* Ensure all properties transition */
+            padding: 0.625rem 1.25rem; 
+            font-size: 0.875rem; 
+        }
+        /* Styles for logged-out state (yellow button) */
+        .logged-out-styles {
+            background-color: var(--pmii-yellow);
+            color: var(--pmii-blue);
+        }
+        .logged-out-styles:hover {
+            background-color: #fbc02d;
+        }
+        /* Styles for logged-in state (red logout button) */
+        #auth-link-main.logout-active, #auth-link-mobile.logout-active {
+            background-image: linear-gradient(to right, #ef4444, #dc2626) !important; /* Red gradient */
+            color: white !important;
+        }
+        #auth-link-main.logout-active:hover, #auth-link-mobile.logout-active:hover {
+            background-image: linear-gradient(to right, #dc2626, #b91c1c) !important; /* Darker red on hover */
+        }
+
+        /* Form Message Styling (for feedback messages) */
+        .form-message-container {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease-out; /* Smooth transition for show/hide */
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            margin-bottom: 0;
+        }
+        .form-message-container.show {
+            opacity: 1;
+            max-height: 100px; /* Adjust based on content height */
+            margin-bottom: 1.25rem;
+        }
+        .form-message-success { background-color: #dcfce7; color: #166534; border: 1px solid #86efac; } /* Green theme */
+        .form-message-error { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; } /* Red theme */
+        .form-message-info { background-color: #bfdbfe; color: #1e40af; border: 1px solid #93c5fd; } /* Blue theme */
+
+
+        /* Contact Section Background with subtle animated pattern */
+        #kontak {
+            background: linear-gradient(135deg, var(--pmii-blue) 0%, var(--pmii-darkblue) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        #kontak::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            /* SVG pattern with subtle dots and circles */
+            background-image:
+                radial-gradient(circle at 15% 25%, rgba(253, 216, 53, 0.07) 1px, transparent 1.5px),
+                radial-gradient(circle at 85% 75%, rgba(253, 216, 53, 0.05) 1px, transparent 1.5px),
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0.5px, transparent 1px);
+            background-size: 80px 80px, 100px 100px, 60px 60px;
+            animation: subtlePatternMoveContactKeyframe 40s linear infinite;
+            z-index: 0;
+        }
+        /* Keyframe for background pattern movement */
+        @keyframes subtlePatternMoveContactKeyframe {
+            0% { background-position: 0 0, 0 0, 0 0; }
+            100% { background-position: 80px 80px, -100px -100px, 60px -60px; }
+        }
+        /* Wrapper for contact content inside the patterned section */
+        .contact-content-wrapper {
+            position: relative; z-index: 1;
+            background-color: rgba(255, 255, 255, 0.03); /* Slightly transparent white background */
+            backdrop-filter: blur(6px); /* Frosted glass effect */
+            border: 1px solid rgba(255, 255, 255, 0.08); /* Subtle white border */
+        }
+        /* Styling for form elements within the contact section */
+        #kontak .form-label { color: #d1d5db; } /* Lighter label color */
+        #kontak .form-input {
+            background-color: rgba(255, 255, 255, 0.08); /* More transparent input background */
+            border-color: rgba(255, 255, 255, 0.15); /* Lighter border */
+            color: white; /* White text for inputs */
+        }
+        #kontak .form-input::placeholder { color: #9ca3af; } /* Placeholder color */
+        #kontak .btn-secondary-pmii {
+            background-color: var(--pmii-yellow);
+            color: var(--pmii-darkblue);
+            border: none;
+        }
+        #kontak .btn-secondary-pmii:hover { background-color: #fbc02d; }
+
+        /* Scroll To Top Button Styling */
+        #scrollToTopBtn {
+            background-color: var(--pmii-yellow);
+            color: var(--pmii-darkblue);
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 50%;
+            box-shadow: var(--shadow-lg);
+            transition: background-color 0.2s, transform 0.2s;
+            position: fixed; /* Fixed position on viewport */
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50; /* Ensure it's above other content */
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+        }
+        #scrollToTopBtn:hover {
+            transform: scale(1.1) translateY(-2px); /* Slight lift and scale on hover */
+        }
+
+        /* Activities Section Card Display Styles */
+        .activity-card-enhanced {
+            background-color: #ffffff; /* White background */
+            border-radius: 1rem; /* More rounded corners */
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Softer, wider shadow */
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth transition for all changes */
+            position: relative;
+            z-index: 1;
+            border: 1px solid rgba(0, 92, 151, 0.05); /* Subtle border */
+        }
+        .activity-card-enhanced:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* More pronounced shadow on hover */
+            transform: translateY(-5px); /* Subtle lift effect */
+        }
+
+        .activity-date-block-enhanced {
+            background: linear-gradient(135deg, var(--pmii-blue) 0%, var(--pmii-darkblue) 100%); /* Gradient background */
+            color: white;
+            padding: 1.25rem 1rem; /* More padding */
+            border-radius: 0.75rem; /* Rounded corners for the block */
+            text-align: center;
+            min-width: 100px; /* Ensure consistent width */
+            flex-shrink: 0; /* Prevent shrinking */
+            margin-right: 1.5rem; /* Spacing from content */
+            position: relative;
+            box-shadow: var(--shadow-md);
+        }
+        .activity-date-block-enhanced .day {
+            font-size: 2.5rem; /* Larger day number */
+            font-weight: 800; /* Extra bold */
+            line-height: 1;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        }
+        .activity-date-block-enhanced .month {
+            font-size: 0.95rem; /* Slightly smaller month text */
+            font-weight: 600;
+            letter-spacing: 0.05em; /* A bit of letter spacing */
+            text-transform: uppercase;
+            opacity: 0.9;
+        }
+        .activity-date-block-enhanced .year {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.25rem;
+        }
+
+        /* Responsive adjustments for activity cards */
+        @media (max-width: 640px) { /* Small screens */
+            .activity-card-enhanced {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+            }
+            .activity-date-block-enhanced {
+                margin-right: 0;
+                margin-bottom: 1.5rem;
+                width: 100%;
+                max-width: 150px; /* Constrain width on small screens */
+                display: inline-flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            .activity-content-wrapper-enhanced {
+                padding-right: 0;
+                text-align: center;
+            }
+            .activity-info-line {
+                justify-content: center;
+            }
+            .activity-detail-button-enhanced {
+                width: 100%;
+                margin-top: 1.5rem;
+                margin-left: 0;
+            }
+        }
+        @media (min-width: 641px) and (max-width: 768px) { /* Medium screens */
+            .activity-card-enhanced {
+                padding: 1.5rem;
+                align-items: flex-start; /* Align date block to top */
+            }
+            .activity-date-block-enhanced {
+                padding: 1rem;
+                min-width: 80px;
+                margin-right: 1rem;
+            }
+            .activity-date-block-enhanced .day { font-size: 2rem; }
+            .activity-date-block-enhanced .month { font-size: 0.85rem; }
+            .activity-detail-button-enhanced {
+                margin-left: auto; /* Push to right */
+            }
+        }
+
+        /* Statistic Card Styling with glow and dynamic numbers */
+        .statistic-card {
+            background-color: var(--pmii-blue); /* Base blue color */
+            border: 1px solid var(--pmii-blue); /* Matching border */
+            transition: all 0.3s ease;
+            cursor: pointer; /* Indicate interactivity */
+            background: linear-gradient(145deg, var(--pmii-blue), var(--pmii-darkblue)); /* Subtle gradient */
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25); /* Stronger initial shadow */
+            position: relative;
+            overflow: hidden;
+            border: none;
+            border-radius: 1rem; /* Rounded corners */
+        }
+        .statistic-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 10% 90%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 90% 10%, rgba(253, 216, 53, 0.05) 1px, transparent 50%);
+            mix-blend-mode: overlay; /* Blends with background */
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .statistic-card:hover::before {
+            opacity: 1; /* Reveal overlay on hover */
+        }
+        .statistic-card:hover {
+            background-color: var(--pmii-darkblue); /* Darker blue on hover */
+            transform: translateY(-8px) scale(1.03); /* More pronounced lift and scale */
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35); /* Stronger shadow on hover */
+            filter: drop-shadow(0 0 0.2rem var(--pmii-yellow)); /* Subtle glow effect */
+        }
+        .statistic-card:hover i {
+            color: #fbc02d; /* Slightly darker yellow for icon on hover */
+            transform: scale(1.2) rotate(5deg); /* More pronounced icon effect */
+            transition: transform 0.3s ease;
+        }
+        /* Styles for animated numbers within statistic cards */
+        .animated-number {
+            font-size: 3rem; /* Adjust size as needed */
+            font-weight: 800; /* Extra bold */
+            color: white; /* Ensure numbers are white */
+            line-height: 1.2;
+            position: relative;
+            z-index: 1;
+        }
+        .statistic-card p {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* New general background style for blue sections with subtle pattern */
+        .section-pmii-bg-pattern {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--pmii-blue) 0%, var(--pmii-darkblue) 100%);
+            color: white; /* Default text color for the entire section */
+        }
+        /* Mobile menu logo and text size adjustment */
+        #mobile-menu-content > div.flex.justify-between.items-center.mb-10 > a > img {
+            height: 2.25rem; /* h-9 */
+            width: auto; /* Maintain aspect ratio */
+        }
+        #mobile-menu-content > div.flex.justify-between.items-center.mb-10 > a > span {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+        }
+        /* Pseudo-element for pattern within blue sections */
+        .section-pmii-bg-pattern::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                radial-gradient(circle at 15% 25%, rgba(253, 216, 53, 0.07) 1px, transparent 1.5px),
+                radial-gradient(circle at 85% 75%, rgba(253, 216, 53, 0.05) 1px, transparent 1.5px),
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0.5px, transparent 1px);
+            background-size: 80px 80px, 100px 100px, 60px 60px;
+            animation: subtlePatternMoveContactKeyframe 40s linear infinite;
+            z-index: 0;
+        }
+        /* Keyframe for background pattern movement */
+        @keyframes subtlePatternMoveContactKeyframe {
+            0% { background-position: 0 0, 0 0, 0 0; }
+            100% { background-position: 80px 80px, -100px -100px, 60px -60px; }
+        }
+        /* Ensure specific elements like titles are yellow in these sections */
+        .section-pmii-bg-pattern .section-title {
+            color: var(--pmii-yellow);
+        }
+        /* Styles for inner white cards within blue sections */
+        .section-pmii-bg-pattern .card-hover,
+        .section-pmii-bg-pattern .activity-card-enhanced {
+            background-color: white; /* Keep the cards themselves white */
+        }
+        /* Ensure text inside white cards remains dark for readability */
+        .section-pmii-bg-pattern .card-hover h3,
+        .section-pmii-bg-pattern .card-hover p,
+        .section-pmii-bg-pattern .card-hover .text-pmii-blue, /* for category span in news */
+        .section-pmii-bg-pattern .activity-card-enhanced h3,
+        .section-pmii-bg-pattern .activity-card-enhanced p,
+        .section-pmii-bg-pattern .activity-card-enhanced .activity-info-line,
+        .section-pmii-bg-pattern .activity-card-enhanced .activity-info-line i {
+            color: var(--text-primary); /* Keep text inside white cards dark */
+        }
+        .section-pmii-bg-pattern .card-hover .detail-link,
+        .section-pmii-bg-pattern .activity-card-enhanced .detail-link {
+            color: var(--pmii-blue); /* Keep detail link blue in white cards */
+        }
+
+        /* Specific style for PMII logo in About Us section for animation */
+        .pmii-logo-about-us-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            flex-shrink: 0; /* Prevents logo container from shrinking */
+        }
+        .pmii-logo-about-us {
+            width: 300px; /* Increased size of the logo image */
+            height: auto; /* Maintain aspect ratio */
+            object-fit: contain;
+            opacity: 0; /* Initially hidden for animation */
+            transform: translateY(70px) scale(0.6) rotate(-15deg); /* Exaggerated initial state */
+            filter: blur(8px); /* Blur effect */
+            transition: opacity 1.2s ease-out, transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 1.2s ease-out; /* Smooth, complex easing */
+        }
+        .animated-section.is-visible .pmii-logo-about-us {
+            opacity: 1; /* Fade in when visible */
+            transform: translateY(0) scale(1) rotate(0deg); /* Move to original position, scale up, straighten */
+            filter: blur(0); /* Remove blur */
+        }
+
+        /* Adjust alignment and spacing for the About Us section on larger screens */
+        @media (min-width: 1024px) {
+            #tentang .flex-col.lg\:flex-row {
+                justify-content: center; /* Center the whole block on large screens */
+                align-items: center; /* Vertically center content */
+                gap: 2rem; /* Adjusted gap between logo and text */
+            }
+            #tentang .text-md.text-white.space-y-6 {
+                flex-grow: 1; /* Allow text to take remaining space */
+                width: auto; /* Let flex-grow manage width */
+                max-width: 600px; /* Optional: constrain max width for text block */
+                text-align: left; /* Align text to the left within its container */
+            }
+        }
+        /* Further adjust text alignment for smaller screens if needed */
+        @media (max-width: 1023px) {
+             #tentang .text-md.text-white.space-y-6 {
+                text-align: center; /* Center text on smaller screens */
+            }
+        }
+
+        /* Footer Styling */
+        .internal-footer {
+            background-color: var(--pmii-blue); /* Solid blue background for footer */
+            padding: 2.5rem 1rem;
+        }
+
+        /* Ensure footer image maintains aspect ratio and text is white */
+        .internal-footer img {
+            height: 3rem; /* Fixed height, e.g., 48px */
+            width: auto; /* Auto width to maintain aspect ratio */
+            object-fit: contain; /* Ensure logo fits within its bounds without distortion */
+        }
+
+        .internal-footer p {
+            color: white; /* Change all paragraph text in footer to white */
+        }
+
+        /* Adjustments for hero-content-container on large screens, considering navbar height */
+        @media (min-width: 1024px) {
+            .hero-content-container {
+                /* top: var(--navbar-height); REMOVED */
+                height: calc(100% - var(--navbar-height)); /* Fills remaining space */
+                padding-top: 0; /* REMOVED excess padding-top */
+                min-height: auto; /* Resets min-height for absolute positioning */
+                padding-left: 0; padding-right: 0; padding-bottom: 0; 
+            }
+        }
+
+        /* Custom Confirmation Modal Styling */
+        .custom-confirm-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+            backdrop-filter: blur(5px); /* Frosted glass effect */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Ensure it's on top of everything */
+            opacity: 0; /* Hidden by default */
+            visibility: hidden;
+            transition: opacity 0.3s ease-out, visibility 0.3s;
+        }
+
+        .custom-confirm-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .custom-confirm-modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 1rem; /* Rounded corners */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+            max-width: 400px; /* Max width for responsiveness */
+            width: 90%; /* Take 90% width on smaller screens */
+            text-align: center;
+            transform: scale(0.9); /* Start slightly smaller */
+            transition: transform 0.3s ease-out;
+        }
+
+        .custom-confirm-modal-overlay.active .custom-confirm-modal-content {
+            transform: scale(1); /* Scale to original size when active */
+        }
+
+        .custom-confirm-modal-content h3 {
+            font-size: 1.75rem; /* Larger title */
+            font-weight: 700; /* Bold title */
+            color: var(--pmii-darkblue); /* Dark blue color */
+            margin-bottom: 1rem;
+        }
+
+        .custom-confirm-modal-content p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .custom-confirm-modal-content .modal-actions {
+            display: flex;
+            justify-content: center; /* Center buttons */
+            gap: 1rem; /* Space between buttons */
+        }
+
+        /* Adjust button styles within the modal */
+        .custom-confirm-modal-content .btn {
+            padding: 0.75rem 1.75rem; /* Larger padding for buttons */
+            font-size: 1rem; /* Readable font size */
+        }
+        
+        /* Specific styling for the custom message box */
+        #customMessageBox {
+            background-color: #333; /* Default dark background */
+            color: #fff; /* Default white text */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        #customMessageBox.bg-green-500 { background-color: #28a745; }
+        #customMessageBox.bg-red-500 { background-color: #dc3545; }
+        #customMessageBox.bg-blue-500 { background-color: #007bff; }
+    </style>
+</head>
+<body>
+
+    <!-- Custom Message Box & Confirm Modal -->
+    <div id="customMessageBox" class="fixed top-4 right-4 z-[9999] px-6 py-3 rounded-lg shadow-xl text-white text-sm font-semibold transition-all duration-300 transform translate-x-full opacity-0">
+        Pesan kustom di sini!
+    </div>
+
+    <div id="customConfirmModal" class="custom-confirm-modal-overlay">
+        <div class="custom-confirm-modal-content">
+            <h3 id="confirmModalTitle">Konfirmasi Aksi</h3>
+            <p id="confirmModalMessage">Apakah Anda yakin ingin melanjutkan?</p>
+            <div class="modal-actions">
+                <button id="confirmCancelBtn" class="btn btn-secondary-pmii">Tidak</button>
+                <button id="confirmYesBtn" class="btn btn-primary-pmii">Ya</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER START -->
+    <nav id="navbar" class="text-white py-3.5 navbar-sticky">
+        <div class="container mx-auto px-4 lg:px-8 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2.5 transform hover:scale-105 transition-transform duration-300">
+                <img src="img/logo-pmii.png" alt="Logo PMII" class="h-9" onerror="this.onerror=null;this.src='https://placehold.co/100x100/005c97/FFFFFF?text=P';">
+                <span id="header-title-text" class="text-[0.65rem] lg:text-xs font-semibold logo-text tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
+                    PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung
+                </span>
+            </a>
+            <div class="hidden lg:flex space-x-6 items-center">
+                <a href="#beranda" class="nav-link text-sm">Beranda</a>
+                <a href="#tentang" class="nav-link text-sm">Tentang Kami</a>
+                <a href="#berita" class="nav-link text-sm">Berita</a>
+                <a href="digilib.html" class="nav-link text-sm" target="_self">📚 Digilib</a>
+                <a href="#kegiatan" class="nav-link text-sm">Kegiatan</a>
+                <a href="#galeri" class="nav-link text-sm">Galeri</a>
+                <div id="desktop-kader-menu-container" class="relative dropdown hidden">
+                    <button class="dropdown-toggle nav-link focus:outline-none text-sm">
+                        Profil Kader <i class="fas fa-chevron-down text-xs ml-1"></i>
+                    </button>
+                    <div class="dropdown-menu mt-3.5">
+                        <a href="edit-profil-kader.html" id="edit-profil-kader-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-user-edit"></i> Edit Profil</a>
+                        <a href="pengaturan-akun-kader.html" id="pengaturan-akun-kader-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-cog"></i> Pengaturan Akun</a>
+                        <a href="akses-ojs.html" id="jurnal-alharokah-link-desktop-kader" class="dropdown-item" target="_self"><i class="fas fa-book-reader"></i> Jurnal Al Harokah</a>
+                        <a href="pengajuan-surat.html" id="pengajuan-surat-link-desktop-kader" class="dropdown-item" target="_self"><i class="fas fa-file-alt"></i> Pengajuan Surat</a>
+                    </div>
+                </div>
+                <div id="desktop-admin-menu-container" class="relative dropdown hidden">
+                    <button class="dropdown-toggle nav-link focus:outline-none text-sm">
+                        Sistem Internal <i class="fas fa-chevron-down text-xs ml-1"></i>
+                    </button>
+                    <div class="dropdown-menu mt-3.5">
+                        <a href="manajemen-akun.html" id="manajemen-akun-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-user-shield"></i>Manajemen Akun</a>
+                        <a href="manajemen-kader.html" id="manajemen-kader-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-users-cog"></i>Manajemen Kader</a>
+                        <a href="repository-ilmiah.html" id="repository-ilmiah-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-book-open"></i>Jurnal & Karya Ilmiah</a>
+                        <a href="pengajuan-surat.html" id="pengajuan-surat-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-file-alt"></i>Pengajuan Surat</a>
+                        <a href="verifikasi-surat.html" id="verifikasi-surat-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-check-circle"></i>Verifikasi Surat</a>
+                        <a href="admin-dashboard-rayon.html" id="dashboard-rayon-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-tachometer-alt"></i>Dashboard Admin Rayon</a>
+                        <a href="admin-dashboard-komisariat.html" id="admin-dashboard-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-tachometer-alt"></i>Dashboard Admin Kom.</a>
+                        <a href="edit-beranda.html" id="edit-beranda-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-edit"></i>Edit Beranda</a>
+                        <a href="akses-ojs.html" id="jurnal-alharokah-link-desktop-admin" class="dropdown-item" target="_self"><i class="fas fa-book-reader"></i>Jurnal Al Harokah</a>
+                        <hr class="border-gray-200 my-1">
+                        <a href="verifikasi-konten-rayon.html" id="verifikasi-konten-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-check-double"></i>Verifikasi Konten Rayon</a>
+                        <a href="rayon-tambah-berita.html" id="tambah-berita-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-newspaper"></i>Tambah Berita & Artikel</a>
+                        <a href="rayon-tambah-kegiatan.html" id="tambah-kegiatan-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-calendar-plus"></i>Tambah Kegiatan</a>
+                        <a href="rayon-tambah-galeri.html" id="tambah-galeri-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-images"></i>Tambah Galeri Kegiatan</a>
+                        <a href="edit-profil-rayon.html" id="edit-profil-rayon-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-building"></i>Edit Profil Rayon</a>
+                        <!-- New Admin Links -->
+                        <a href="pengaturan-situs.html" id="pengaturan-situs-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-cogs"></i>Pengaturan Situs</a>
+                        <a href="dashboard-statistik.html" id="dashboard-statistik-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-chart-bar"></i>Dashboard Statistik</a>
+                        <a href="kelola-notifikasi.html" id="kelola-notifikasi-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-bell"></i>Kelola Notifikasi</a>
+                        <a href="laporan-analisis.html" id="laporan-analisis-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-file-invoice"></i>Laporan & Analisis</a>
+                        <a href="generate-qr.html" id="ttd-digital-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-qrcode"></i>TTD Digital</a>
+                    </div>
+                </div>
+                <a href="#kontak" class="nav-link text-sm">Kontak</a>
+                <a href="login.html" id="auth-link-main" class="btn logged-out-styles text-sm" data-action="login">
+                    Login
+                </a>
+            </div>
+            <div class="lg:hidden">
+                <button id="mobile-menu-button" class="menu-icon focus:outline-none p-2 -mr-2"><i class="fas fa-bars text-2xl"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="mobile-menu-content" class="lg:hidden fixed top-0 right-0 h-full w-4/5 max-w-xs bg-gradient-to-b from-pmii-blue to-pmii-darkblue text-white p-6 shadow-2xl z-40">
+        <div class="flex justify-between items-center mb-10">
+            <a href="index.html" class="flex items-center space-x-2">
+                <img src="img/logo-pmii.png" alt="Logo PMII Mobile" class="h-9" onerror="this.onerror=null;this.src='https://placehold.co/100x100/005c97/FFFFFF?text=P';">
+                <span id="mobile-header-title-text" class="text-[0.6rem] font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
+                    PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung
+                </span>
+            </a>
+            <button id="close-mobile-menu-button" class="focus:outline-none p-2 -mr-2"><i class="fas fa-times text-2xl"></i></button>
+        </div>
+        <nav id="mobile-nav-links" class="flex flex-col space-y-3">
+            </nav>
+    </div>
+    <div id="mobile-menu-overlay" class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-30"></div>
+    <!-- HEADER END -->
+
+    <div class="main-content-wrapper">
+        <section id="beranda" class="hero-bg-enhanced text-white">
+            <!-- Background image on the left side -->
+            <img src="img/background-web-2.png" alt="Hero Background Image Left" class="hero-left-image" onerror="this.onerror=null;this.src='https://placehold.co/800x1200/004a7c/FFFFFF?text=Background+Image+Left';">
+            <!-- Background image on the right side -->
+            <img src="img/background-web.png" alt="Hero Background Image Right" class="hero-right-image" onerror="this.onerror=null;this.src='https://placehold.co/800x1200/004a7c/FFFFFF?text=Background+Image+Right';">
+            
+            <!-- Hero content (text box) on the left side -->
+            <div class="hero-content-container">
+                <div class="hero-text-box">
+                    <div class="inline-block px-4 py-2 mb-4 rounded-lg bg-white bg-opacity-20 backdrop-filter backdrop-blur-sm text-white text-sm font-semibold tracking-wide border border-white border-opacity-30">
+                        WEBSITE RESMI
+                    </div>
+                    <h1 id="hero-main-title" class="text-xl sm:text-2xl md:text-3xl lg:text-3xl font-extrabold mb-4 leading-tight" style="text-shadow: 2px 2px 8px rgba(0,0,0,0.5);">
+                        Pengurus Komisariat<br>Pergerakan Mahasiswa Islam Indonesia<br>UIN Sunan Gunung Djati<br>Cabang Kota Bandung
+                    </h1>
+                    <a href="#tentang" class="btn btn-secondary-pmii text-lg">
+                        Jelajahi Lebih Lanjut <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1.5 transition-transform duration-300"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="announcement-section" class="py-16 bg-pmii-yellow text-pmii-blue animated-section animate-fade-in-up hidden">
+            <div class="container mx-auto px-4 text-center">
+                <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-8">
+                    <i class="fas fa-bullhorn text-5xl md:text-6xl animate-pulseSubtle"></i>
+                    <div class="md:text-left">
+                        <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-1.5">Pengumuman Penting</h2>
+                        <p id="announcement-text" class="text-md md:text-lg lg:text-xl"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tentang" class="py-20 lg:py-28 section-pmii-bg-pattern animated-section animate-fade-in-up">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl lg:text-4xl font-bold text-center text-pmii-yellow mb-16 section-title">Tentang PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung</h2>
+                <div class="flex flex-col lg:flex-row items-center justify-content-center lg:justify-start gap-6">
+                    <div class="pmii-logo-about-us-container animated-section" style="--stagger-delay: 0.1s;">
+                        <img src="img/logo-pmii.png" alt="Logo PMII" class="pmii-logo-about-us">
+                    </div>
+                    <div class="text-md text-white space-y-6 leading-relaxed flex-grow animated-section animate-slide-in-right-perspective" style="--stagger-delay: 0.2s;">
+                        <p id="about-us-p1" class="text-white">Pergerakan Mahasiswa Islam Indonesia (PMII) Komisariat UIN Sunan Gunung Djati Bandung adalah organisasi kemahasiswaan Islam yang berlandaskan Ahlussunnah wal Jama'ah an-Nahdliyah. Kami berkomitmen untuk mencetak kader-kader Ulul Albab yang memiliki kedalaman spiritual, keluasan ilmu pengetahuan, dan kepedulian sosial yang tinggi.</p>
+                        <a href="tentang-kami.html" class="btn btn-primary-pmii text-base mt-5 inline-block group mr-4" target="_self">
+                            Baca Selengkapnya <i class="fas fa-angle-double-right ml-1.5 group-hover:translate-x-1 transition-transform duration-300"></i>
+                        </a>
+                        <a href="all-rayons.html" class="btn btn-secondary-pmii text-base mt-5 inline-block group" target="_self">
+                            Daftar Rayon <i class="fas fa-building ml-1.5 group-hover:translate-x-0.5 transition-transform duration-300"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="statistik" class="py-20 lg:py-28 section-pmii-bg-pattern animated-section animate-fade-in-up">
+            <div class="container mx-auto px-4 text-center">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <a href="all-rayons.html" class="statistic-card bg-pmii-blue p-8 rounded-xl shadow-lg flex flex-col items-center justify-center animate-card-entry stagger-1" target="_self">
+                        <i class="fas fa-building text-4xl mb-4 text-pmii-yellow"></i>
+                        <h3 class="animated-number text-5xl font-extrabold" data-target="9">0</h3>
+                        <p class="text-lg opacity-80 mt-2">Rayon</p>
+                        <p class="text-sm opacity-60 mt-1">Klik untuk lihat profil & kontak setiap rayon</p>
+                    </a>
+
+                    <div class="statistic-card bg-pmii-blue p-8 rounded-xl shadow-lg flex flex-col items-center justify-center animate-card-entry stagger-2">
+                        <i class="fas fa-users text-4xl mb-4 text-pmii-yellow"></i>
+                        <h3 class="animated-number text-5xl font-extrabold" data-target="1000" data-append-text="+">0</h3>
+                        <p class="text-lg opacity-80 mt-2">Kader Lingkup Komisariat</p>
+                        <p class="text-sm opacity-60 mt-1">UIN Sunan Gunung Djati Cabang Kota Bandung</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="berita" class="py-20 lg:py-28 section-pmii-bg-pattern animated-section animate-fade-in-up">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl lg:text-4xl font-bold text-center text-pmii-yellow mb-14 section-title">Berita & Artikel Terbaru</h2>
+                <div id="news-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    </div>
+                <div class="text-center mt-12">
+                    <a href="berita-artikel.html" class="btn btn-primary-pmii text-base" target="_self">Lihat Semua Berita & Artikel</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="kegiatan" class="py-20 lg:py-28 section-pmii-bg-pattern animated-section animate-fade-in-up">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl lg:text-4xl font-bold text-center text-pmii-yellow mb-14 section-title">Agenda Kegiatan</h2>
+                <div id="edit-activities-button-container" class="text-center mb-10 hidden">
+                    <a href="edit-beranda.html#activities-edit-section" id="edit-activities-btn" class="btn btn-primary-pmii text-base" target="_self">
+                        <i class="fas fa-pencil-alt mr-2"></i> Edit Agenda Kegiatan
+                    </a>
+                </div>
+                <div id="activities-container" class="space-y-8">
+                    </div>
+                <div class="text-center mt-12">
+                    <a href="agenda-kegiatan.html" class="btn btn-primary-pmii text-base" target="_self">Lihat Semua Agenda Kegiatan</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="galeri" class="py-20 lg:py-28 section-pmii-bg-pattern animated-section animate-fade-in-up">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl lg:text-4xl font-bold text-center text-pmii-yellow mb-14 section-title">Galeri Kegiatan PMII</h2>
+                <div id="gallery-container" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+                    </div>
+                <div class="text-center mt-12">
+                    <a href="galeri-foto.html" class="btn btn-primary-pmii text-base" target="_self">Lihat Semua Galeri Foto</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="kontak" class="py-20 lg:py-28 text-white animated-section animate-fade-in-up">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl lg:text-4xl font-bold text-center mb-14 section-title text-white">Hubungi Kami</h2>
+                <div class="contact-content-wrapper p-6 md:p-10 rounded-xl shadow-2xl max-w-3xl mx-auto border border-white/10">
+                    <div id="contact-form-response-message" class="hidden form-message-container"></div>
+                    <div class="grid md:grid-cols-2 gap-8 md:gap-12">
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-5 text-pmii-yellow">Informasi Kontak</h3>
+                            <div class="space-y-3.5 text-sm">
+                                <p class="flex items-start"><i class="fas fa-map-marker-alt mr-3 mt-0.5 w-4 text-center text-pmii-yellow"></i> <span>Jl. AH. Nasution No.105, Cipadung Wetan, Kec. Cibiru, Kota Bandung, Jawa Barat 40614</span></p>
+                                <p class="flex items-start"><i class="fas fa-envelope mr-3 mt-0.5 w-4 text-center text-pmii-yellow"></i> <a href="mailto:pmiikomisariatuinbandungkota@gmail.com" class="hover:text-pmii-yellow transition-colors">pmiikomisariatuinbandungkota@gmail.com</a></p>
+                                <p class="flex items-start"><i class="fas fa-phone mr-3 mt-0.5 w-4 text-center text-pmii-yellow"></i> <span>085320677948</span></p>
+                            </div>
+                            <h4 class="text-xl font-semibold mt-8 mb-3 text-pmii-yellow">Media Sosial</h4>
+                            <div class="flex space-x-4">
+                                <a href="https://instagram.com/pmii.uinsgd" target="_blank" aria-label="Instagram PMII" class="text-2xl hover:text-pmii-yellow transition-colors transform hover:scale-110"><i class="fab fa-instagram"></i></a>
+                                <a href="#" aria-label="Facebook PMII" class="text-2xl hover:text-pmii-yellow transition-colors transform hover:scale-110"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" aria-label="Twitter PMII" class="text-2xl hover:text-pmii-yellow transition-colors transform hover:scale-110"><i class="fab fa-twitter"></i></a>
+                                <a href="#" aria-label="Youtube PMII" class="text-2xl hover:text-pmii-yellow transition-colors transform hover:scale-110"><i class="fab fa-youtube"></i></a>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-semibold mb-5 text-pmii-yellow">Kirim Pesan Langsung</h3>
+                            <form id="formKontakPesan">
+                                <div>
+                                    <label for="nama_kontak" class="form-label">Nama Lengkap</label>
+                                    <input type="text" id="nama_kontak" name="nama_kontak" required class="form-input text-sm">
+                                </div>
+                                <div>
+                                    <label for="email_kontak" class="form-label">Alamat Email</label>
+                                    <input type="email" id="email_kontak" name="email_kontak" required class="form-input text-sm">
+                                </div>
+                                <div>
+                                    <label for="pesan_kontak" class="form-label">Pesan Anda</label>
+                                    <textarea id="pesan_kontak" name="pesan_kontak" rows="4" required class="form-input text-sm"></textarea>
+                                </div>
+                                <button type="submit" class="w-full btn btn-secondary-pmii text-sm mt-1.5">Kirim Pesan Anda</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer class="internal-footer py-10 mt-auto">
+        <div class="container mx-auto px-4 text-center">
+            <img src="img/logo-pmii.png" alt="Logo PMII Footer" class="h-12 w-auto mx-auto mb-2.5 rounded-full" onerror="this.onerror=null;this.src='https://placehold.co/100x100/005c97/FFFFFF?text=P';">
+            <p class="text-md font-semibold footer-title">PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung</p>
+            <p class="text-xs mt-3">&copy; <span id="tahun-footer-kader"></span> PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <button id="scrollToTopBtn" title="Kembali ke atas" class="hidden">
+        <i class="fas fa-arrow-up text-xl"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+    <script>
+        const customConfirmModal = document.getElementById('customConfirmModal');
+        const confirmModalTitle = document.getElementById('confirmModalTitle');
+        const confirmModalMessage = document.getElementById('confirmModalMessage');
+        const confirmYesBtn = document.getElementById('confirmYesBtn');
+        const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+        let currentConfirmCallback = null;
+        // --- Global State & Elements ---
+        const LOCAL_STORAGE_USER_KEY = 'loggedInUser'; // Masih digunakan untuk simulasi sesi pengguna di sisi klien
+        const LOCAL_STORAGE_HOMEPAGE_CONTENT_KEY = 'homepageContent'; // Masih digunakan untuk fallback/pemuatan awal
+        
+        function showCustomConfirm(title, message, onConfirm, onCancel = null) {
+            confirmModalTitle.textContent = title;
+            confirmModalMessage.textContent = message;
+            customConfirmModal.classList.add('active');
+            currentConfirmCallback = onConfirm;
+
+            confirmYesBtn.onclick = () => {
+        if (currentConfirmCallback) {
+            currentConfirmCallback();
+        }
+        hideCustomConfirm();
+    };
+    confirmCancelBtn.onclick = () => {
+        if (onCancel) {
+            onCancel();
+        }
+        hideCustomConfirm();
+    };
+}
+function hideCustomConfirm() {
+    customConfirmModal.classList.remove('active');
+    currentConfirmCallback = null;
+}
+
+
+
+        let loggedInUser = null; // Menyimpan data pengguna yang masuk dari localStorage
+        
+        // Navbar & Auth Elements
+        const headerTitleText = document.getElementById('header-title-text');
+        const mobileHeaderTitleText = document.getElementById('mobile-header-title-text');
+        const authLinkMain = document.getElementById('auth-link-main');
+        const authLinkMobile = document.getElementById('mobile-logout-link'); // Referensi ke link logout di mobile menu
+        const desktopKaderMenuContainer = document.getElementById('desktop-kader-menu-container');
+        const desktopAdminMenuContainer = document.getElementById('desktop-admin-menu-container');
+
+        function displayMessage(container, type, messageText) {
+    const messageBox = document.getElementById('customMessageBox');
+    messageBox.textContent = messageText; // Menggunakan messageText sebagai argumen
+    messageBox.className = 'fixed top-4 right-4 z-[9999] px-6 py-3 rounded-lg shadow-xl text-white text-sm font-semibold transition-all duration-300 transform translate-x-full opacity-0';
+
+    let iconClass = '';
+    if (type === 'success') {
+        messageBox.classList.add('bg-green-500');
+        iconClass = 'fas fa-check-circle';
+    } else if (type === 'error') {
+        messageBox.classList.add('bg-red-500');
+        iconClass = 'fas fa-times-circle';
+    } else {
+        messageBox.classList.add('bg-blue-500');
+        iconClass = 'fas fa-info-circle';
+    }
+
+    messageBox.innerHTML = `<i class="${iconClass} mr-2"></i> ${messageText}`;
+    messageBox.classList.add('show');
+
+    setTimeout(() => {
+        messageBox.classList.remove('show');
+    }, 5000);
+}
+
+        // Admin/Kader Links Map: Menyimpan referensi ke elemen link desktop dan mobile
+        const adminMenuLinks = {
+            manajemenAkun: { desktop: document.getElementById('manajemen-akun-link-desktop'), mobile: null },
+            manajemenKader: { desktop: document.getElementById('manajemen-kader-link-desktop'), mobile: null },
+            repositoryIlmiah: { desktop: document.getElementById('repository-ilmiah-link-desktop'), mobile: null },
+            pengajuanSurat: { desktop: document.getElementById('pengajuan-surat-link-desktop'), mobile: null },
+            verifikasiSurat: { desktop: document.getElementById('verifikasi-surat-link-desktop'), mobile: null },
+            dashboardRayon: { desktop: document.getElementById('dashboard-rayon-link-desktop'), mobile: null },
+            adminDashboard: { desktop: document.getElementById('admin-dashboard-link-desktop'), mobile: null },
+            editBeranda: { desktop: document.getElementById('edit-beranda-link-desktop'), mobile: null },
+            jurnalAlharokahAdmin: { desktop: document.getElementById('jurnal-alharokah-link-desktop-admin'), mobile: null },
+            editProfilKader: { desktop: document.getElementById('edit-profil-kader-link-desktop'), mobile: null },
+            pengaturanAkunKader: { desktop: document.getElementById('pengaturan-akun-kader-link-desktop'), mobile: null },
+            jurnalAlharokahKader: { desktop: document.getElementById('jurnal-alharokah-link-desktop-kader'), mobile: null },
+            pengajuanSuratKader: { desktop: document.getElementById('pengajuan-surat-link-desktop-kader'), mobile: null },
+            verifikasiKontenRayon: { desktop: document.getElementById('verifikasi-konten-link-desktop'), mobile: null },
+            tambahBeritaRayon: { desktop: document.getElementById('tambah-berita-link-desktop'), mobile: null },
+            tambahKegiatanRayon: { desktop: document.getElementById('tambah-kegiatan-link-desktop'), mobile: null },
+            tambahGaleriRayon: { desktop: document.getElementById('tambah-galeri-link-desktop'), mobile: null },
+            editProfilRayon: { desktop: document.getElementById('edit-profil-rayon-link-desktop'), mobile: null },
+            pengaturanSitus: { desktop: document.getElementById('pengaturan-situs-link-desktop'), mobile: null },
+            dashboardStatistik: { desktop: document.getElementById('dashboard-statistik-link-desktop'), mobile: null },
+            kelolaNotifikasi: { desktop: document.getElementById('kelola-notifikasi-link-desktop'), mobile: null },
+            laporanAnalisis: { desktop: document.getElementById('laporan-analisis-link-desktop'), mobile: null },
+            ttdDigital: { desktop: document.getElementById('ttd-digital-link-desktop'), mobile: null }
+        };
+
+        // Elemen Manajemen Kegiatan (Hanya tombol di index.html, modal ada di edit-beranda.html)
+        const editActivitiesButtonContainer = document.getElementById('edit-activities-button-container');
+
+        // --- Manajemen Data ---
+        let homepageContent = {}; // Menyimpan konten halaman utama yang sedang ditampilkan
+
+        // Data mock untuk pemuatan awal jika pengambilan dari backend gagal
+        const defaultHomepageContent = {
+            heroMainTitle: "Pengurus Komisariat<br>Pergerakan Mahasiswa Islam Indonesia<br>UIN Sunan Gunung Djati<br>Cabang Kota Bandung",
+            announcementText: "", // Kosong secara default
+            aboutP1: `Pergerakan Mahasiswa Islam Indonesia (PMII) Komisariat UIN Sunan Gunung Djati Bandung adalah organisasi kemahasiswaan Islam yang berlandaskan Ahlussunnah wal Jama'ah an-Nahdliyah. Kami berkomitmen untuk mencetak kader-kader Ulul Albab yang memiliki kedalaman spiritual, keluasan ilmu pengetahuan, dan kepedulian sosial yang tinggi.`,
+            news: [
+                { id: 1, title: "PMII Sukses Gelar Webinar Nasional Hukum Progresif", category: "Kegiatan", imageUrl: "https://placehold.co/600x400/005c97/FFFFFF?text=Webinar+Hukum", description: "Webinar membahas implementasi hukum progresif di Indonesia, dihadiri akademisi dan praktisi hukum.", date: "2024-06-10", status: "approved" },
+                { id: 2, title: "Kader PMII Berpartisipasi dalam Aksi Bersih Lingkungan", category: "Sosial", imageUrl: "https://placehold.co/600x400/22c55e/FFFFFF?text=Aksi+Lingkungan", description: "Puluhan kader PMII turun ke jalan membersihkan area sekitar kampus sebagai bentuk kepedulian lingkungan.", date: "2024-06-05", status: "approved" },
+                { id: 3, title: "Artikel: Tantangan Demokrasi di Era Digital menurut PMII", category: "Artikel", imageUrl: "https://placehold.co/600x400/fdd835/004a7c?text=Demokrasi+Digital", description: "Analisis mendalam mengenai bagaimana platform digital mempengaruhi partisipasi dan kualitas demokrasi di Indonesia.", date: "2024-06-01", status: "approved" }
+            ],
+            activities: [
+                { id: 1, title: "Diskusi Rutin Fiqh Kontemporer", day: "20", month: "JUN", year: "2024", time: "14:00 - 16:00 WIB", location: "Sekretariat PMII", description: "Kajian mendalam isu-isu fiqh terkini dengan pendekatan kontekstual.", link: "#", status: "approved" },
+                { id: 2, title: "Pelatihan Kepemimpinan Dasar (PKD) Batch 2", day: "05", month: "JUL", year: "2024", time: "08:00 - Selesai", location: "Villa Sejahtera, Lembang", description: "Program pembentukan karakter dan kepemimpinan bagi calon kader muda PMII.", link: "#", status: "approved" }
+            ],
+            gallery: [
+                { id: 1, imageUrl: "https://placehold.co/400x400/005c97/FFFFFF?text=Galeri+1", caption: "Momen Kebersamaan PKD Raya 2023", status: "approved" },
+                { id: 2, imageUrl: "https://placehold.co/400x400/fdd835/004a7c?text=Galeri+2", caption: "Diskusi Mingguan di Basecamp", status: "approved" },
+                { id: 3, imageUrl: "https://placehold.co/400x400/22c55e/FFFFFF?text=Galeri+3", caption: "Bakti Sosial Ramadhan 1445H", status: "approved" },
+                { id: 4, imageUrl: "https://placehold.co/400x400/dc2626/FFFFFF?text=Galeri+4", caption: "Delegasi Konferensi Cabang", status: "approved" }
+            ]
+        };
+
+        /**
+         * Memuat semua konten halaman utama dari API backend hipotetis.
+         * Akan kembali ke konten default jika pengambilan data gagal.
+         */
+        async function loadHomepageContent() {
+            try {
+                // Ambil konten utama halaman (hero, pengumuman, tentang)
+                const mainContentResponse = await fetch('/index.php/api/homepage-main-content'); // Ganti dengan URL endpoint backend Anda
+                const mainContentData = await mainContentResponse.json();
+                homepageContent.heroMainTitle = mainContentData.heroMainTitle || defaultHomepageContent.heroMainTitle;
+                homepageContent.announcementText = mainContentData.announcementText || defaultHomepageContent.announcementText;
+                homepageContent.aboutP1 = mainContentData.aboutP1 || defaultHomepageContent.aboutP1;
+
+                // Ambil berita
+                const newsResponse = await fetch('/index.php/api/news?status=approved&limit=3'); // Ganti dengan URL endpoint backend Anda
+                homepageContent.news = await newsResponse.json();
+
+                // Ambil kegiatan
+                const activitiesResponse = await fetch('/index.php/api/activities?status=approved&limit=2'); // Ganti dengan URL endpoint backend Anda
+                homepageContent.activities = await activitiesResponse.json();
+
+                // Ambil galeri
+                const galleryResponse = await fetch('/index.php/api/gallery?status=approved&limit=4'); // Ganti dengan URL endpoint backend Anda
+                homepageContent.gallery = await galleryResponse.json();
+
+            } catch (error) {
+                console.error('Gagal memuat konten halaman utama dari backend:', error);
+                showCustomMessage('Gagal memuat konten. Menggunakan data default.', 'error');
+                // Kembali ke konten default jika pengambilan data gagal
+                homepageContent = defaultHomepageContent;
+            } finally {
+                // Isi elemen konten statis
+                if (document.getElementById('hero-main-title')) document.getElementById('hero-main-title').innerHTML = homepageContent.heroMainTitle;
+
+                const announcementSection = document.getElementById('announcement-section');
+                if (announcementSection) {
+                    if (homepageContent.announcementText && homepageContent.announcementText.trim() !== '') {
+                        announcementSection.classList.remove('hidden');
+                        document.getElementById('announcement-text').innerHTML = homepageContent.announcementText + ' <a href="#" class="underline font-bold hover:text-pmii-darkblue transition-colors duration-300">di sini</a>.';
+                    } else {
+                        announcementSection.classList.add('hidden');
+                    }
+                }
+                if (document.getElementById('about-us-p1')) document.getElementById('about-us-p1').textContent = homepageContent.aboutP1;
+
+                // Render Bagian Konten Dinamis (Berita, Kegiatan, Galeri)
+                renderNews();
+                renderActivities();
+                renderGallery();
+            }
+        }
+
+        // Render Artikel Berita
+        function renderNews() {
+            const newsContainer = document.getElementById('news-container');
+            if (!newsContainer) return;
+
+            newsContainer.innerHTML = ''; // Hapus konten yang ada
+            const newsData = homepageContent.news || [];
+            
+            if (newsData.length > 0) {
+                // Urutkan berdasarkan tanggal, terbaru dulu
+                newsData.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                newsData.slice(0, 3).forEach((item, index) => { // Tampilkan hanya 3 yang pertama untuk halaman utama
+                    const newsCard = `<div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover flex flex-col animated-section animate-card-entry stagger-${index + 1}">
+                                <img src="${item.imageUrl}" onerror="this.onerror=null;this.src='https://placehold.co/600x400/CCCCCC/333333?text=Image+Not+Found';" alt="${item.title}" class="w-full h-56 object-cover">
+                                <div class="p-6 flex flex-col flex-grow">
+                                    <span class="text-xs text-pmii-blue font-semibold bg-pmii-yellow/50 px-2.5 py-1 rounded-full self-start mb-2.5">${item.category}</span>
+                                    <h3 class="text-xl font-bold text-pmii-darkblue mb-3 leading-tight hover:text-pmii-yellow transition-colors">${item.title}</h3>
+                                    <p class="text-text-secondary text-sm mb-5 flex-grow line-clamp-3">${item.description}</p>
+                                    <a href="berita-artikel.html" class="font-semibold text-pmii-blue hover:text-pmii-yellow transition-colors self-start group text-sm">
+                                        Baca Selengkapnya <i class="fas fa-arrow-right text-xs ml-1 group-hover:translate-x-0.5 transition-transform"></i>
+                                    </a>
+                                </div>
+                            </div>`;
+                    newsContainer.innerHTML += newsCard;
+                });
+            } else {
+                newsContainer.innerHTML = `<p class="text-gray-500 text-center py-8 col-span-full">Belum ada berita atau artikel terbaru yang ditampilkan.</p>`;
+            }
+        }
+
+        // Render Kegiatan
+        function renderActivities() {
+            const activitiesContainer = document.getElementById('activities-container');
+            if (!activitiesContainer) return;
+
+            activitiesContainer.innerHTML = ''; // Hapus konten yang ada
+            const activitiesData = homepageContent.activities || [];
+
+            if (activitiesData.length > 0) {
+                // Urutkan berdasarkan tanggal, yang akan datang dulu
+                activitiesData.sort((a, b) => {
+                    const dateA = new Date(`${a.year}-${a.month}-${a.day}`);
+                    const dateB = new Date(`${b.year}-${b.month}-${b.day}`);
+                    return dateA - dateB;
+                });
+
+                activitiesData.slice(0, 2).forEach((item, index) => { // Tampilkan hanya 2 yang pertama untuk halaman utama
+                    const activityCard = `
+                        <div class="activity-card-enhanced flex items-center p-4 sm:p-6 mb-4 animated-section animate-card-entry stagger-${index + 1}">
+                            <div class="activity-date-block-enhanced">
+                                <p class="day">${item.day}</p>
+                                <p class="month">${item.month}</p>
+                                <p class="year">${item.year}</p>
+                            </div>
+                            <div class="activity-content-wrapper-enhanced flex-grow">
+                                <h3 class="title text-lg font-semibold text-pmii-darkblue mb-2">${item.title}</h3>
+                                <p class="activity-info-line flex items-center text-sm text-text-secondary mb-1"><i class="fas fa-clock mr-2 text-pmii-yellow"></i> ${item.time}</p>
+                                <p class="activity-info-line flex items-center text-sm text-text-secondary"><i class="fas fa-map-marker-alt mr-2 text-pmii-yellow"></i> ${item.location}</p>
+                            </div>
+                            <a href="agenda-kegiatan.html" class="activity-detail-button-enhanced whitespace-nowrap btn btn-primary-pmii btn-sm" target="_self">Detail Acara</a>
+                        </div>`;
+                    activitiesContainer.innerHTML += activityCard;
+                });
+            } else {
+                activitiesContainer.innerHTML = `<p class="text-gray-500 text-center py-8">Belum ada agenda kegiatan yang tersedia.</p>`;
+            }
+        }
+
+        // Render Galeri
+        function renderGallery() {
+            const galleryContainer = document.getElementById('gallery-container');
+            if (!galleryContainer) return;
+
+            galleryContainer.innerHTML = ''; // Hapus konten yang ada
+            const galleryData = homepageContent.gallery || [];
+
+            if (galleryData.length > 0) {
+                galleryData.slice(0, 4).forEach((item, index) => { // Tampilkan hanya 4 yang pertama untuk halaman utama
+                    const galleryItem = `
+                        <a href="${item.imageUrl}" data-fancybox="gallery" data-caption="${item.caption}"
+                           class="block rounded-lg overflow-hidden shadow-md group relative aspect-w-1 aspect-h-1 animated-section animate-card-entry stagger-${index + 1}">
+                            <img src="${item.imageUrl}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/CCCCCC/333333?text=Image+Not+Found';" alt="${item.caption}"
+                                         class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300 ease-in-out">
+                            <div class="absolute inset-0 bg-gradient-to-t from-pmii-blue/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
+                                <p class="text-white text-xs font-medium translate-y-2 group-hover:translate-y-0 transition-transform duration-300">${item.caption}</p>
+                            </div>
+                            <div class="absolute top-1.5 right-1.5 bg-pmii-yellow text-pmii-blue p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform scale-75 group-hover:scale-100 text-xs">
+                                <i class="fas fa-search-plus"></i>
+                            </div>
+                        </a>`;
+                    galleryContainer.innerHTML += galleryItem;
+                });
+                Fancybox.bind("[data-fancybox]", { Thumbs: false, Toolbar: { display: { left: ["infobar"], middle: [], right: ["close"] } } });
+            } else {
+                galleryContainer.innerHTML = `<p class="text-gray-500 text-center py-8 col-span-full">Belum ada foto galeri yang ditampilkan.</p>`;
+            }
+        }
+
+
+        /**
+         * Memperbarui UI (link navbar) berdasarkan peran pengguna yang masuk.
+         */
+        function updateAdminUI() {
+            const defaultTitle = 'PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung';
+            const loggedInTitle = 'SINTAKSIS (Sistem Informasi Terintegrasi Kaderisasi)'; /* Teks lengkap dikembalikan */
+            const loginText = "Login";
+            const logoutText = "Logout";
+            const loggedInStylesAuthLink = "logout-active";
+            const loggedOutStylesAuthLinkClasses = ["bg-pmii-yellow", "text-pmii-blue", "hover:bg-yellow-400"];
+
+            // Perbarui judul header berdasarkan status loggedInUser
+            if (headerTitleText) {
+                headerTitleText.textContent = (loggedInUser && (loggedInUser.role === 'rayon' || loggedInUser.role === 'komisariat' || loggedInUser.role === 'kader')) ? loggedInTitle : defaultTitle;
+            }
+            if (mobileHeaderTitleText) {
+                mobileHeaderTitleText.textContent = (loggedInUser && (loggedInUser.role === 'rayon' || loggedInUser.role === 'komisariat' || loggedInUser.role === 'kader')) ? loggedInTitle : defaultTitle;
+            }
+
+            // Sembunyikan semua link terkait admin/kader di desktop secara default
+            for (const key in adminMenuLinks) {
+                const desktopLink = adminMenuLinks[key].desktop;
+                if (desktopLink) {
+                    desktopLink.style.display = 'none';
+                }
+            }
+
+            // Sembunyikan kontainer menu admin/kader utama secara default
+            if(desktopAdminMenuContainer) desktopAdminMenuContainer.classList.add('hidden');
+            if(desktopKaderMenuContainer) desktopKaderMenuContainer.classList.add('hidden');
+
+            // Sembunyikan tombol edit kegiatan secara default
+            if(editActivitiesButtonContainer) editActivitiesButtonContainer.classList.add('hidden');
+
+
+            if (loggedInUser) {
+                // Perbarui tombol otentikasi menjadi "Logout"
+                if (authLinkMain) {
+                    authLinkMain.textContent = logoutText;
+                    authLinkMain.dataset.action = "logout";
+                    authLinkMain.classList.remove(...loggedOutStylesAuthLinkClasses);
+                    authLinkMain.classList.add(loggedInStylesAuthLink);
+                    authLinkMain.removeEventListener('click', handleAuthClick); 
+                    authLinkMain.addEventListener('click', handleAuthClick);
+                }
+                if (authLinkMobile) {
+                    authLinkMobile.textContent = logoutText;
+                    authLinkMobile.dataset.action = "logout";
+                    authLinkMobile.classList.remove(...loggedOutStylesAuthLinkClasses);
+                    authLinkMobile.classList.add(loggedInStylesAuthLink);
+                    authLinkMobile.removeEventListener('click', handleAuthClick);
+                    authLinkMobile.addEventListener('click', handleAuthClick);
+                }
+
+
+                // Tampilkan menu berdasarkan peran
+                if (loggedInUser.role === "rayon" || loggedInUser.role === "komisariat") {
+                    if(desktopAdminMenuContainer) desktopAdminMenuContainer.classList.remove('hidden');
+                } else if (loggedInUser.role === "kader") {
+                    if(desktopKaderMenuContainer) desktopKaderMenuContainer.classList.remove('hidden');
+                }
+
+                // Tentukan link spesifik mana yang akan ditampilkan untuk desktop
+                let visibleDesktopLinksKeys = [];
+                if (loggedInUser.role === "rayon") {
+                    visibleDesktopLinksKeys = [
+                        'manajemenKader', 'repositoryIlmiah', 
+                        'pengajuanSurat', 'dashboardRayon',
+                        'jurnalAlharokahAdmin', 'tambahBeritaRayon',
+                        'tambahKegiatanRayon', 'tambahGaleriRayon', 
+                        'verifikasiKontenRayon', 'editProfilRayon'
+                    ];
+                } else if (loggedInUser.role === "komisariat") {
+                    visibleDesktopLinksKeys = [
+                        'manajemenAkun', 'manajemenKader', 
+                        'repositoryIlmiah', 'pengajuanSurat',
+                        'verifikasiSurat', 'adminDashboard',
+                        'editBeranda', 'jurnalAlharokahAdmin',
+                        'verifikasiKontenRayon', 'editProfilRayon',
+                        'pengaturanSitus', 'dashboardStatistik',
+                        'kelolaNotifikasi', 'laporanAnalisis',
+                        'ttdDigital' // Ditambahkan TTD Digital
+                    ];
+                    if(editActivitiesButtonContainer) editActivitiesButtonContainer.classList.remove('hidden'); // Hanya Komisariat yang bisa mengedit kegiatan
+                } else if (loggedInUser.role === "kader") {
+                    visibleDesktopLinksKeys = [
+                        'editProfilKader', 'pengaturanAkunKader', 
+                        'jurnalAlharokahKader', 'pengajuanSuratKader'
+                    ];
+                }
+
+                visibleDesktopLinksKeys.forEach(key => {
+                    const linkEl = adminMenuLinks[key].desktop;
+                    if (linkEl) linkEl.style.display = 'flex'; // Gunakan flex untuk item dropdown
+                });
+
+            } else {
+                // Perbarui tombol otentikasi menjadi "Login"
+                if (authLinkMain) {
+                    authLinkMain.textContent = loginText;
+                    authLinkMain.dataset.action = "login";
+                    authLinkMain.classList.remove(loggedInStylesAuthLink);
+                    authLinkMain.classList.add(...loggedOutStylesAuthLinkClasses);
+                    authLinkMain.removeEventListener('click', handleAuthClick); 
+                    authLinkMain.addEventListener('click', handleAuthClick);
+                }
+                if (authLinkMobile) {
+                    authLinkMobile.textContent = loginText;
+                    authLinkMobile.dataset.action = "login";
+                    authLinkMobile.classList.remove(loggedInStylesAuthLink);
+                    authLinkMobile.classList.add(...loggedOutStylesAuthLinkClasses);
+                    authLinkMobile.removeEventListener('click', handleAuthClick);
+                    authLinkMobile.addEventListener('click', handleAuthClick);
+                }
+            }
+        }
+
+        /**
+         * Fungsi kotak pesan kustom untuk menggantikan alert() dan confirm().
+         * @param {string} message - Pesan yang akan ditampilkan.
+         * @param {string} type - 'success', 'error', 'info'.
+         * @param {Function} [callback] - Fungsi callback opsional untuk dijalankan setelah pesan memudar.
+         */
+        function showCustomMessage(message, type = 'info', callback = null) {
+            const messageBox = document.getElementById('customMessageBox');
+            messageBox.textContent = message;
+            messageBox.className = 'fixed top-4 right-4 z-[9999] px-6 py-3 rounded-lg shadow-xl text-white text-sm font-semibold transition-all duration-300 transform translate-x-full opacity-0'; // Reset kelas
+
+            // Terapkan styling berdasarkan tipe
+            if (type === 'success') {
+                messageBox.classList.add('bg-green-500');
+            } else if (type === 'error') {
+                messageBox.classList.add('bg-red-500');
+            } else { // Default ke info (biru)
+                messageBox.classList.add('bg-blue-500');
+            }
+
+            // Tampilkan pesan
+            messageBox.classList.remove('translate-x-full', 'opacity-0');
+            messageBox.classList.add('translate-x-0', 'opacity-100');
+
+            setTimeout(() => {
+                messageBox.classList.remove('translate-x-0', 'opacity-100');
+                messageBox.classList.add('translate-x-full', 'opacity-0');
+                if (callback) {
+                    // Jalankan callback setelah transisi memudar selesai
+                    messageBox.addEventListener('transitionend', function handler() {
+                        callback();
+                        messageBox.removeEventListener('transitionend', handler);
+                    });
+                }
+            }, 3000);
+        }
+
+        /**
+         * Menangani klik tombol otentikasi (Login/Logout).
+         * Untuk demonstrasi, ini akan mengelola status login.
+         */
+        async function handleAuthClick(e) {
+            e.preventDefault();
+            const action = e.target.dataset.action;
+
+            if (action === 'login') {
+                // Arahkan ke login.html saat tombol login diklik
+                window.location.href = 'login.html';
+                
+            } else if (action === 'logout') {
+                // Tampilkan modal konfirmasi kustom untuk logout
+                showCustomConfirm('Konfirmasi Logout', 'Apakah Anda yakin ingin logout?', async () => {
+                    // Jika pengguna mengonfirmasi (klik Ya)
+                    try {
+                        // Panggilan logout backend hipotetis
+                        // Dalam aplikasi nyata, ini akan mengirim permintaan ke backend Anda untuk membatalkan sesi/token
+                        const response = await fetch('/index.php/api/logout', { // Ganti dengan URL endpoint backend Anda
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${localStorage.getItem('authToken')}` // Kirim token jika ada
+                            }
+                        });
+
+                        if (response.ok) {
+                            showCustomMessage('Anda telah berhasil logout.', 'success', () => {
+                                document.body.classList.add('fade-out-page');
+                                setTimeout(() => {
+                                    loggedInUser = null;
+                                    localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+                                    localStorage.removeItem('authToken'); // Hapus token otentikasi nyata jika ada
+                                    window.location.reload(); 
+                                }, 500); // Sesuaikan dengan durasi fade-out CSS
+                            });
+                        } else {
+                            const errorData = await response.json();
+                            showCustomMessage(`Gagal logout: ${errorData.message || 'Terjadi kesalahan pada server.'}`, 'error');
+                        }
+                    } catch (error) {
+                        console.error("Error selama logout:", error);
+                        showCustomMessage('Terjadi kesalahan jaringan saat logout.', 'error');
+                    }
+                }, () => {
+                    // Jika pengguna membatalkan (klik Tidak), tidak lakukan apa-apa atau berikan pesan
+                    showCustomMessage('Logout dibatalkan.', 'info');
+                });
+            }
+        }
+
+
+        // --- Eksekusi Utama saat DOMContentLoaded ---
+        document.addEventListener('DOMContentLoaded', async function () {
+            // Pemuatan status otentikasi pengguna dari localStorage (simulasi untuk peran UI)
+            try {
+                const storedUser = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
+                if (storedUser) {
+                    loggedInUser = JSON.parse(storedUser);
+                    // Validasi data pengguna (misalnya, pastikan properti 'role' ada)
+                    if (typeof loggedInUser !== 'object' || loggedInUser === null || !loggedInUser.role) {
+                        loggedInUser = null; // Batalkan jika format tidak benar
+                        localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+                    }
+                }
+            } catch (e) {
+                console.error("Error saat mengurai loggedInUser dari localStorage:", e);
+                loggedInUser = null;
+                localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+            }
+
+            await loadHomepageContent(); // Muat semua konten dinamis untuk halaman utama (sekarang menggunakan fetch)
+            updateAdminUI(); // Perbarui UI berdasarkan pengguna yang masuk
+
+            // --- Event Listener ---
+
+            // Smooth scroll untuk link navigasi internal
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Navbar sticky dan tombol scroll ke atas
+            const navbar = document.getElementById('navbar');
+            const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+            window.addEventListener('scroll', () => {
+                if (scrollToTopBtn) {
+                    scrollToTopBtn.classList.toggle('hidden', window.pageYOffset <= 300);
+                    scrollToTopBtn.classList.toggle('flex', window.pageYOffset > 300);
+                }
+                // Tambah/hapus kelas navbar-scrolled berdasarkan posisi scroll
+                if (navbar) {
+                    if (window.scrollY > 50) { // Sesuaikan ambang scroll sesuai kebutuhan
+                        navbar.classList.add('navbar-scrolled');
+                    } else {
+                        navbar.classList.remove('navbar-scrolled');
+                    }
+                }
+            });
+
+            // Fungsionalitas menu mobile
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const closeMobileMenuButton = document.getElementById('close-mobile-menu-button');
+            const mobileMenuContent = document.getElementById('mobile-menu-content');
+            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+            const mobileNavLinksContainer = document.getElementById('mobile-nav-links'); // Dapatkan kontainer nav
+
+            // Fungsi untuk mengisi menu mobile secara dinamis berdasarkan peran pengguna dan link desktop yang tersedia
+            function populateMobileMenu() {
+                if (!mobileNavLinksContainer) return;
+
+                mobileNavLinksContainer.innerHTML = ''; // Hapus link yang ada
+
+                // Link umum yang selalu ada
+                const generalLinksData = [
+                    { text: 'Beranda', href: 'index.html#beranda', icon: 'fas fa-home' },
+                    { text: 'Tentang Kami', href: 'index.html#tentang', icon: 'fas fa-info-circle' },
+                    { text: 'Berita', href: 'index.html#berita', icon: 'fas fa-newspaper' },
+                    { text: '📚 Digilib', href: 'digilib.html', icon: 'fas fa-book' },
+                    { text: 'Kegiatan', href: 'index.html#kegiatan', icon: 'fas fa-calendar-alt' },
+                    { text: 'Galeri', href: 'index.html#galeri', icon: 'fas fa-images' }
+                ];
+
+                generalLinksData.forEach(linkData => {
+                    const link = document.createElement('a');
+                    link.href = linkData.href;
+                    link.classList.add('mobile-nav-link', 'py-2', 'px-4', 'rounded-md', 'flex', 'items-center', 'space-x-3', 'hover:bg-white/10', 'transition-colors');
+                    link.innerHTML = `<i class="${linkData.icon} text-pmii-yellow"></i><span>${linkData.text}</span>`;
+                    link.addEventListener('click', toggleMobileMenu); // Tutup menu saat diklik
+                    mobileNavLinksContainer.appendChild(link);
+                });
+
+                // Tambahkan dropdown Sistem Internal berdasarkan link desktop yang terlihat dari peran pengguna
+                if (loggedInUser && (loggedInUser.role === 'komisariat' || loggedInUser.role === 'rayon' || loggedInUser.role === 'kader')) {
+                    const systemInternalTitle = document.createElement('div');
+                    systemInternalTitle.classList.add('mobile-submenu-title', 'font-semibold', 'text-pmii-yellow', 'mt-4', 'mb-2', 'px-4', 'py-1');
+                    systemInternalTitle.textContent = loggedInUser.role === 'kader' ? 'Profil Kader' : 'Sistem Internal';
+                    mobileNavLinksContainer.appendChild(systemInternalTitle);
+
+                    // Iterasi melalui adminMenuLinks dan tambahkan yang terlihat
+                    for (const key in adminMenuLinks) {
+                        const desktopLink = adminMenuLinks[key].desktop;
+                        if (desktopLink && desktopLink.style.display !== 'none') { // Hanya tambahkan jika versi desktop terlihat
+                            const link = document.createElement('a');
+                            link.href = desktopLink.href;
+                            link.classList.add('mobile-submenu-item', 'py-2', 'px-4', 'ml-4', 'rounded-md', 'flex', 'items-center', 'space-x-3', 'hover:bg-white/10', 'transition-colors');
+                            // Salin ikon dan teks, hapus chevron yang ada jika ada
+                            link.innerHTML = desktopLink.innerHTML.replace(/<i class="fas fa-chevron-down[^>]*><\/i>/, '');
+                            // Pastikan warna ikon kuning
+                            const iconElement = link.querySelector('i');
+                            if (iconElement) {
+                                iconElement.classList.add('text-pmii-yellow');
+                            }
+                            link.addEventListener('click', toggleMobileMenu); // Tutup menu saat diklik
+                            mobileNavLinksContainer.appendChild(link);
+                        }
+                    }
+                }
+                
+                // Tambahkan link Kontak
+                const kontakLink = document.createElement('a');
+                kontakLink.href = 'index.html#kontak';
+                kontakLink.classList.add('mobile-nav-link', 'py-2', 'px-4', 'rounded-md', 'flex', 'items-center', 'space-x-3', 'hover:bg-white/10', 'transition-colors', 'mt-4');
+                kontakLink.innerHTML = `<i class="fas fa-address-book text-pmii-yellow"></i><span>Kontak</span>`;
+                kontakLink.addEventListener('click', toggleMobileMenu); // Tutup menu saat diklik
+                mobileNavLinksContainer.appendChild(kontakLink);
+
+                // Tambahkan link Logout (atau Login jika belum masuk)
+                const authLink = document.createElement('a');
+                authLink.href = '#'; // Default, href sebenarnya tergantung status login
+                authLink.id = 'mobile-logout-link';
+                authLink.classList.add('mobile-nav-link', 'mt-4', 'justify-center', 'btn'); // Tambahkan kelas btn untuk styling
+                authLink.addEventListener('click', handleAuthClick); // Gunakan handler umum
+
+                if (loggedInUser) {
+                    authLink.classList.add('bg-red-500', 'hover:bg-red-600', 'logout-active');
+                    authLink.innerHTML = `<i class="fas fa-sign-out-alt mr-2"></i><span>Logout</span>`;
+                    authLink.dataset.action = "logout";
+                } else {
+                    authLink.classList.add('logged-out-styles'); // Terapkan gaya tombol kuning
+                    authLink.innerHTML = `<i class="fas fa-sign-in-alt mr-2"></i><span>Login</span>`;
+                    authLink.dataset.action = "login"; // Atur data-action untuk penanganan
+                }
+                mobileNavLinksContainer.appendChild(authLink);
+            }
+
+
+            function toggleMobileMenu() {
+                const isOpen = mobileMenuContent.classList.contains('menu-active');
+                if (!isOpen) {
+                    populateMobileMenu(); // Isi menu sebelum ditampilkan
+                    mobileMenuContent.classList.add('menu-active');
+                    mobileMenuOverlay.classList.add('menu-active');
+                    document.body.classList.add('overflow-hidden'); // Mencegah scrolling latar belakang
+                } else {
+                    mobileMenuContent.classList.remove('menu-active');
+                    mobileMenuOverlay.classList.remove('menu-active');
+                    document.body.classList.remove('overflow-hidden'); // Izinkan scrolling latar belakang
+                }
+            }
+            
+            // Pastikan tombol menu dan overlay ditemukan sebelum melampirkan listener
+            if (mobileMenuButton) mobileMenuButton.addEventListener('click', toggleMobileMenu);
+            if (closeMobileMenuButton) closeMobileMenuButton.addEventListener('click', toggleMobileMenu);
+            if (mobileMenuOverlay) mobileMenuOverlay.addEventListener('click', toggleMobileMenu);
+
+
+            // Handler klik tombol scroll ke atas
+            if (scrollToTopBtn) scrollToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+            // Atur tahun saat ini di footer
+            if (document.getElementById('tahun-footer-kader')) document.getElementById('tahun-footer-kader').textContent = new Date().getFullYear();
+
+            // Fungsi untuk menganimasikan angka untuk bagian statistik
+            function animateNumber(element, start, end, duration, appendText = '') {
+                let startTime = null;
+                const step = (currentTime) => {
+                    if (!startTime) startTime = currentTime;
+                    const progress = Math.min((currentTime - startTime) / duration, 1);
+                    const value = Math.floor(progress * (end - start) + start);
+                    element.textContent = value.toLocaleString('id-ID'); // Format dengan lokal Indonesia
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        element.textContent = end.toLocaleString('id-ID') + appendText; // Nilai akhir dengan appendText
+                        element.dataset.animated = 'true'; // Tandai sebagai sudah dianimasikan
+                    }
+                };
+                requestAnimationFrame(step);
+            }
+
+            // Intersection Observer untuk animasi bagian dan animasi angka
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        // Terapkan animasi stagger ke anak langsung yang merupakan kartu dalam kontainer spesifik
+                        if(entry.target.id === 'news-container' || entry.target.id === 'gallery-container' || entry.target.id === 'activities-container') {
+                            Array.from(entry.target.children).forEach((card, i) => {
+                                if(card.classList.contains('animated-section')) { // Periksa apakah itu kartu yang dapat dianimasikan
+                                    card.style.transitionDelay = `${i * 0.1}s`;
+                                    card.classList.add('is-visible');
+                                }
+                            });
+                        }
+                        // Logika spesifik untuk menganimasikan angka di bagian #statistik
+                        if (entry.target.id === 'statistik') {
+                            entry.target.querySelectorAll('.animated-number').forEach(numberElement => {
+                                // Hanya animasikan jika belum dianimasikan
+                                if (!numberElement.dataset.animated || numberElement.dataset.animated === 'false') {
+                                    const targetNumber = parseInt(numberElement.dataset.target);
+                                    const appendTextFromData = numberElement.dataset.appendText || '';
+                                    animateNumber(numberElement, 0, targetNumber, 1500, appendTextFromData);
+                                }
+                            });
+                        }
+                    } else {
+                        // Secara opsional hapus is-visible saat elemen keluar dari tampilan
+                        // Ini memungkinkan pemicuan ulang animasi saat digulir kembali ke tampilan
+                        // entry.target.classList.remove('is-visible');
+                        // Reset angka yang dianimasikan saat tidak terlihat (opsional, jika Anda ingin mereka direset)
+                        // if (entry.target.id === 'statistik') {
+                        //     entry.target.querySelectorAll('.animated-number').forEach(numberElement => {
+                        //         numberElement.dataset.animated = 'false';
+                        //         numberElement.textContent = '0'; // Reset ke 0
+                        //     });
+                        // }
+                    }
+                });
+            }, { threshold: 0.1 }); // Pemicu saat 10% elemen terlihat
+
+            // Amati semua bagian yang dianimasikan
+            document.querySelectorAll('.animated-section').forEach(section => {
+                observer.observe(section);
+            });
+
+            // --- Pengiriman Formulir Kontak ---
+            // Ini sekarang ditangani sepenuhnya di sisi klien dengan umpan balik yang disimulasikan.
+            const formKontakPesan = document.getElementById('formKontakPesan');
+            const contactFormResponseMessage = document.getElementById('contact-form-response-message'); // Dapatkan kontainer pesan baru
+
+            if (formKontakPesan) {
+                formKontakPesan.addEventListener('submit', async function(e) {
+                    e.preventDefault(); // Mencegah pengiriman formulir default untuk ditangani dengan JS
+
+                    const nama = document.getElementById('nama_kontak').value.trim();
+                    const email = document.getElementById('email_kontak').value.trim();
+                    const pesan = document.getElementById('pesan_kontak').value.trim();
+
+                    if (nama === '' || email === '' || pesan === '') {
+                        displayMessage(contactFormResponseMessage, 'error', 'Harap isi semua kolom formulir.');
+                        return;
+                    }
+
+                    try {
+                        // Panggilan backend hipotetis untuk mengirim pesan
+                        // Dalam aplikasi nyata, ini akan mengirim data ke server Anda
+                        // yang kemudian menggunakan layanan seperti SendGrid, Mailgun, atau Nodemailer untuk mengirim email.
+                        const response = await fetch('/index.php/api/contact', { // Ganti dengan URL endpoint backend Anda
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ nama, email, pesan })
+                        });
+
+                        const result = await response.json(); // Asumsi backend mengembalikan JSON
+
+                        if (response.ok) { // Status 200-299
+                            displayMessage(contactFormResponseMessage, 'success', result.message || 'Pesan Anda berhasil dikirim! Kami akan segera menghubungi Anda.');
+                            formKontakPesan.reset();
+                        } else {
+                            displayMessage(contactFormResponseMessage, 'error', result.message || 'Gagal mengirim pesan. Silakan coba lagi.');
+                        }
+                    } catch (error) {
+                        console.error('Error saat mengirim pesan kontak:', error);
+                        displayMessage(contactFormResponseMessage, 'error', 'Terjadi kesalahan jaringan. Silakan coba lagi.');
+                    }
+                });
+            }
+
+            /**
+             * Menampilkan pesan sementara di kontainer yang ditentukan.
+             * @param {HTMLElement} container - Elemen HTML untuk menampilkan pesan.
+             * @param {string} type - Tipe pesan ('success', 'error', 'info').
+             * @param {string} messageText - Konten teks pesan.
+             */
+            function displayMessage(container, type, messageText) {
+                container.textContent = ''; // Hapus konten sebelumnya
+                container.classList.remove('form-message-success', 'form-message-error', 'form-message-info'); // Reset tipe
+                
+                let iconClass = '';
+                if (type === 'success') {
+                    container.classList.add('form-message-success');
+                    iconClass = 'fas fa-check-circle';
+                } else if (type === 'error') {
+                    container.classList.add('form-message-error');
+                    iconClass = 'fas fa-times-circle';
+                } else { // info
+                    container.classList.add('form-message-info');
+                    iconClass = 'fas fa-info-circle';
+                }
+
+                container.innerHTML = `<i class="${iconClass} mr-2"></i> ${messageText}`;
+                container.classList.add('show'); // Tampilkan dengan transisi
+
+                setTimeout(() => {
+                    container.classList.remove('show'); // Sembunyikan dengan transisi
+                }, 5000); // Pesan terlihat selama 5 detik
+            }
+
+            /* Logika Modal Konfirmasi Kustom */
+            const customConfirmModal = document.getElementById('customConfirmModal');
+            const confirmModalTitle = document.getElementById('confirmModalTitle');
+            const confirmModalMessage = document.getElementById('confirmModalMessage');
+            const confirmYesBtn = document.getElementById('confirmYesBtn');
+            const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+            let currentConfirmCallback = null; // Untuk menyimpan fungsi callback
+
+            /**
+             * Menampilkan modal konfirmasi kustom.
+             * @param {string} title - Judul modal konfirmasi.
+             * @param {string} message - Pesan yang akan ditampilkan di modal.
+             * @param {Function} onConfirm - Fungsi callback untuk dieksekusi jika 'Ya' diklik.
+             * @param {Function} [onCancel] - Fungsi callback opsional untuk dieksekusi jika 'Tidak' diklik.
+             */
+            function showCustomConfirm(title, message, onConfirm, onCancel = null) {
+                confirmModalTitle.textContent = title;
+                confirmModalMessage.textContent = message;
+                customConfirmModal.classList.add('active'); // Tampilkan overlay modal
+                currentConfirmCallback = onConfirm; // Simpan callback konfirmasi
+
+                // Atur event listener untuk tombol modal
+                confirmYesBtn.onclick = () => {
+                    if (currentConfirmCallback) {
+                        currentConfirmCallback(); // Jalankan callback konfirmasi
+                    }
+                    hideCustomConfirm(); // Sembunyikan modal
+                };
+                confirmCancelBtn.onclick = () => {
+                    if (onCancel) {
+                        onCancel(); // Jalankan callback batal jika disediakan
+                    }
+                    hideCustomConfirm(); // Sembunyikan modal
+                };
+            }
+
+            /**
+             * Menyembunyikan modal konfirmasi kustom.
+             */
+            function hideCustomConfirm() {
+                customConfirmModal.classList.remove('active'); // Sembunyikan overlay modal
+                currentConfirmCallback = null; // Hapus callback
+            }
+
+            // Tutup modal saat mengklik di luar konten
+            customConfirmModal.addEventListener('click', function(event) {
+                if (event.target === customConfirmModal) { // Periksa apakah klik terjadi pada overlay itu sendiri
+                    hideCustomConfirm();
+                }
+            });
+
+        });
+    </script>
+
+</body>
+</html>

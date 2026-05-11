@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perpustakaan Digital - Buku Referensi</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Poppins & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pmii-blue: #005c97;
+            --pmii-darkblue: #004a7c;
+            --pmii-yellow: #fdd835;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --background-page: #f3f4f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --success-color: #22c55e; /* For approved status */
+        }
+        body {
+            font-family: 'Poppins', 'Inter', sans-serif;
+            background-color: var(--background-page);
+            color: var(--text-primary);
+        }
+        .internal-header { background-color: white; box-shadow: var(--shadow-md); border-bottom: 1px solid var(--border-color); }
+        .logo-text { color: var(--pmii-blue); }
+        #auth-info-header { background-color: var(--pmii-blue); color: white; padding: 0.6rem 1.2rem; border-radius: 0.5rem; transition: all 0.25s; font-weight: 500; }
+        #auth-info-header:hover { background-color: var(--pmii-darkblue); transform: translateY(-2px); }
+        #auth-info-header.logout-active { background-color: #ef4444 !important; }
+        #auth-info-header.logout-active:hover { background-color: #dc2626 !important; }
+        .page-title { color: var(--pmii-darkblue); font-weight: 800; }
+        /* Consistent button styles from digilib.html */
+        .btn-modern {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-modern:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: var(--shadow-md);
+        }
+        .btn-modern:active {
+            transform: translateY(0px) scale(0.98);
+        }
+        .btn-primary-pmii {
+            background-color: var(--pmii-blue); color: white;
+        }
+        .btn-primary-pmii:hover { background-color: var(--pmii-darkblue); }
+        .btn-outline-modern {
+            background-color: transparent;
+            color: var(--pmii-darkblue);
+            border: 1px solid var(--pmii-blue);
+        }
+        .btn-outline-modern:hover {
+            background-color: var(--pmii-blue);
+            color: white;
+            border-color: var(--pmii-blue);
+        }
+
+        /* Specific styles for this page's buttons, harmonized */
+        .btn { padding: 0.6rem 1.25rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.9rem; transition: all 0.25s; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; box-shadow: var(--shadow-sm); }
+        .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .btn:disabled { background-color: #9ca3af; cursor: not-allowed; }
+        .btn-primary { background-color: var(--pmii-blue); color: white; }
+        .btn-primary:hover:not(:disabled) { background-color: var(--pmii-darkblue); }
+        .btn-danger { background-color: #ef4444; color: white; }
+        .btn-danger:hover { background-color: #dc2626; }
+        .btn-success { background-color: #22c55e; color: white; }
+        .btn-success:hover { background-color: #16a34a; }
+        .btn-outline { background-color: transparent; color: var(--text-secondary); border: 1px solid var(--border-color); }
+        .btn-outline:hover { background-color: var(--background-page); }
+
+        .book-card { background-color: white; border-radius: 0.75rem; overflow: hidden; box-shadow: var(--shadow-md); transition: transform 0.3s ease, box-shadow 0.3s ease; display: flex; flex-direction: column; cursor: pointer;} /* Added cursor:pointer */
+        .book-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+        .book-card .cover-image {
+            height: 280px;
+            background-color: #e5e7eb;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            position: relative; /* For overlay */
+        }
+        .book-card .cover-image::after { /* Overlay for hover effect */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0);
+            transition: background-color 0.3s ease;
+        }
+        .book-card:hover .cover-image::after {
+            background-color: rgba(0, 0, 0, 0.2); /* Darken on hover */
+        }
+        .book-card .card-content { padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; }
+        .book-card .book-title { font-weight: 700; color: var(--text-primary); font-size: 1.1rem; line-height: 1.4; flex-grow: 1; }
+        .book-card .book-author { font-weight: 500; color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem; }
+        .book-card .admin-actions { border-top: 1px solid var(--border-color); padding: 0.75rem 1.25rem; background-color: #f9fafb; display: none; }
+        .book-card .action-buttons { /* For view detail button */
+            margin-top: 1rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        .modal-overlay { transition: opacity 0.3s ease; }
+        .modal-content { transition: transform 0.3s ease; }
+        .admin-controls { display: none; }
+
+        /* Custom Alert/Notification */
+        #notification { transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out; }
+
+        /* Universal Modal Styles (copied from digilib.html) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-lg);
+            max-width: 500px;
+            width: 90%;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--pmii-darkblue);
+        }
+        .modal-body {
+            line-height: 1.6;
+        }
+        .modal-body p {
+            margin-bottom: 0.5rem;
+        }
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            padding-top: 1rem;
+            margin-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+         /* Custom Message Box Styles */
+        #customMessageBox {
+            background-color: #333;
+            color: white;
+            min-width: 250px;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+            right: 1rem; /* Adjust position */
+            top: 1rem; /* Adjust position */
+            z-index: 9999;
+        }
+        #customMessageBox.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        #customMessageBox.info {
+            background-color: #2196F3; /* Blue for info */
+        }
+        #customMessageBox.success {
+            background-color: #4CAF50; /* Green for success */
+        }
+        #customMessageBox.error {
+            background-color: #f44336; /* Red for error */
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Custom Notification/Alert -->
+    <div id="notification" class="fixed top-5 right-5 w-80 p-4 rounded-lg shadow-lg bg-pmii-darkblue text-white z-50 transform translate-x-[150%] opacity-0">
+        <p id="notification-message">Ini adalah pesan notifikasi!</p>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm">
+            <div class="p-5 text-center">
+                <i class="fas fa-exclamation-triangle text-4xl text-yellow-500 mb-4"></i>
+                <h3 id="confirmation-title" class="text-lg font-semibold text-text-primary">Konfirmasi</h3>
+                <p id="confirmation-message" class="text-sm text-text-secondary mt-2 mb-6">Apakah Anda yakin?</p>
+            </div>
+            <div class="flex justify-center items-center p-4 bg-gray-50 border-t">
+                <button id="confirm-cancel-btn" class="btn btn-outline mr-3">Batal</button>
+                <button id="confirm-ok-btn" class="btn btn-danger">Yakin</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Header -->
+    <header class="internal-header py-3 sticky top-0 z-40">
+        <div class="container mx-auto px-4 lg:px-8 flex justify-between items-center">
+            <a href="digilib.html" class="flex items-center space-x-2.5">
+                <img src="https://placehold.co/100x100/005c97/FFFFFF?text=P" alt="Logo PMII" class="h-9 w-9 rounded-full">
+                <span class="text-sm md:text-base font-semibold logo-text">Perpustakaan Digital PMII</span>
+            </a>
+            <div class="flex items-center space-x-3 md:space-x-4">
+                <span id="user-info" class="text-xs sm:text-sm font-medium hidden"></span>
+                <a href="#" id="auth-info-header" class="btn btn-primary text-xs sm:text-sm">Login</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 lg:py-12">
+        <div id="book-list-view">
+            <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+                <div>
+                    <h1 class="text-3xl lg:text-4xl page-title">Buku Referensi</h1>
+                    <p class="text-md text-text-muted mt-2">Koleksi buku-buku penting untuk kajian dan referensi.</p>
+                </div>
+                <button id="add-data-btn" class="btn btn-primary admin-controls">
+                    <i class="fas fa-plus mr-2"></i> Tambah Buku
+                </button>
+            </div>
+
+            <div class="mb-8 bg-white p-4 rounded-lg shadow-md">
+                <div class="relative">
+                    <input type="search" id="search-input" placeholder="Cari judul buku atau penulis..." class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <div class="absolute top-1/2 left-3 -translate-y-1/2"><i class="fas fa-search text-gray-400"></i></div>
+                </div>
+            </div>
+
+            <div id="book-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-8"></div>
+            <p id="no-data-message" class="text-center py-16 text-text-muted hidden">Belum ada data buku.</p>
+        </div>
+    </main>
+
+    <!-- Modal for Adding/Editing Data -->
+    <div id="data-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden modal-overlay">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg modal-content transform scale-95">
+            <div class="flex justify-between items-center p-5 border-b">
+                <h3 id="modal-title" class="text-xl font-bold text-text-primary">Tambah Buku Baru</h3>
+                <button id="close-modal-btn" class="text-gray-400 hover:text-gray-600">&times;</button>
+            </div>
+            <form id="data-form" class="p-5 space-y-4">
+                <input type="hidden" id="document-id">
+                <div>
+                    <label for="judul" class="block text-sm font-medium text-gray-700 mb-1">Judul Buku</label>
+                    <input type="text" id="judul" name="judul" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                <div>
+                    <label for="penulis" class="block text-sm font-medium text-gray-700 mb-1">Penulis</label>
+                    <input type="text" id="penulis" name="penulis" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                <div>
+                    <label for="penerbit" class="block text-sm font-medium text-gray-700 mb-1">Penerbit</label>
+                    <input type="text" id="penerbit" name="penerbit" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                <div>
+                    <label for="tahun" class="block text-sm font-medium text-gray-700 mb-1">Tahun Terbit</label>
+                    <input type="number" id="tahun" name="tahun" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                <div>
+                    <label for="isbn" class="block text-sm font-medium text-gray-700 mb-1">ISBN</label>
+                    <input type="text" id="isbn" name="isbn" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="ringkasan" class="block text-sm font-medium text-gray-700 mb-1">Ringkasan/Abstrak</label>
+                    <textarea id="ringkasan" name="ringkasan" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+                <div>
+                    <label for="linkEksternal" class="block text-sm font-medium text-gray-700 mb-1">Link Eksternal (opsional)</label>
+                    <input type="url" id="linkEksternal" name="linkEksternal" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="https://contoh.com/buku.pdf">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Sampul Buku</label>
+                    <div class="mt-1 flex items-center space-x-4">
+                        <img id="cover-preview" src="https://placehold.co/100x150/e0e0e0/9e9e9e?text=Preview" alt="Pratinjau Sampul" class="w-24 h-36 object-cover rounded-md bg-gray-100">
+                        <div class="w-full">
+                           <label for="cover-upload" class="cursor-pointer bg-white py-2 px-3 border border-gray-300 rounded-md shadow-sm text-sm leading-4 font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                               <span>Pilih file...</span>
+                               <input id="cover-upload" name="cover-upload" type="file" class="sr-only" accept="image/png, image/jpeg, image/webp">
+                           </label>
+                           <p class="text-xs text-gray-500 mt-1">PNG, JPG, WEBP hingga 2MB.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-4">
+                    <button type="button" id="cancel-btn" class="btn btn-outline mr-3">Batal</button>
+                    <button type="submit" id="submit-btn" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Showing Document Details (Universal Modal) -->
+    <div id="detailSearchResultModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="detailSearchResultTitle">Detail Dokumen</h3>
+                <button type="button" class="text-gray-400 hover:text-gray-600 text-xl" onclick="closeModal('detailSearchResultModal')">&times;</button>
+            </div>
+            <div class="modal-body text-sm text-text-secondary">
+                <p><strong>Judul:</strong> <span id="detailResultJudul" class="font-medium"></span></p>
+                <p><strong>Penulis:</strong> <span id="detailResultPenulis"></span></p>
+                <p id="detailResultRayonContainer" class="hidden"><strong>Rayon:</strong> <span id="detailResultRayon"></span></p>
+                <p id="detailResultTahunContainer" class="hidden"><strong>Tahun:</strong> <span id="detailResultTahun"></span></p>
+                <p id="detailResultPenerbitContainer" class="hidden"><strong>Penerbit:</strong> <span id="detailResultPenerbit"></span></p>
+                <p id="detailResultPeriodeContainer" class="hidden"><strong>Periode:</strong> <span id="detailResultPeriode"></span></p>
+                <p id="detailResultTanggalUnggahContainer" class="hidden"><strong>Tanggal Unggah:</strong> <span id="detailResultTanggalUnggah"></span></p>
+                <h4 class="font-semibold text-text-primary mt-4 mb-2">Abstrak/Deskripsi:</h4>
+                <p id="detailResultAbstrak"></p>
+                <div class="modal-footer justify-between">
+                    <a href="#" id="detailResultDownloadLink" target="_blank" class="btn-modern btn-outline-modern">
+                        <i class="fas fa-download mr-2"></i> Unduh File
+                    </a>
+                    <button type="button" class="btn-modern btn-outline-modern" onclick="closeModal('detailSearchResultModal')">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="bg-pmii-darkblue py-8 mt-16">
+        <div class="container mx-auto px-4 text-center text-gray-300">
+            <p class="text-sm">&copy; <span id="footer-year"></span> PK PMII UIN Sunan Gunung Djati. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+<script type="module">
+    // NOTE: Firebase SDKs are not imported in this simulation version.
+    // They can be re-added when connecting to a live database.
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- STATE & MOCK DATA (SIMULATION) ---
+        let isAdmin = false;
+        let loggedInUserPage = null;
+        let userRole = 'public'; // 'public', 'kader', 'rayon', 'komisariat'
+
+        let books = []; // This will hold the filtered 'buku' items
+        let allDigilibItems = []; // This will hold aggregated data from localStorage
+        const MAX_RECENT_FILES = 5;
+        let recentFiles = JSON.parse(localStorage.getItem('recentFiles')) || []; // Load recent files from localStorage
+
+        // For cover image upload (base64 simulation)
+        let stagedCoverBase64 = null;
+
+        // --- DOM ELEMENTS ---
+        const userInfo = document.getElementById('user-info');
+        const authHeader = document.getElementById('auth-info-header');
+        const adminControls = document.querySelectorAll('.admin-controls');
+        const bookGrid = document.getElementById('book-grid');
+        const noDataMessage = document.getElementById('no-data-message');
+        const searchInput = document.getElementById('search-input');
+        
+        const dataModal = document.getElementById('data-modal');
+        const dataForm = document.getElementById('data-form');
+        const docIdInput = document.getElementById('document-id');
+        const submitBtn = document.getElementById('submit-btn');
+        const coverUploadInput = document.getElementById('cover-upload');
+        const coverPreview = document.getElementById('cover-preview');
+
+        // Elements for universal detail modal
+        const detailSearchResultModal = document.getElementById('detailSearchResultModal');
+        const detailResultJudul = document.getElementById('detailResultJudul');
+        const detailResultPenulis = document.getElementById('detailResultPenulis');
+        const detailResultRayonContainer = document.getElementById('detailResultRayonContainer');
+        const detailResultRayon = document.getElementById('detailResultRayon');
+        const detailResultTahunContainer = document.getElementById('detailResultTahunContainer');
+        const detailResultTahun = document.getElementById('detailResultTahun');
+        const detailResultPenerbitContainer = document.getElementById('detailResultPenerbitContainer');
+        const detailResultPenerbit = document.getElementById('detailResultPenerbit');
+        const detailResultPeriodeContainer = document.getElementById('detailResultPeriodeContainer');
+        const detailResultPeriode = document.getElementById('detailResultPeriode');
+        const detailResultTanggalUnggahContainer = document.getElementById('detailResultTanggalUnggahContainer');
+        const detailResultTanggalUnggah = document.getElementById('detailResultTanggalUnggah');
+        const detailResultAbstrak = document.getElementById('detailResultAbstrak');
+        const detailResultDownloadLink = document.getElementById('detailResultDownloadLink');
+
+
+        // --- NOTIFICATION & CONFIRMATION ---
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notification-message');
+        const confirmationModal = document.getElementById('confirmation-modal');
+        let confirmCallback = null;
+
+        /**
+         * Displays a custom alert message to the user.
+         * @param {string} message - The message to display.
+         * @param {string} type - The type of alert ('info', 'success', 'error').
+         */
+        function showAlert(message, type = 'info') {
+            notificationMessage.textContent = message;
+            notification.className = 'fixed top-5 right-5 w-80 p-4 rounded-lg shadow-lg text-white z-50 transform translate-x-[150%] opacity-0'; // Reset classes
+            if (type === 'success') {
+                notification.classList.add('bg-green-500');
+            } else if (type === 'error') {
+                notification.classList.add('bg-red-500');
+            } else {
+                notification.classList.add('bg-pmii-darkblue');
+            }
+            notification.classList.remove('transform', 'translate-x-[150%]', 'opacity-0');
+            notification.classList.add('translate-x-0', 'opacity-100');
+            setTimeout(() => { notification.classList.add('transform', 'translate-x-[150%]', 'opacity-0'); }, 3000);
+        }
+
+        /**
+         * Shows a confirmation modal to the user.
+         * @param {string} title - The title of the confirmation dialog.
+         * @param {string} message - The message to display.
+         * @param {Function} callback - The function to execute if the user confirms.
+         */
+        function showConfirmation(title, message, callback) {
+            document.getElementById('confirmation-title').textContent = title;
+            document.getElementById('confirmation-message').textContent = message;
+            confirmCallback = callback;
+            confirmationModal.classList.remove('hidden');
+        }
+
+        document.getElementById('confirm-ok-btn').addEventListener('click', () => {
+            if (confirmCallback) confirmCallback();
+            confirmationModal.classList.add('hidden');
+        });
+        document.getElementById('confirm-cancel-btn').addEventListener('click', () => {
+            confirmationModal.classList.add('hidden');
+        });
+
+        // --- AUTH SIMULATION ---
+        /**
+         * Updates the UI based on the current authentication status.
+         */
+        function updateAuthUI() {
+            if (localStorage.getItem('isAdminLoggedIn') === 'true') {
+                isAdmin = true;
+                loggedInUserPage = JSON.parse(localStorage.getItem('loggedInUser'));
+                if (loggedInUserPage && ['komisariat', 'rayon', 'kader'].includes(loggedInUserPage.role)) {
+                    userRole = loggedInUserPage.role;
+                }
+            } else {
+                isAdmin = false;
+                loggedInUserPage = null;
+                userRole = 'public';
+            }
+
+            if (isAdmin) {
+                userInfo.textContent = `Halo, ${loggedInUserPage.nama || 'Admin'}`;
+                userInfo.classList.remove('hidden');
+                authHeader.textContent = 'Logout';
+                authHeader.classList.add('logout-active');
+                adminControls.forEach(el => el.style.display = 'inline-flex');
+            } else {
+                userInfo.classList.add('hidden');
+                authHeader.textContent = 'Login';
+                authHeader.classList.remove('logout-active');
+                adminControls.forEach(el => el.style.display = 'none');
+            }
+            renderBooks(); // Re-render to apply admin actions visibility
+        }
+
+        /**
+         * Handles the logout process for the current user.
+         * @param {Event} e - The event object.
+         */
+        function handlePageLogout(e) {
+            e.preventDefault();
+            localStorage.removeItem('isAdminLoggedIn');
+            localStorage.removeItem('loggedInUser');
+            isAdmin = false;
+            loggedInUserPage = null;
+            userRole = 'public';
+            updateAuthUI();
+            showAlert('Anda telah logout.', 'info', () => {
+                window.location.assign('login.html');
+            });
+        }
+        
+        // Ensure the authHeader listener is correctly set up (re-added for clarity)
+        authHeader.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (authHeader.textContent === 'Logout') {
+                handlePageLogout(e);
+            } else {
+                window.location.assign('login.html');
+            }
+        });
+
+        // Universal modal open/close functions (replicated from digilib.html for consistency)
+        /**
+         * Opens a modal by adding the 'active' class.
+         * @param {string} modalId - The ID of the modal element.
+         */
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if(modal) {
+                modal.classList.add('active');
+                console.log(`Modal ${modalId} dibuka.`); // Debug log
+            }
+        }
+
+        /**
+         * Closes a modal by removing the 'active' class.
+         * @param {string} modalId - The ID of the modal element.
+         */
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if(modal) {
+                modal.classList.remove('active');
+                console.log(`Modal ${modalId} ditutup.`); // Debug log
+            }
+        }
+
+        /**
+         * Displays a universal detail modal with information about a document.
+         * This function handles populating the modal with dynamic data and
+         * adjusting the download link visibility based on user role.
+         * @param {object} item - The document object containing details.
+         * @param {string} item.judul - The title of the document.
+         * @param {string} item.title - Alternative title (for prosiding, or naskah if judul is absent).
+         * @param {string} item.penulis - The author of the document.
+         * @param {string} item.author - Alternative author (for prosiding).
+         * @param {string} item.abstrak - The abstract/description of the document.
+         * @param {string} item.description - Alternative description (for prosiding).
+         * @param {string} item.type - The type of the document (e.g., 'makalah', 'buku', 'prosiding', 'naskah').
+         * @param {string} [item.rayon] - The rayon (for 'makalah' type).
+         * @param {string} [item.tanggalUnggah] - The upload date (for 'makalah' type).
+         * @param {number} [item.tahun] - The publication year (for 'buku' type).
+         * @param {string} [item.penerbit] - The publisher (for 'buku' type).
+         * @param {number} [item.year] - The year (for 'prosiding' type).
+         * @param {string} [item.period] - The historical period (for 'naskah' type).
+         * @param {string} [item.fileUrl] - The URL to download the file.
+         * @param {object} [item.file] - Object containing file name (e.g., { name: "filename.pdf" }).
+         * @param {string} [item.fileName] - The suggested file name for download.
+         */
+        function showUniversalDetailModal(item) {
+            detailResultJudul.textContent = item.judul || item.title || 'Tidak Diketahui';
+            detailResultPenulis.textContent = item.penulis || item.author || 'Tidak Diketahui';
+            detailResultAbstrak.textContent = item.abstrak || item.description || 'Tidak ada deskripsi.';
+
+            // Hide all optional fields by default
+            detailResultRayonContainer.classList.add('hidden');
+            detailResultTahunContainer.classList.add('hidden');
+            detailResultPenerbitContainer.classList.add('hidden');
+            detailResultPeriodeContainer.classList.add('hidden');
+            detailResultTanggalUnggahContainer.classList.add('hidden');
+
+            // Show relevant fields based on document type
+            if (item.type === 'makalah') {
+                if (item.rayon) { detailResultRayon.textContent = item.rayon; detailResultRayonContainer.classList.remove('hidden'); }
+                if (item.tanggalUnggah) { detailResultTanggalUnggah.textContent = new Date(item.tanggalUnggah).toLocaleDateString('id-ID'); detailResultTanggalUnggahContainer.classList.remove('hidden'); }
+            } else if (item.type === 'buku') {
+                if (item.tahun) { detailResultTahun.textContent = item.tahun; detailResultTahunContainer.classList.remove('hidden'); }
+                if (item.penerbit) { detailResultPenerbit.textContent = item.penerbit; detailResultPenerbitContainer.classList.remove('hidden'); }
+            } else if (item.type === 'prosiding') {
+                if (item.year) { detailResultTahun.textContent = item.year; detailResultTahunContainer.classList.remove('hidden'); } // Reusing Tahun for Year
+            } else if (item.type === 'naskah') {
+                if (item.period) { detailResultPeriode.textContent = item.period; detailResultPeriodeContainer.classList.remove('hidden'); }
+            }
+
+            // Handle download link based on login status
+            if (userRole === 'public') {
+                detailResultDownloadLink.removeAttribute('href');
+                detailResultDownloadLink.onclick = (e) => {
+                    e.preventDefault();
+                    closeModal('detailSearchResultModal');
+                    showAlert('Silakan login untuk mengunduh dokumen.', 'info', () => {
+                        window.location.assign('login.html');
+                    });
+                };
+                detailResultDownloadLink.classList.remove('hidden');
+            } else {
+                const downloadUrl = item.fileUrl || (item.file ? item.file.name : '#');
+                const downloadFileName = item.fileName || (item.file ? item.file.name : 'document');
+
+                detailResultDownloadLink.href = downloadUrl;
+                detailResultDownloadLink.download = downloadFileName;
+                detailResultDownloadLink.onclick = null; 
+                detailResultDownloadLink.classList.remove('hidden');
+
+                // Add file to recent history only if download is permitted (user is logged in)
+                addFileToHistory(item); 
+            }
+
+            openModal('detailSearchResultModal');
+        }
+
+        // --- File History Management (replicated from digilib.html for consistency) ---
+        /**
+         * Adds a file item to the recent files history in localStorage.
+         * @param {object} fileItem - The file object to add to history.
+         */
+        function addFileToHistory(fileItem) {
+            if (!fileItem || (!fileItem.fileUrl && !fileItem.fileName && !fileItem.file?.name)) {
+                console.warn("Attempted to add invalid fileItem to history:", fileItem);
+                return;
+            }
+            
+            const simplifiedItem = {
+                id: fileItem.id,
+                title: fileItem.judul || fileItem.title,
+                author: fileItem.penulis || fileItem.author,
+                type: fileItem.type,
+                fileUrl: fileItem.fileUrl || fileItem.file?.name,
+                fileName: fileItem.fileName || fileItem.file?.name
+            };
+
+            recentFiles = recentFiles.filter(item => !(item.id === simplifiedItem.id && item.type === simplifiedItem.type));
+            recentFiles.unshift(simplifiedItem);
+            
+            if (recentFiles.length > MAX_RECENT_FILES) {
+                recentFiles = recentFiles.slice(0, MAX_RECENT_FILES);
+            }
+            localStorage.setItem('recentFiles', JSON.stringify(recentFiles));
+            // No need to render recent files here, as this page doesn't display them.
+            // They will be rendered when digilib.html is loaded.
+        }
+
+        // --- DATA AGGREGATION (FROM LOCALSTORAGE) ---
+        /**
+         * Loads all aggregated digital library data from localStorage or uses dummy data if not found.
+         * This data is then filtered to populate the 'books' array specific to this page.
+         */
+        function loadAllDigilibData() {
+            // Dummy Data for testing (will be replaced with data from localStorage)
+            const dummyMakalahKader = [
+                { id: 1001, judul: "Peran PMII dalam Pembentukan Karakter Kader", penulis: "Mahbub Junaidi", rayon: "PMII Rayon Fakultas Ushuluddin", abstrak: "Makalah ini menganalisis peran PMII dalam membentuk karakter kader dan relevansinya di era modern, mencakup aspek spiritual, intelektual, dan sosial. ", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Makalah_PMII_Karakter.pdf", tanggalUnggah: "2024-01-10", status: "approved" },
+                { id: 1002, judul: "Pengembangan Dakwah di Era Digital", penulis: "Siti Aisyah", rayon: "PMII Rayon Fakultas Dakwah", abstrak: "Kajian tentang metode dakwah efektif di platform digital, menyoroti penggunaan media sosial dan aplikasi komunikasi untuk menyebarkan pesan Islam.", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Dakwah_Digital.pdf", tanggalUnggah: "2024-03-01", status: "approved" },
+                { id: 1003, judul: "Inovasi Pendidikan Islam Kontemporer", penulis: "Ali Topan", rayon: "PMII Rayon Fakultas Tarbiyah", abstrak: "Studi kasus inovasi kurikulum pendidikan Islam kontemporer, dengan fokus pada integrasi ilmu pengetahuan umum dan agama.", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Inovasi_Pendidikan.pdf", tanggalUnggah: "2024-05-20", status: "approved" },
+                { id: 1004, judul: "Kepemimpinan Profetik di Era Modern", penulis: "Imam Ghazali", rayon: "PMII Rayon Fakultas Syariah", abstrak: "Menganalisis relevansi kepemimpinan profetik dalam konteks modern, dengan studi kasus dari berbagai organisasi Islam dan non-Islam.", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Kepemimpinan_Profetik.pdf", tanggalUnggah: "2024-06-01", status: "approved" },
+            ];
+            const dummyBukuReferensi = [
+                { id: 2001, judul: "Sejarah Pergerakan Islam Global", penulis: "Prof. Dr. Sejarahwan", penerbit: "Penerbit Ilmu Jaya", tahun: 2018, ringkasan: "Buku komprehensif tentang sejarah pergerakan Islam di berbagai belahan dunia, dari masa klasik hingga kontemporer.", cover: "https://placehold.co/400x600/005c97/FFFFFF?text=Buku+1", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Sejarah_Islam.pdf", isbn: "978-602-00-0001-1" },
+                { id: 2002, judul: "Ekonomi Syariah dan Keuangan Islam", penulis: "Dr. Ekonom Syariah", penerbit: "Cahaya Ilmu Islam", tahun: 2022, ringkasan: "Analisis mendalam ekonomi syariah dan sistem keuangan Islam saat ini, termasuk studi perbandingan dengan sistem ekonomi konvensional.", cover: "https://placehold.co/400x600/fdd835/000000?text=Buku+2", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Ekonomi_Syariah.pdf", isbn: "978-602-00-0002-8" },
+                { id: 2003, judul: "Filsafat Pendidikan dalam Perspektif Islam", penulis: "Prof. Dr. Filsuf Pendidikan", penerbit: "Penerbit Mutiara Hikmah", tahun: 2015, ringkasan: "Mengungkap dasar-dasar filosofis pendidikan Islam, mengkaji tujuan, kurikulum, dan metode pembelajaran dari sudut pandang Islam.", cover: "https://placehold.co/400x600/333333/FFFFFF?text=Buku+3", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Filsafat_Pendidikan.pdf", isbn: "978-602-00-0003-5" },
+                { id: 2004, judul: "Sosiologi Perkotaan: Studi Kasus Masyarakat Muslim", penulis: "Dr. Sosiolog", penerbit: "Pustaka Kota", tahun: 2020, ringkasan: "Menjelajahi dinamika sosial dan budaya masyarakat perkotaan dengan fokus pada komunitas Muslim.", cover: "https://placehold.co/400x600/81c784/FFFFFF?text=Buku+4", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Sosiologi_Perkotaan.pdf", isbn: "978-602-00-0004-5" },
+                { id: 2005, judul: "Psikologi Islam: Pendekatan Modern", penulis: "Prof. Dr. Psikolog Muslim", penerbit: "Kalam Hidup", tahun: 2019, ringkasan: "Mengkaji prinsip-prinsip psikologi dari sudut pandang Islam dan relevansinya dengan tantangan kontemporer.", cover: "https://placehold.co/400x600/d81b60/FFFFFF?text=Buku+5", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Psikologi_Islam.pdf", isbn: "978-602-00-0005-2" },
+                { id: 2006, judul: "Manajemen Organisasi Nirlaba Islam", penulis: "M. Nurul Islam", penerbit: "Manajemen Syariah", tahun: 2021, ringkasan: "Panduan praktis untuk pengelolaan organisasi nirlaba yang berlandaskan prinsip-prinsip Islam.", cover: "https://placehold.co/400x600/42a5f5/FFFFFF?text=Buku+6", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Manajemen_Nirlaba.pdf", isbn: "978-602-00-0006-9" },
+                { id: 2007, judul: "Pemikiran Politik Islam Abad Pertengahan", penulis: "Azyumardi Azra", penerbit: "Filsafat Politik", tahun: 2017, ringkasan: "Menganalisis pemikiran politik para cendekiawan Muslim terkemuka di era abad pertengahan.", cover: "https://placehold.co/400x600/ab47bc/FFFFFF?text=Buku+7", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Pemikiran_Politik_Islam.pdf", isbn: "978-602-00-0007-6" },
+                { id: 2008, judul: "Sastra Islam Kontemporer", penulis: "Prof. Dr. Sastrawan", penerbit: "Dunia Pustaka", tahun: 2016, ringkasan: "Kumpulan esai dan analisis tentang perkembangan sastra Islam modern dan pengaruhnya.", cover: "https://placehold.co/400x600/ff7043/FFFFFF?text=Buku+8", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Sastra_Islam.pdf", isbn: "978-602-00-0008-3" },
+                { id: 2009, judul: "Tafsir Al-Qur'an Tematik", penulis: "Prof. Dr. Mufassir", penerbit: "Tafsir Nusantara", tahun: 2023, ringkasan: "Pendekatan tafsir Al-Qur'an berdasarkan tema-tema relevan untuk kehidupan modern.", cover: "https://placehold.co/400x600/26a69a/FFFFFF?text=Buku+9", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Tafsir_Tematik.pdf", isbn: "978-602-00-0009-0" },
+                { id: 2010, judul: "Hadis dan Isu-isu Kontemporer", penulis: "Dr. Muhaddits", penerbit: "Hadis Modern", tahun: 2022, ringkasan: "Mengkaji hadis-hadis Nabi Muhammad SAW dalam konteks isu-isu sosial dan etika modern.", cover: "https://placehold.co/400x600/ffee58/000000?text=Buku+10", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Hadis_Kontemporer.pdf", isbn: "978-602-00-0010-6" }
+            ];
+            const dummyProsidingSeminar = [
+                { id: 3001, title: "Revolusi Industri 4.0: Tantangan dan Peluang Umat", year: 2023, file: { name: "Prosiding_RI40.pdf" }, fileUrl: "https://www.africau.edu/images/default/sample.pdf", description: "Prosiding dari seminar nasional yang membahas dampak Revolusi Industri 4.0 terhadap masyarakat, ekonomi, dan pendidikan umat Islam. Termasuk rekomendasi kebijakan.", author: "Berbagai Penulis" },
+                { id: 3002, title: "Peran Mahasiswa dalam Penguatan Demokrasi di Indonesia", year: 2022, file: { name: "Prosiding_Demokrasi.pdf" }, fileUrl: "https://www.africau.edu/images/default/sample.pdf", description: "Kumpulan makalah dari seminar tentang kontribusi aktif mahasiswa dalam menjaga dan memperkuat nilai-nilai demokrasi di Indonesia, mencakup isu-isu politik dan sosial.", author: "Berbagai Penulis" },
+            ];
+            const dummyNaskahSejarah = [
+                { id: 4001, judul: "Manuskrip Asli Pendirian PMII: Sebuah Analisis Historis", penulis: "Tim Sejarawan PMII", period: "1960-1965", deskripsi: "Naskah asli yang mencatat proses awal pendirian PMII, termasuk diskusi-diskusi internal, tantangan eksternal, dan visi awal organisasi. Dokumen penting untuk memahami akar pergerakan.", file: { name: "Manuskrip_PMII_Awal.pdf" }, fileUrl: "https://www.africau.edu/images/default/sample.pdf" },
+                { id: 4002, judul: "Catatan Sejarah Konferensi Cabang PMII Bandung 1980", penulis: "Arsip PMII Cabang Bandung", period: "1980", deskripsi: "Dokumen internal berisi catatan penting dan risalah lengkap konferensi cabang PMII di Bandung pada tahun 1980, mencakup keputusan strategis dan dinamika kepengurusan saat itu.", file: { name: "Konferensi_Bandung_1980.pdf" }, fileUrl: "https://www.africau.edu/images/default/sample.pdf" },
+            ];
+
+            // Prioritize data from localStorage if available
+            const storedMakalahKader = JSON.parse(localStorage.getItem('makalahKaderData')) || dummyMakalahKader;
+            const storedBukuReferensi = JSON.parse(localStorage.getItem('bukuReferensi')) || dummyBukuReferensi;
+            const storedProsidingData = JSON.parse(localStorage.getItem('proceedingData')) || dummyProsidingSeminar;
+            const storedNaskahSejarah = JSON.parse(localStorage.getItem('naskahSejarah')) || dummyNaskahSejarah;
+
+            allDigilibItems = []; // Clear previous aggregated data
+
+            storedMakalahKader.forEach(item => {
+                if (item.status === 'approved') {
+                    allDigilibItems.push({ ...item, id: parseInt(item.id), type: 'makalah', searchKeywords: `${item.judul} ${item.penulis} ${item.rayon} ${item.abstrak}` });
+                }
+            });
+
+            storedBukuReferensi.forEach(item => {
+                allDigilibItems.push({ 
+                    id: parseInt(item.id), judul: item.judul, penulis: item.penulis, penerbit: item.penerbit, tahun: item.tahun, isbn: item.isbn,
+                    abstrak: item.ringkasan, type: 'buku', cover: item.cover,
+                    searchKeywords: `${item.judul} ${item.penulis} ${item.penerbit} ${item.ringkasan} ${item.isbn}`,
+                    fileUrl: item.fileUrl || item.linkEksternal, fileName: item.fileName 
+                });
+            });
+
+            storedProsidingData.forEach(item => {
+                allDigilibItems.push({ 
+                    id: parseInt(item.id), title: item.title, year: item.year, 
+                    description: item.description, type: 'prosiding', author: item.author,
+                    searchKeywords: `${item.title} ${item.year} ${item.file?.name || ''}`,
+                    fileUrl: item.fileUrl || item.file?.name, fileName: item.file?.name
+                });
+            });
+
+            storedNaskahSejarah.forEach(item => {
+                allDigilibItems.push({ 
+                    id: parseInt(item.id), judul: item.judul, penulis: item.penulis, 
+                    deskripsi: item.deskripsi, period: item.period, type: 'naskah', 
+                    searchKeywords: `${item.judul} ${item.penulis} ${item.deskripsi} ${item.period} ${item.file?.name || ''}`,
+                    fileUrl: item.fileUrl || item.file?.name, fileName: item.file?.name
+                });
+            });
+            
+            // Filter only 'buku' type for this page's display
+            books = allDigilibItems.filter(item => item.type === 'buku');
+            console.log("Buku Referensi yang Dimuat:", books);
+        }
+        
+        // --- UI LOGIC ---
+        /**
+         * Renders the list of books based on the search input.
+         */
+        function renderBooks() {
+            const query = searchInput.value.toLowerCase();
+            const filteredBooks = books.filter(book => 
+                (book.judul && book.judul.toLowerCase().includes(query)) ||
+                (book.title && book.title.toLowerCase().includes(query)) ||
+                (book.penulis && book.penulis.toLowerCase().includes(query)) ||
+                (book.author && book.author.toLowerCase().includes(query)) ||
+                (book.ringkasan && book.ringkasan.toLowerCase().includes(query)) ||
+                (book.abstrak && book.abstrak.toLowerCase().includes(query)) ||
+                (book.penerbit && book.penerbit.toLowerCase().includes(query)) ||
+                (book.isbn && book.isbn.toLowerCase().includes(query))
+            );
+
+            bookGrid.innerHTML = '';
+            if (filteredBooks.length === 0) {
+                noDataMessage.classList.remove('hidden');
+                noDataMessage.textContent = query ? 'Tidak ada buku yang cocok.' : 'Belum ada data buku.';
+            } else {
+                noDataMessage.classList.add('hidden');
+                filteredBooks.forEach(book => {
+                    const card = document.createElement('div');
+                    card.className = 'book-card';
+                    card.setAttribute('data-id', book.id); // Add data-id
+                    card.setAttribute('data-type', book.type); // Add data-type
+                    
+                    card.innerHTML = `
+                        <div class="cover-image" style="background-image: url('${book.cover || 'https://placehold.co/400x600/e0e0e0/9e9e9e?text=No+Cover'}')"
+                             onerror="this.style.backgroundImage='url(https://placehold.co/400x600/e0e0e0/9e9e9e?text=Error)'">
+                            ${!book.cover ? '<i class="fas fa-book-open fa-3x"></i>' : ''}
+                        </div>
+                        <div class="card-content">
+                            <h3 class="book-title">${book.judul || book.title}</h3>
+                            <p class="book-author">${book.penulis || book.author}</p>
+                            <div class="action-buttons">
+                                <button class="btn-modern btn-outline-modern view-detail-btn" data-id="${book.id}" data-type="${book.type}">
+                                    Lihat Detail
+                                </button>
+                            </div>
+                        </div>
+                        <div class="admin-actions p-3 text-right">
+                             <button data-action="edit" data-id="${book.id}" class="text-yellow-600 hover:text-yellow-800 mr-3" title="Edit"><i class="fas fa-edit"></i></button>
+                             <button data-action="delete" data-id="${book.id}" class="text-red-600 hover:text-red-800" title="Hapus"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    bookGrid.appendChild(card);
+                });
+
+                // Add event listeners for the "Lihat Detail" buttons
+                bookGrid.querySelectorAll('.view-detail-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent card click event from firing
+                        const itemId = parseInt(e.currentTarget.dataset.id);
+                        const itemType = e.currentTarget.dataset.type;
+                        const foundItem = allDigilibItems.find(item => item.id === itemId && item.type === itemType);
+                        if (foundItem) {
+                            showUniversalDetailModal(foundItem);
+                        } else {
+                            showAlert('Detail buku tidak ditemukan.', 'error');
+                        }
+                    });
+                });
+            }
+            
+            if (isAdmin) {
+                bookGrid.querySelectorAll('.admin-actions').forEach(el => el.style.display = 'block');
+            } else {
+                bookGrid.querySelectorAll('.admin-actions').forEach(el => el.style.display = 'none');
+            }
+        }
+        
+        // --- FILE HANDLING ---
+        /**
+         * Reads a file as a Base64 encoded string.
+         * @param {File} file - The file to read.
+         * @returns {Promise<string>} A promise that resolves with the Base64 string.
+         */
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = (error) => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        coverUploadInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) { // 2MB limit
+                    showAlert('Ukuran file terlalu besar. Maksimal 2MB.', 'error');
+                    coverUploadInput.value = ''; // Reset input
+                    stagedCoverBase64 = null;
+                    coverPreview.src = 'https://placehold.co/100x150/e0e0e0/9e9e9e?text=Preview';
+                    return;
+                }
+                try {
+                    stagedCoverBase64 = await readFileAsBase64(file);
+                    coverPreview.src = stagedCoverBase64;
+                } catch (error) {
+                    console.error("Error reading cover file:", error);
+                    showAlert("Gagal memuat pratinjau sampul.", "error");
+                    stagedCoverBase64 = null;
+                    coverPreview.src = 'https://placehold.co/100x150/e0e0e0/9e9e9e?text=Preview';
+                }
+            } else {
+                stagedCoverBase64 = null;
+                coverPreview.src = 'https://placehold.co/100x150/e0e0e0/9e9e9e?text=Preview';
+            }
+        });
+
+
+        // --- CRUD SIMULATION ---
+        /**
+         * Handles the form submission for adding or editing book data.
+         * @param {Event} e - The event object.
+         */
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Menyimpan...';
+
+            const id = docIdInput.value ? parseInt(docIdInput.value) : null;
+            
+            const bookData = {
+                judul: document.getElementById('judul').value,
+                penulis: document.getElementById('penulis').value,
+                penerbit: document.getElementById('penerbit').value,
+                tahun: parseInt(document.getElementById('tahun').value),
+                isbn: document.getElementById('isbn').value,
+                ringkasan: document.getElementById('ringkasan').value,
+                linkEksternal: document.getElementById('linkEksternal').value,
+                cover: stagedCoverBase64 || coverPreview.src, // Use staged or existing preview
+                type: 'buku' // Explicitly set type for books
+            };
+
+            if (id) {
+                const index = books.findIndex(b => b.id === id);
+                if (index !== -1) {
+                    // Retain old cover if no new file is staged and it's not the default preview
+                    if (!stagedCoverBase64 && bookData.cover === 'https://placehold.co/100x150/e0e0e0/9e9e9e?text=Preview') {
+                        bookData.cover = books[index].cover;
+                    }
+                    books[index] = { ...books[index], ...bookData };
+                    showAlert('Buku berhasil diperbarui!', 'success');
+                }
+            } else {
+                // For new books, ensure a cover is selected or default is used
+                if (!stagedCoverBase64 && bookData.cover === 'https://placehold.co/100x150/e0e0e0/9e9e9e?text=Preview') {
+                    showAlert('Mohon unggah sampul buku.', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Simpan';
+                    return;
+                }
+                bookData.id = Date.now(); // Generate unique ID
+                books.unshift(bookData);
+                showAlert('Buku baru berhasil ditambahkan!', 'success');
+            }
+            
+            updateAllDigilibItemsAndLocalStorage();
+            renderBooks();
+            closeModal('data-modal');
+            
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Simpan';
+        }
+
+        /**
+         * Updates the 'bukuReferensi' data in localStorage and reloads all aggregated data.
+         */
+        function updateAllDigilibItemsAndLocalStorage() {
+            localStorage.setItem('bukuReferensi', JSON.stringify(books.map(item => {
+                // For localStorage, convert the simulated file URLs back to the format expected
+                // or simply store the base64 string.
+                // If cover is a data URL (base64), store it. Otherwise, if it's a placeholder, keep it.
+                const storedCover = item.cover.startsWith('data:') ? item.cover : (item.cover.includes('placehold.co') ? item.cover : null);
+                return {
+                    id: item.id,
+                    judul: item.judul,
+                    penulis: item.penulis,
+                    penerbit: item.penerbit,
+                    tahun: item.tahun,
+                    isbn: item.isbn,
+                    ringkasan: item.ringkasan,
+                    linkEksternal: item.linkEksternal,
+                    cover: storedCover,
+                    type: item.type, // Ensure type is stored
+                    fileUrl: item.fileUrl, // Ensure fileUrl is stored
+                    fileName: item.fileName // Ensure fileName is stored
+                };
+            })));
+            loadAllDigilibData(); // Reload all data to ensure allDigilibItems is up-to-date
+        }
+
+        // --- MODAL & EVENT LISTENERS ---
+        /**
+         * Opens the data entry modal for adding or editing a book.
+         * @param {object|null} book - The book object to edit, or null for a new entry.
+         */
+        function openDataModal(book = null) { // Renamed to avoid conflict with universal openModal
+            dataForm.reset();
+            coverPreview.src = 'https://placehold.co/100x150/e0e0e0/9e9e9e?text=Preview'; // Reset preview
+            stagedCoverBase64 = null; // Clear staged file
+
+            if (book) {
+                document.getElementById('modal-title').textContent = 'Edit Buku';
+                docIdInput.value = book.id;
+                document.getElementById('judul').value = book.judul || book.title;
+                document.getElementById('penulis').value = book.penulis || book.author;
+                document.getElementById('penerbit').value = book.penerbit;
+                document.getElementById('tahun').value = book.tahun;
+                document.getElementById('isbn').value = book.isbn;
+                document.getElementById('ringkasan').value = book.ringkasan || book.abstrak;
+                document.getElementById('linkEksternal').value = book.linkEksternal || book.fileUrl; // Use linkEksternal or fileUrl
+                if(book.cover) coverPreview.src = book.cover;
+            } else {
+                document.getElementById('modal-title').textContent = 'Tambah Buku Baru';
+                docIdInput.value = '';
+            }
+            dataModal.classList.remove('hidden');
+        }
+
+        authHeader.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (authHeader.textContent === 'Logout') {
+                handlePageLogout(e);
+            } else {
+                window.location.assign('login.html');
+            }
+        });
+
+        document.getElementById('add-data-btn').addEventListener('click', () => openDataModal()); // Call openDataModal
+        document.getElementById('close-modal-btn').addEventListener('click', () => closeModal('data-modal')); // Pass modal ID
+        document.getElementById('cancel-btn').addEventListener('click', () => closeModal('data-modal')); // Pass modal ID
+        dataForm.addEventListener('submit', handleFormSubmit);
+        searchInput.addEventListener('input', renderBooks);
+        
+        bookGrid.addEventListener('click', (e) => {
+            const button = e.target.closest('button[data-action]');
+            if (button) { // Handle admin actions (edit/delete)
+                const action = button.dataset.action;
+                const id = parseInt(button.dataset.id);
+                
+                if (action === 'edit') {
+                    const bookToEdit = books.find(b => b.id === id);
+                    if (bookToEdit) openDataModal(bookToEdit);
+                    else showAlert('Buku tidak ditemukan untuk diedit.', 'error');
+                } else if (action === 'delete') {
+                    showConfirmation('Hapus Buku', 'Apakah Anda yakin ingin menghapus buku ini?', () => {
+                        books = books.filter(b => b.id !== id);
+                        updateAllDigilibItemsAndLocalStorage(); // Update localStorage after deletion
+                        renderBooks();
+                        showAlert('Buku berhasil dihapus.', 'success');
+                    });
+                }
+            } else { // Handle click on the card itself to view details (if not an admin action button)
+                const card = e.target.closest('.book-card');
+                if (card) {
+                    const itemId = parseInt(card.dataset.id);
+                    const itemType = card.dataset.type;
+                    const foundItem = allDigilibItems.find(item => item.id === itemId && item.type === itemType);
+                    if (foundItem) {
+                        showUniversalDetailModal(foundItem);
+                    } else {
+                        showAlert('Detail buku tidak ditemukan.', 'error');
+                    }
+                }
+            }
+        });
+
+        // --- INITIALIZATION ---
+        (function initialize() {
+            document.getElementById('footer-year').textContent = new Date().getFullYear();
+            loadAllDigilibData(); // Load all aggregated data on init
+            updateAuthUI(); // This will also call renderBooks
+        })();
+    });
+</script>
+
+</body>
+</html>

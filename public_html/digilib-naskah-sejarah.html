@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perpustakaan Digital - Naskah Sejarah</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Poppins & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pmii-blue: #005c97;
+            --pmii-darkblue: #004a7c;
+            --pmii-yellow: #fdd835;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --background-page: #f3f4f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --success-color: #22c55e; /* For approved status */
+        }
+        body {
+            font-family: 'Poppins', 'Inter', sans-serif;
+            background-color: var(--background-page);
+            color: var(--text-primary);
+        }
+        .internal-header { background-color: white; box-shadow: var(--shadow-md); border-bottom: 1px solid var(--border-color); }
+        .logo-text { color: var(--pmii-blue); }
+        #auth-info-header { background-color: var(--pmii-blue); color: white; padding: 0.6rem 1.2rem; border-radius: 0.5rem; transition: all 0.25s; font-weight: 500; }
+        #auth-info-header:hover { background-color: var(--pmii-darkblue); transform: translateY(-2px); }
+        #auth-info-header.logout-active { background-color: #ef4444 !important; }
+        #auth-info-header.logout-active:hover { background-color: #dc2626 !important; }
+        .page-title { color: var(--pmii-darkblue); font-weight: 800; }
+        .btn { padding: 0.6rem 1.25rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.9rem; transition: all 0.25s; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; box-shadow: var(--shadow-sm); }
+        .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .btn-primary { background-color: var(--pmii-blue); color: white; }
+        .btn-primary:hover:not(:disabled) { background-color: var(--pmii-darkblue); }
+        .btn-success { background-color: #22c55e; color: white; }
+        .btn-success:hover { background-color: #16a34a; }
+        .btn-danger { background-color: #ef4444; color: white; }
+        .btn-danger:hover { background-color: #dc2626; }
+        .btn-outline { background-color: transparent; color: var(--text-secondary); border: 1px solid var(--border-color); }
+        .btn-outline:hover { background-color: var(--background-page); }
+
+        /* History Item Styling */
+        .history-item {
+            background-color: white;
+            border-left: 4px solid var(--pmii-yellow);
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-left-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 1.25rem;
+        }
+        .history-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-lg);
+            border-left-color: var(--pmii-blue);
+        }
+        .history-item .icon-wrapper {
+            flex-shrink: 0;
+            width: 50px;
+            height: 50px;
+            background-color: #f3f4f6;
+            color: var(--pmii-darkblue);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-right: 1.25rem;
+        }
+        .history-item .item-content { flex-grow: 1; }
+        .history-item .item-title { font-weight: 600; color: var(--text-primary); }
+        .history-item .item-period { font-size: 0.875rem; color: var(--text-muted); font-style: italic; }
+        .history-item .admin-actions { display: none; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-lg);
+            max-width: 500px;
+            width: 90%;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--pmii-darkblue);
+        }
+
+        .modal-body {
+            line-height: 1.6;
+        }
+
+        .modal-body p {
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            padding-top: 1rem;
+            margin-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+        /* Custom Message Box Styles */
+        #customMessageBox {
+            background-color: #333;
+            color: white;
+            min-width: 250px;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+            right: 1rem; /* Adjust position */
+            top: 1rem; /* Adjust position */
+            z-index: 9999;
+        }
+        #customMessageBox.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        #customMessageBox.info {
+            background-color: #2196F3; /* Blue for info */
+        }
+        #customMessageBox.success {
+            background-color: #4CAF50; /* Green for success */
+        }
+        #customMessageBox.error {
+            background-color: #f44336; /* Red for error */
+        }
+
+        .admin-controls { display: none; }
+        #notification { transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out; }
+
+        /* General button style from digilib.html for consistency */
+        .btn-modern {
+            padding: 0.75rem 1.5rem; 
+            border-radius: 0.5rem; 
+            font-weight: 600;
+            font-size: 0.875rem; 
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+            display: inline-flex; align-items: center; justify-content: center; 
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-modern:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: var(--shadow-md);
+        }
+        .btn-modern:active {
+            transform: translateY(0px) scale(0.98);
+        }
+        .btn-primary-pmii { 
+            background-color: var(--pmii-blue); color: white;
+        }
+        .btn-primary-pmii:hover { background-color: var(--pmii-darkblue); }
+        .btn-outline-modern {
+            background-color: transparent;
+            color: var(--pmii-darkblue);
+            border: 1px solid var(--pmii-blue);
+        }
+        .btn-outline-modern:hover {
+            background-color: var(--pmii-blue);
+            color: white;
+            border-color: var(--pmii-blue);
+        }
+
+    </style>
+</head>
+<body>
+    
+    <!-- UI Elements: Notification, Confirmation Modal -->
+    <div id="notification" class="fixed top-5 right-5 w-80 p-4 rounded-lg shadow-lg bg-pmii-darkblue text-white z-50 transform translate-x-[150%] opacity-0"><p id="notification-message">Ini adalah pesan notifikasi!</p></div>
+    <div id="confirmation-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden"><div class="bg-white rounded-lg shadow-xl w-full max-w-sm"><div class="p-5 text-center"><i class="fas fa-exclamation-triangle text-4xl text-yellow-500 mb-4"></i><h3 id="confirmation-title" class="text-lg font-semibold text-text-primary">Konfirmasi</h3><p id="confirmation-message" class="text-sm text-text-secondary mt-2 mb-6">Apakah Anda yakin?</p></div><div class="flex justify-center items-center p-4 bg-gray-50 border-t"><button id="confirm-cancel-btn" class="btn btn-outline mr-3">Batal</button><button id="confirm-ok-btn" class="btn btn-danger">Yakin</button></div></div></div>
+
+    <!-- Header -->
+    <header class="internal-header py-3 sticky top-0 z-40">
+        <div class="container mx-auto px-4 lg:px-8 flex justify-between items-center">
+            <a href="digilib.html" class="flex items-center space-x-2.5">
+                <img src="https://placehold.co/100x100/005c97/FFFFFF?text=P" alt="Logo PMII" class="h-9 w-9 rounded-full">
+                <span class="text-sm md:text-base font-semibold logo-text">Perpustakaan Digital PMII</span>
+            </a>
+            <div class="flex items-center space-x-3 md:space-x-4">
+                <span id="user-info" class="text-xs sm:text-sm font-medium hidden"></span>
+                <a href="#" id="auth-info-header" class="btn btn-primary text-xs sm:text-sm">Login</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 lg:py-12">
+        <div id="history-list-view">
+            <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+                <div>
+                    <h1 class="text-3xl lg:text-4xl page-title">Naskah Sejarah</h1>
+                    <p class="text-md text-text-muted mt-2">Arsip dan naskah terkait sejarah pergerakan.</p>
+                </div>
+                <button id="add-data-btn" class="btn btn-primary admin-controls">
+                    <i class="fas fa-plus mr-2"></i> Tambah Naskah
+                </button>
+            </div>
+
+            <div class="mb-8 bg-white p-4 rounded-lg shadow-md">
+                <div class="relative">
+                    <input type="search" id="search-input" placeholder="Cari berdasarkan judul atau periode..." class="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <div class="absolute top-1/2 left-3 -translate-y-1/2"><i class="fas fa-search text-gray-400"></i></div>
+                </div>
+            </div>
+
+            <div id="history-list" class="space-y-4">
+                <!-- History items will be dynamically inserted here -->
+            </div>
+            <p id="no-data-message" class="text-center py-16 text-text-muted hidden">Belum ada data naskah sejarah.</p>
+        </div>
+    </main>
+
+    <!-- Modal for Adding/Editing Data -->
+    <div id="data-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden modal-overlay">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg modal-content transform scale-95">
+            <div class="flex justify-between items-center p-5 border-b">
+                <h3 id="modal-title" class="text-xl font-bold text-text-primary">Tambah Naskah Sejarah</h3>
+                <button id="close-modal-btn" class="text-gray-400 hover:text-gray-600">&times;</button>
+            </div>
+            <form id="data-form" class="p-5 space-y-4">
+                <input type="hidden" id="document-id">
+                <div>
+                    <label for="judul" class="block text-sm font-medium text-gray-700 mb-1">Judul Naskah</label>
+                    <input type="text" id="judul" name="judul" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
+                </div>
+                <div>
+                    <label for="periode" class="block text-sm font-medium text-gray-700 mb-1">Periode/Tahun</label>
+                    <input type="text" id="periode" name="periode" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Contoh: 1960-1970" required>
+                </div>
+                <div>
+                    <label for="deskripsi" class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Singkat</label>
+                    <textarea id="deskripsi" name="deskripsi" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">File Naskah</label>
+                    <div id="file-upload-area" class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
+                        <div class="space-y-1 text-center">
+                            <i class="fas fa-scroll fa-3x mx-auto text-gray-400"></i>
+                            <div class="flex text-sm text-gray-600 justify-center">
+                                <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500"><span>Unggah file</span><input id="file-upload" name="file-upload" type="file" class="sr-only" accept=".pdf,.doc,.docx,.jpg,.png"></label>
+                            </div>
+                            <p id="file-name-preview" class="text-xs text-gray-500">PDF, DOCX, JPG, PNG hingga 10MB</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end pt-4">
+                    <button type="button" id="cancel-btn" class="btn btn-outline mr-3">Batal</button>
+                    <button type="submit" id="submit-btn" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Showing Document Details (Universal Modal) -->
+    <div id="detailSearchResultModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="detailSearchResultTitle">Detail Dokumen</h3>
+                <button type="button" class="text-gray-400 hover:text-gray-600 text-xl" onclick="closeModal('detailSearchResultModal')">&times;</button>
+            </div>
+            <div class="modal-body text-sm text-text-secondary">
+                <p><strong>Judul:</strong> <span id="detailResultJudul" class="font-medium"></span></p>
+                <p><strong>Penulis:</strong> <span id="detailResultPenulis"></span></p>
+                <p id="detailResultRayonContainer" class="hidden"><strong>Rayon:</strong> <span id="detailResultRayon"></span></p>
+                <p id="detailResultTahunContainer" class="hidden"><strong>Tahun:</strong> <span id="detailResultTahun"></span></p>
+                <p id="detailResultPenerbitContainer" class="hidden"><strong>Penerbit:</strong> <span id="detailResultPenerbit"></span></p>
+                <p id="detailResultPeriodeContainer" class="hidden"><strong>Periode:</strong> <span id="detailResultPeriode"></span></p>
+                <p id="detailResultTanggalUnggahContainer" class="hidden"><strong>Tanggal Unggah:</strong> <span id="detailResultTanggalUnggah"></span></p>
+                <h4 class="font-semibold text-text-primary mt-4 mb-2">Abstrak/Deskripsi:</h4>
+                <p id="detailResultAbstrak"></p>
+                <div class="modal-footer justify-between">
+                    <a href="#" id="detailResultDownloadLink" target="_blank" class="btn-modern btn-outline-modern">
+                        <i class="fas fa-download mr-2"></i> Unduh File
+                    </a>
+                    <button type="button" class="btn-modern btn-outline-modern" onclick="closeModal('detailSearchResultModal')">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="bg-pmii-darkblue py-8 mt-16">
+        <div class="container mx-auto px-4 text-center text-gray-300">
+            <p class="text-sm">&copy; <span id="footer-year"></span> PK PMII UIN Sunan Gunung Djati. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+<script type="module">
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- STATE & MOCK DATA (SIMULATION) ---
+        let isAdmin = false;
+        let loggedInUserPage = null;
+        let userRole = 'public'; // 'public', 'kader', 'rayon', 'komisariat'
+        
+        // Data Histories will now be part of allDigilibItems
+        let histories = []; 
+        let allDigilibItems = []; // This will hold aggregated data from localStorage
+        const MAX_RECENT_FILES = 5;
+        let recentFiles = JSON.parse(localStorage.getItem('recentFiles')) || []; // Load recent files from localStorage
+
+        let stagedFile = null;
+
+        // --- DOM ELEMENTS ---
+        const userInfo = document.getElementById('user-info');
+        const authHeader = document.getElementById('auth-info-header');
+        const adminControls = document.querySelectorAll('.admin-controls');
+        const historyList = document.getElementById('history-list');
+        const noDataMessage = document.getElementById('no-data-message');
+        const searchInput = document.getElementById('search-input');
+        
+        const dataModal = document.getElementById('data-modal');
+        const dataForm = document.getElementById('data-form');
+        const docIdInput = document.getElementById('document-id');
+        const fileUploadInput = document.getElementById('file-upload');
+        const fileNamePreview = document.getElementById('file-name-preview');
+
+        // Elements for universal detail modal
+        const detailSearchResultModal = document.getElementById('detailSearchResultModal');
+        const detailResultJudul = document.getElementById('detailResultJudul');
+        const detailResultPenulis = document.getElementById('detailResultPenulis');
+        const detailResultRayonContainer = document.getElementById('detailResultRayonContainer');
+        const detailResultRayon = document.getElementById('detailResultRayon');
+        const detailResultTahunContainer = document.getElementById('detailResultTahunContainer');
+        const detailResultTahun = document.getElementById('detailResultTahun');
+        const detailResultPenerbitContainer = document.getElementById('detailResultPenerbitContainer');
+        const detailResultPenerbit = document.getElementById('detailResultPenerbit');
+        const detailResultPeriodeContainer = document.getElementById('detailResultPeriodeContainer');
+        const detailResultPeriode = document.getElementById('detailResultPeriode');
+        const detailResultTanggalUnggahContainer = document.getElementById('detailResultTanggalUnggahContainer');
+        const detailResultTanggalUnggah = document.getElementById('detailResultTanggalUnggah');
+        const detailResultAbstrak = document.getElementById('detailResultAbstrak');
+        const detailResultDownloadLink = document.getElementById('detailResultDownloadLink');
+
+
+        // --- UTILITY FUNCTIONS ---
+        const notification = document.getElementById('notification');
+        const notificationMessage = document.getElementById('notification-message');
+        const confirmationModal = document.getElementById('confirmation-modal');
+        let confirmCallback = null;
+
+        /**
+         * Displays a custom alert message to the user.
+         * @param {string} message - The message to display.
+         * @param {string} type - The type of alert ('info', 'success', 'error').
+         */
+        function showAlert(message, type = 'info') {
+            notificationMessage.textContent = message;
+            notification.className = 'fixed top-5 right-5 w-80 p-4 rounded-lg shadow-lg text-white z-50 transform translate-x-[150%] opacity-0'; // Reset classes
+            if (type === 'success') {
+                notification.classList.add('bg-green-500');
+            } else if (type === 'error') {
+                notification.classList.add('bg-red-500');
+            } else {
+                notification.classList.add('bg-pmii-darkblue');
+            }
+            notification.classList.remove('transform', 'translate-x-[150%]', 'opacity-0');
+            notification.classList.add('translate-x-0', 'opacity-100');
+            setTimeout(() => { notification.classList.add('transform', 'translate-x-[150%]', 'opacity-0'); }, 3000);
+        }
+
+        /**
+         * Shows a confirmation modal to the user.
+         * @param {string} title - The title of the confirmation dialog.
+         * @param {string} message - The message to display.
+         * @param {Function} callback - The function to execute if the user confirms.
+         */
+        function showConfirmation(title, message, callback) {
+            document.getElementById('confirmation-title').textContent = title;
+            document.getElementById('confirmation-message').textContent = message;
+            confirmCallback = callback;
+            confirmationModal.classList.remove('hidden');
+        }
+
+        document.getElementById('confirm-ok-btn').addEventListener('click', () => {
+            if (confirmCallback) confirmCallback();
+            confirmationModal.classList.add('hidden');
+        });
+        document.getElementById('confirm-cancel-btn').addEventListener('click', () => {
+            confirmationModal.classList.add('hidden');
+        });
+
+        // --- AUTH SIMULATION ---
+        /**
+         * Updates the UI based on the current authentication status.
+         */
+        function updateAuthUI() {
+            if (localStorage.getItem('isAdminLoggedIn') === 'true') {
+                isAdmin = true;
+                loggedInUserPage = JSON.parse(localStorage.getItem('loggedInUser'));
+                if (loggedInUserPage && ['komisariat', 'rayon', 'kader'].includes(loggedInUserPage.role)) {
+                    userRole = loggedInUserPage.role;
+                }
+            } else {
+                isAdmin = false;
+                loggedInUserPage = null;
+                userRole = 'public';
+            }
+
+            if (isAdmin) {
+                userInfo.textContent = `Halo, ${loggedInUserPage.nama || 'Admin'}`;
+                userInfo.classList.remove('hidden');
+                authHeader.textContent = 'Logout';
+                authHeader.classList.add('logout-active');
+                adminControls.forEach(el => el.style.display = 'inline-flex');
+            } else {
+                userInfo.classList.add('hidden');
+                authHeader.textContent = 'Login';
+                authHeader.classList.remove('logout-active');
+                adminControls.forEach(el => el.style.display = 'none');
+            }
+            renderHistories(); // Re-render to apply admin actions visibility
+        }
+
+        /**
+         * Handles the logout process for the current user.
+         * @param {Event} e - The event object.
+         */
+        function handlePageLogout(e) {
+            e.preventDefault();
+            localStorage.removeItem('isAdminLoggedIn');
+            localStorage.removeItem('loggedInUser');
+            isAdmin = false;
+            loggedInUserPage = null;
+            userRole = 'public';
+            updateAuthUI();
+            showAlert('Anda telah logout.', 'info', () => {
+                window.location.assign('login.html');
+            });
+        }
+        
+        // Ensure the authHeader listener is correctly set up (re-added for clarity)
+        authHeader.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (authHeader.textContent === 'Logout') {
+                handlePageLogout(e);
+            } else {
+                window.location.assign('login.html');
+            }
+        });
+
+        // Universal modal open/close functions (replicated from digilib.html for consistency)
+        /**
+         * Opens a modal by adding the 'active' class.
+         * @param {string} modalId - The ID of the modal element.
+         */
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if(modal) {
+                modal.classList.add('active');
+                console.log(`Modal ${modalId} dibuka.`); // Debug log
+            }
+        }
+
+        /**
+         * Closes a modal by removing the 'active' class.
+         * @param {string} modalId - The ID of the modal element.
+         */
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if(modal) {
+                modal.classList.remove('active');
+                console.log(`Modal ${modalId} ditutup.`); // Debug log
+            }
+        }
+
+        /**
+         * Displays a universal detail modal with information about a document.
+         * This function handles populating the modal with dynamic data and
+         * adjusting the download link visibility based on user role.
+         * @param {object} item - The document object containing details.
+         * @param {string} item.judul - The title of the document.
+         * @param {string} item.title - Alternative title (for prosiding, or naskah if judul is absent).
+         * @param {string} item.penulis - The author of the document.
+         * @param {string} item.author - Alternative author (for prosiding).
+         * @param {string} item.abstrak - The abstract/description of the document.
+         * @param {string} item.description - Alternative description (for prosiding).
+         * @param {string} item.type - The type of the document (e.g., 'makalah', 'buku', 'prosiding', 'naskah').
+         * @param {string} [item.rayon] - The rayon (for 'makalah' type).
+         * @param {string} [item.tanggalUnggah] - The upload date (for 'makalah' type).
+         * @param {number} [item.tahun] - The publication year (for 'buku' type).
+         * @param {string} [item.penerbit] - The publisher (for 'buku' type).
+         * @param {number} [item.year] - The year (for 'prosiding' type).
+         * @param {string} [item.period] - The historical period (for 'naskah' type).
+         * @param {string} [item.fileUrl] - The URL to download the file.
+         * @param {object} [item.file] - Object containing file name (e.g., { name: "filename.pdf" }).
+         * @param {string} [item.fileName] - The suggested file name for download.
+         */
+        function showUniversalDetailModal(item) {
+            detailResultJudul.textContent = item.judul || item.title || 'Tidak Diketahui';
+            detailResultPenulis.textContent = item.penulis || item.author || 'Tidak Diketahui';
+            detailResultAbstrak.textContent = item.abstrak || item.description || 'Tidak ada deskripsi.';
+
+            // Hide all optional fields by default
+            detailResultRayonContainer.classList.add('hidden');
+            detailResultTahunContainer.classList.add('hidden');
+            detailResultPenerbitContainer.classList.add('hidden');
+            detailResultPeriodeContainer.classList.add('hidden');
+            detailResultTanggalUnggahContainer.classList.add('hidden');
+
+            // Show relevant fields based on document type
+            if (item.type === 'makalah') {
+                if (item.rayon) { detailResultRayon.textContent = item.rayon; detailResultRayonContainer.classList.remove('hidden'); }
+                if (item.tanggalUnggah) { detailResultTanggalUnggah.textContent = new Date(item.tanggalUnggah).toLocaleDateString('id-ID'); detailResultTanggalUnggahContainer.classList.remove('hidden'); }
+            } else if (item.type === 'buku') {
+                if (item.tahun) { detailResultTahun.textContent = item.tahun; detailResultTahunContainer.classList.remove('hidden'); }
+                if (item.penerbit) { detailResultPenerbit.textContent = item.penerbit; detailResultPenerbitContainer.classList.remove('hidden'); }
+            } else if (item.type === 'prosiding') {
+                if (item.year) { detailResultTahun.textContent = item.year; detailResultTahunContainer.classList.remove('hidden'); } // Reusing Tahun for Year
+            } else if (item.type === 'naskah') { // Specific for Naskah Sejarah
+                if (item.period) { detailResultPeriode.textContent = item.period; detailResultPeriodeContainer.classList.remove('hidden'); }
+            }
+
+            // Handle download link based on login status
+            if (userRole === 'public') {
+                detailResultDownloadLink.removeAttribute('href');
+                detailResultDownloadLink.onclick = (e) => {
+                    e.preventDefault();
+                    closeModal('detailSearchResultModal');
+                    showAlert('Silakan login untuk mengunduh dokumen.', 'info', () => {
+                        window.location.assign('login.html');
+                    });
+                };
+                detailResultDownloadLink.classList.remove('hidden');
+            } else {
+                const downloadUrl = item.fileUrl || (item.file ? item.file.name : '#');
+                const downloadFileName = item.fileName || (item.file ? item.file.name : 'document');
+
+                detailResultDownloadLink.href = downloadUrl;
+                detailResultDownloadLink.download = downloadFileName;
+                detailResultDownloadLink.onclick = null; 
+                detailResultDownloadLink.classList.remove('hidden');
+
+                // Add file to recent history only if download is permitted (user is logged in)
+                addFileToHistory(item); 
+            }
+
+            openModal('detailSearchResultModal');
+        }
+
+        // --- File History Management (replicated from digilib.html for consistency) ---
+        /**
+         * Adds a file item to the recent files history in localStorage.
+         * @param {object} fileItem - The file object to add to history.
+         */
+        function addFileToHistory(fileItem) {
+            if (!fileItem || (!fileItem.fileUrl && !fileItem.fileName && !fileItem.file?.name)) {
+                console.warn("Attempted to add invalid fileItem to history:", fileItem);
+                return;
+            }
+            
+            const simplifiedItem = {
+                id: fileItem.id,
+                title: fileItem.judul || fileItem.title,
+                author: fileItem.penulis || fileItem.author,
+                type: fileItem.type,
+                fileUrl: fileItem.fileUrl || fileItem.file?.name,
+                fileName: fileItem.fileName || fileItem.file?.name
+            };
+
+            recentFiles = recentFiles.filter(item => !(item.id === simplifiedItem.id && item.type === simplifiedItem.type));
+            recentFiles.unshift(simplifiedItem);
+            
+            if (recentFiles.length > MAX_RECENT_FILES) {
+                recentFiles = recentFiles.slice(0, MAX_RECENT_FILES);
+            }
+            localStorage.setItem('recentFiles', JSON.stringify(recentFiles));
+            // No need to render recent files here, as this page doesn't display them.
+            // They will be rendered when digilib.html is loaded.
+        }
+
+        // --- DATA AGGREGATION (FROM LOCALSTORAGE) ---
+        /**
+         * Loads all aggregated digital library data from localStorage or uses dummy data if not found.
+         * This data is then filtered to populate the 'histories' array specific to this page.
+         */
+        function loadAllDigilibData() {
+            // Dummy Data for testing (will be replaced with data from localStorage)
+            // Note: These IDs are intentionally different from the dummy data in digilib.html
+            // to avoid ID conflicts if both sets of dummy data are in localStorage.
+            const dummyMakalahKader = [
+                { id: 1001, judul: "Peran PMII dalam Pembentukan Karakter Kader", penulis: "Mahbub Junaidi", rayon: "PMII Rayon Fakultas Ushuluddin", abstrak: "Makalah ini menganalisis peran PMII dalam membentuk karakter kader dan relevansinya di era modern, mencakup aspek spiritual, intelektual, dan sosial. ", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Makalah_PMII_Karakter.pdf", tanggalUnggah: "2024-01-10", status: "approved" },
+                { id: 1002, judul: "Pengembangan Dakwah di Era Digital", penulis: "Siti Aisyah", rayon: "PMII Rayon Fakultas Dakwah", abstrak: "Kajian tentang metode dakwah efektif di platform digital, menyoroti penggunaan media sosial dan aplikasi komunikasi untuk menyebarkan pesan Islam.", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Dakwah_Digital.pdf", tanggalUnggah: "2024-03-01", status: "approved" },
+                { id: 1003, judul: "Inovasi Pendidikan Islam Kontemporer", penulis: "Ali Topan", rayon: "PMII Rayon Fakultas Tarbiyah", abstrak: "Studi kasus inovasi kurikulum pendidikan Islam kontemporer, dengan fokus pada integrasi ilmu pengetahuan umum dan agama.", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Inovasi_Pendidikan.pdf", tanggalUnggah: "2024-05-20", status: "approved" },
+                { id: 1004, judul: "Kepemimpinan Profetik di Era Modern", penulis: "Imam Ghazali", rayon: "PMII Rayon Fakultas Syariah", abstrak: "Menganalisis relevansi kepemimpinan profetik dalam konteks modern, dengan studi kasus dari berbagai organisasi Islam dan non-Islam.", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Kepemimpinan_Profetik.pdf", tanggalUnggah: "2024-06-01", status: "approved" },
+            ];
+            const dummyBukuReferensi = [
+                { id: 2001, judul: "Sejarah Pergerakan Islam Global", penulis: "Prof. Dr. Sejarahwan", penerbit: "Penerbit Ilmu Jaya", tahun: 2018, ringkasan: "Buku komprehensif tentang sejarah pergerakan Islam di berbagai belahan dunia, dari masa klasik hingga kontemporer.", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Sejarah_Islam.pdf", isbn: "978-602-00-0001-1" },
+                { id: 2002, judul: "Ekonomi Syariah dan Keuangan Islam", penulis: "Dr. Ekonom Syariah", penerbit: "Cahaya Ilmu Islam", tahun: 2022, ringkasan: "Analisis mendalam ekonomi syariah dan sistem keuangan Islam saat ini, termasuk studi perbandingan dengan sistem ekonomi konvensional.", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Ekonomi_Syariah.pdf", isbn: "978-602-00-0002-8" },
+                { id: 2003, judul: "Filsafat Pendidikan dalam Perspektif Islam", penulis: "Prof. Dr. Filsuf Pendidikan", penerbit: "Penerbit Mutiara Hikmah", tahun: 2015, ringkasan: "Mengungkap dasar-dasar filosofis pendidikan Islam, mengkaji tujuan, kurikulum, dan metode pembelajaran dari sudut pandang Islam.", fileUrl: "https://www.africau.edu/images/default/sample.pdf", fileName: "Filsafat_Pendidikan.pdf", isbn: "978-602-00-0003-5" },
+            ];
+            const dummyProsidingSeminar = [
+                { id: 3001, title: "Revolusi Industri 4.0: Tantangan dan Peluang Umat", year: 2023, file: { name: "Prosiding_RI40.pdf" }, fileUrl: "https://www.africau.edu/images/default/sample.pdf", description: "Prosiding dari seminar nasional yang membahas dampak Revolusi Industri 4.0 terhadap masyarakat, ekonomi, dan pendidikan umat Islam. Termasuk rekomendasi kebijakan.", author: "Berbagai Penulis" },
+                { id: 3002, title: "Peran Mahasiswa dalam Penguatan Demokrasi di Indonesia", year: 2022, file: { name: "Prosiding_Demokrasi.pdf" }, fileUrl: "https://www.africau.edu/images/default/sample.pdf", description: "Kumpulan makalah dari seminar tentang kontribusi aktif mahasiswa dalam menjaga dan memperkuat nilai-nilai demokrasi di Indonesia, mencakup isu-isu politik dan sosial.", author: "Berbagai Penulis" },
+            ];
+            const dummyNaskahSejarah = [
+                { id: 4001, judul: "Manuskrip Asli Pendirian PMII: Sebuah Analisis Historis", penulis: "Tim Sejarawan PMII", period: "1960-1965", deskripsi: "Naskah asli yang mencatat proses awal pendirian PMII, termasuk diskusi-diskusi internal, tantangan eksternal, dan visi awal organisasi. Dokumen penting untuk memahami akar pergerakan.", file: { name: "Manuskrip_PMII_Awal.pdf" }, fileUrl: "https://www.africau.edu/images/default/sample.pdf" },
+                { id: 4002, judul: "Catatan Sejarah Konferensi Cabang PMII Bandung 1980", penulis: "Arsip PMII Cabang Bandung", period: "1980", deskripsi: "Dokumen internal berisi catatan penting dan risalah lengkap konferensi cabang PMII di Bandung pada tahun 1980, mencakup keputusan strategis dan dinamika kepengurusan saat itu.", file: { name: "Konferensi_Bandung_1980.pdf" }, fileUrl: "https://www.africau.edu/images/default/sample.pdf" },
+                { id: 4003, judul: "Biografi Singkat Tokoh-tokoh Pendiri PMII", penulis: "Tim Penulis Biografi", period: "1960-an", deskripsi: "Kumpulan biografi singkat tokoh-tokoh penting di balik pendirian PMII, menyoroti kontribusi, pemikiran, dan latar belakang mereka dalam membangun organisasi ini.", file: { name: "Biografi_Tokoh_PMII.pdf" }, fileUrl: "https://www.africau.edu/images/default/sample.pdf" },
+                { id: 4004, judul: "Evolusi Ideologi PMII: Dari Masa ke Masa", penulis: "Dr. Sejarah Ideologi", period: "1960-2000", deskripsi: "Analisis mendalam tentang evolusi ideologi PMII sepanjang sejarahnya, mulai dari awal pendirian hingga era reformasi, serta adaptasinya terhadap perubahan zaman.", file: {name: "Perkembangan_Ideologi_PMII.pdf"}, fileUrl: "https://www.africau.edu/images/default/sample.pdf" },
+                { id: 4005, judul: "Risalah Lengkap Kongres PMII VII (1991)", penulis: "Panitia Kongres PMII", period: "1991", deskripsi: "Dokumen komprehensif berisi risalah, keputusan, dan rekomendasi penting dari Kongres PMII ke-VII yang diselenggarakan pada tahun 1991. Sumber primer untuk studi organisasi.", file: {name: "Kongres_PMII_VII.pdf"}, fileUrl: "https://www.africau.edu/images/default/sample.pdf" },
+                { id: 4006, judul: "Piagam PMII: Teks Asli dan Interpretasi Resmi", penulis: "Tim Peneliti Hukum dan Sejarah", period: "1960", deskripsi: "Analisis mendalam terhadap piagam pendirian PMII, mencakup teks asli, latar belakang perumusannya, dan interpretasi resmi yang relevan hingga saat ini.", file: {name: "Piagam_PMII.pdf"}, fileUrl: "https://www.africau.edu/images/default/sample.pdf" },
+                { id: 4007, judul: "Perjuangan PMII pada Masa Orde Baru", penulis: "Prof. Dr. Sejarah Politik", period: "1966-1998", deskripsi: "Dokumentasi dan analisis perjuangan PMII selama rezim Orde Baru, menyoroti peran strategisnya dalam gerakan mahasiswa dan advokasi sosial politik.", file: { name: "PMII_Orde_Baru.pdf" }, fileUrl: "https://www.africau.edu/images/default/sample.pdf" },
+                { id: 4008, judul: "Peran PMII dalam Reformasi 1998", penulis: "Aktivis '98 dan Peneliti", period: "1998", deskripsi: "Kajian tentang kontribusi vital PMII dalam gerakan reformasi tahun 1998, termasuk peran kader dan aktivis dalam menuntut perubahan demokratis di Indonesia.", file: { name: "PMII_Reformasi_98.pdf" }, fileUrl: "https://www.africau.edu/images/default/sample.pdf" },
+                { id: 4009, judul: "Naskah Pidato Tokoh Penting PMII (Koleksi)", penulis: "Berbagai Tokoh PMII", period: "1960-2000", deskripsi: "Koleksi naskah pidato dari tokoh-tokoh sentral dalam sejarah PMII, menawarkan wawasan langsung tentang pemikiran dan arah pergerakan pada berbagai periode.", file: { name: "Pidato_Tokoh_PMII.pdf" }, fileUrl: "https://www.africau.edu/images/default/sample.pdf" },
+                { id: 4010, judul: "Dokumentasi Foto dan Video Sejarah PMII", penulis: "Divisi Dokumentasi PMII", period: "1960-an Hingga Kini", deskripsi: "Kumpulan dokumentasi visual (foto dan deskripsi video) yang merekam momen-momen penting dan aktivitas sejarah PMII dari masa ke masa.", file: { name: "Dokumentasi_Visual_PMII.pdf" }, fileUrl: "https://www.africau.edu/images/default/sample.pdf" },
+            ];
+
+
+            // Prioritize data from localStorage if available
+            const storedMakalahKader = JSON.parse(localStorage.getItem('makalahKaderData')) || dummyMakalahKader;
+            const storedBukuReferensi = JSON.parse(localStorage.getItem('bukuReferensi')) || dummyBukuReferensi;
+            const storedProsidingData = JSON.parse(localStorage.getItem('proceedingData')) || dummyProsidingSeminar;
+            const storedNaskahSejarah = JSON.parse(localStorage.getItem('naskahSejarah')) || dummyNaskahSejarah;
+
+            allDigilibItems = []; // Clear previous aggregated data
+
+            storedMakalahKader.forEach(item => {
+                if (item.status === 'approved') {
+                    allDigilibItems.push({ ...item, id: parseInt(item.id), type: 'makalah', searchKeywords: `${item.judul} ${item.penulis} ${item.rayon} ${item.abstrak}` });
+                }
+            });
+
+            storedBukuReferensi.forEach(item => {
+                allDigilibItems.push({ 
+                    id: parseInt(item.id), judul: item.judul, penulis: item.penulis, penerbit: item.penerbit, tahun: item.tahun,
+                    abstrak: item.ringkasan, type: 'buku', 
+                    searchKeywords: `${item.judul} ${item.penulis} ${item.penerbit} ${item.ringkasan} ${item.isbn}`,
+                    fileUrl: item.fileUrl || item.linkEksternal, fileName: item.fileName 
+                });
+            });
+
+            storedProsidingData.forEach(item => {
+                allDigilibItems.push({ 
+                    id: parseInt(item.id), title: item.title, year: item.year, 
+                    description: item.description, type: 'prosiding', 
+                    searchKeywords: `${item.title} ${item.year} ${item.file?.name || ''}`,
+                    fileUrl: item.fileUrl || item.file?.name, fileName: item.file?.name
+                });
+            });
+
+            storedNaskahSejarah.forEach(item => {
+                allDigilibItems.push({ 
+                    id: parseInt(item.id), judul: item.judul, penulis: item.penulis, 
+                    deskripsi: item.deskripsi, period: item.period, type: 'naskah', 
+                    searchKeywords: `${item.judul} ${item.penulis} ${item.deskripsi} ${item.period} ${item.file?.name || ''}`,
+                    fileUrl: item.fileUrl || item.file?.name, fileName: item.file?.name
+                });
+            });
+            
+            // Filter only 'naskah' type for this page's display
+            histories = allDigilibItems.filter(item => item.type === 'naskah');
+            console.log("Naskah Sejarah yang Dimuat:", histories);
+        }
+        
+        // --- UI LOGIC ---
+        /**
+         * Renders the list of history documents based on the search input.
+         */
+        function renderHistories() {
+            const query = searchInput.value.toLowerCase();
+            const filteredData = histories.filter(h => 
+                (h.judul && h.judul.toLowerCase().includes(query)) || 
+                (h.title && h.title.toLowerCase().includes(query)) ||
+                (h.period && h.period.toLowerCase().includes(query)) ||
+                (h.deskripsi && h.deskripsi.toLowerCase().includes(query)) ||
+                (h.description && h.description.toLowerCase().includes(query))
+            );
+
+            historyList.innerHTML = '';
+            if (filteredData.length === 0) {
+                noDataMessage.classList.remove('hidden');
+                noDataMessage.textContent = query ? 'Naskah tidak ditemukan.' : 'Belum ada data naskah sejarah.';
+            } else {
+                noDataMessage.classList.add('hidden');
+                filteredData.forEach(h => {
+                    const item = document.createElement('div');
+                    item.className = 'history-item';
+                    item.innerHTML = `
+                        <div class="icon-wrapper"><i class="fas fa-landmark"></i></div>
+                        <div class="item-content">
+                            <p class="item-title">${h.judul || h.title}</p>
+                            <p class="item-period">Periode: ${h.period}</p>
+                        </div>
+                        <div class="flex-shrink-0 ml-4">
+                            <button class="btn btn-success btn-sm view-detail-btn" data-id="${h.id}" data-type="${h.type}">
+                                <i class="fas fa-eye mr-2"></i>Lihat Detail
+                            </button>
+                        </div>
+                        <div class="admin-actions flex-shrink-0 ml-4 space-x-3">
+                             <button data-action="edit" data-id="${h.id}" class="text-yellow-600 hover:text-yellow-800" title="Edit"><i class="fas fa-edit"></i></button>
+                             <button data-action="delete" data-id="${h.id}" class="text-red-600 hover:text-red-800" title="Hapus"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `;
+                    historyList.appendChild(item);
+                });
+
+                // Attach event listeners for "Lihat Detail" buttons
+                historyList.querySelectorAll('.view-detail-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const itemId = parseInt(e.currentTarget.dataset.id);
+                        const itemType = e.currentTarget.dataset.type;
+                        console.log('Tombol detail diklik. ID:', itemId, 'Tipe:', itemType); // Debug log
+                        const foundItem = allDigilibItems.find(item => {
+                            console.log('Membandingkan:', item.id, item.type, 'dengan', itemId, itemType); // Debug log untuk perbandingan
+                            return item.id === itemId && item.type === itemType;
+                        });
+                        if (foundItem) {
+                            console.log('Item ditemukan:', foundItem); // Debug log
+                            showUniversalDetailModal(foundItem);
+                        } else {
+                            console.error('Item tidak ditemukan di allDigilibItems untuk modal detail:', itemId, itemType);
+                            showAlert('Dokumen tidak ditemukan.', 'error');
+                        }
+                    });
+                });
+            }
+            
+            if (isAdmin) {
+                historyList.querySelectorAll('.admin-actions').forEach(el => el.style.display = 'flex');
+            } else {
+                historyList.querySelectorAll('.admin-actions').forEach(el => el.style.display = 'none');
+            }
+        }
+        
+        // --- FILE HANDLING ---
+        /**
+         * Handles file input change, validating file size and staging the file.
+         * @param {Event} e - The event object.
+         */
+        fileUploadInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                    showAlert('Ukuran file terlalu besar. Maksimal 10MB.', 'error');
+                    fileUploadInput.value = '';
+                    stagedFile = null;
+                    fileNamePreview.textContent = 'PDF, DOCX, JPG, PNG hingga 10MB';
+                    return;
+                }
+                stagedFile = file;
+                fileNamePreview.textContent = file.name;
+            } else {
+                stagedFile = null;
+                fileNamePreview.textContent = 'PDF, DOCX, JPG, PNG hingga 10MB';
+            }
+        });
+
+        // --- CRUD SIMULATION ---
+        /**
+         * Handles the form submission for adding or editing history documents.
+         * @param {Event} e - The event object.
+         */
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const id = docIdInput.value ? parseInt(docIdInput.value) : null;
+            const historyData = {
+                judul: document.getElementById('judul').value, // Use judul for consistency with other data
+                period: document.getElementById('periode').value,
+                deskripsi: document.getElementById('deskripsi').value,
+                file: stagedFile ? { name: stagedFile.name } : null,
+                fileUrl: stagedFile ? URL.createObjectURL(stagedFile) : null, // Simulate file URL for download
+                type: 'naskah' // Explicitly set type for Naskah Sejarah
+            };
+
+            if (id) {
+                const index = histories.findIndex(h => h.id === id);
+                if (index !== -1) {
+                    if (!historyData.file) { // Keep existing file if new one is not uploaded
+                        historyData.file = histories[index].file;
+                        historyData.fileUrl = histories[index].fileUrl;
+                    }
+                    histories[index] = { ...histories[index], ...historyData };
+                    showAlert('Naskah berhasil diperbarui!', 'success');
+                }
+            } else {
+                if (!historyData.file) {
+                    showAlert('Mohon unggah file naskah.', 'error');
+                    return;
+                }
+                historyData.id = Date.now(); // Generate unique ID
+                histories.unshift(historyData);
+                showAlert('Naskah baru berhasil ditambahkan!', 'success');
+            }
+            
+            // Update allDigilibItems and localStorage to keep data consistent across pages
+            updateAllDigilibItemsAndLocalStorage();
+            renderHistories();
+            closeModal('data-modal'); // Close the data modal
+        }
+
+        /**
+         * Updates the 'naskahSejarah' data in localStorage and reloads all aggregated data.
+         */
+        function updateAllDigilibItemsAndLocalStorage() {
+            localStorage.setItem('naskahSejarah', JSON.stringify(histories.map(item => {
+                // Return a simplified item for localStorage to avoid circular references from URL.createObjectURL
+                const { fileUrl, ...rest } = item;
+                return rest;
+            })));
+            loadAllDigilibData(); // Reload all data to ensure allDigilibItems is up-to-date
+        }
+
+
+        // --- MODAL & EVENT LISTENERS ---
+        /**
+         * Opens the data entry modal for adding or editing a history document.
+         * @param {object|null} history - The history object to edit, or null for a new entry.
+         */
+        function openDataModal(history = null) { // Renamed from openModal to avoid conflict with universal openModal
+            dataForm.reset();
+            fileNamePreview.textContent = 'PDF, DOCX, JPG, PNG hingga 10MB';
+            stagedFile = null;
+
+            if (history) {
+                document.getElementById('modal-title').textContent = 'Edit Naskah Sejarah';
+                docIdInput.value = history.id;
+                document.getElementById('judul').value = history.judul || history.title; // Use judul or title
+                document.getElementById('periode').value = history.period;
+                document.getElementById('deskripsi').value = history.deskripsi || history.description;
+                if(history.file && history.file.name) fileNamePreview.textContent = `File saat ini: ${history.file.name}`;
+            } else {
+                document.getElementById('modal-title').textContent = 'Tambah Naskah Sejarah';
+                docIdInput.value = '';
+            }
+            dataModal.classList.remove('hidden');
+        }
+
+        // Event listeners
+        document.getElementById('add-data-btn').addEventListener('click', () => openDataModal()); // Call openDataModal
+        document.getElementById('close-modal-btn').addEventListener('click', () => closeModal('data-modal')); // Pass modal ID
+        document.getElementById('cancel-btn').addEventListener('click', () => closeModal('data-modal')); // Pass modal ID
+        dataForm.addEventListener('submit', handleFormSubmit);
+        searchInput.addEventListener('input', renderHistories);
+        
+        historyList.addEventListener('click', (e) => {
+            const button = e.target.closest('button[data-action]');
+            if (!button) return;
+
+            const action = button.dataset.action;
+            const id = parseInt(button.dataset.id); // Ensure ID is parsed as integer
+            
+            if (action === 'edit') {
+                const itemToEdit = histories.find(h => h.id === id);
+                if (itemToEdit) openDataModal(itemToEdit); // Call openDataModal
+                else showAlert('Item tidak ditemukan untuk diedit.', 'error');
+            } else if (action === 'delete') {
+                showConfirmation('Hapus Naskah', 'Apakah Anda yakin ingin menghapus data ini?', () => {
+                    histories = histories.filter(h => h.id !== id);
+                    updateAllDigilibItemsAndLocalStorage(); // Update localStorage after deletion
+                    renderHistories();
+                    showAlert('Data berhasil dihapus.', 'success');
+                });
+            }
+        });
+
+        // --- INITIALIZATION ---
+        (function initialize() {
+            document.getElementById('footer-year').textContent = new Date().getFullYear();
+            loadAllDigilibData(); // Load all aggregated data on init
+            updateAuthUI(); // This will also call renderHistories
+        })();
+    });
+</script>
+
+</body>
+</html>

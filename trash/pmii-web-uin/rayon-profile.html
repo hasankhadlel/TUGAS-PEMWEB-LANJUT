@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Rayon - Sistem Internal PMII</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Poppins & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Variabel CSS untuk skema warna PMII dan bayangan */
+        :root {
+            --pmii-blue: #005c97;
+            --pmii-darkblue: #004a7c;
+            --pmii-yellow: #fdd835;
+            --pmii-purple: #6A0DAD; /* Warna ungu baru */
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --background-page: #f3f4f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        body {
+            font-family: 'Poppins', 'Inter', sans-serif;
+            background-color: var(--background-page);
+            color: var(--text-primary);
+            line-height: 1.6;
+            display: flex; /* Untuk membuat footer lengket di bagian bawah */
+            flex-direction: column; /* Untuk membuat footer lengket di bagian bawah */
+            min-height: 100vh; /* Memastikan body minimal setinggi viewport */
+            overflow-x: hidden; /* Mencegah overflow horizontal */
+        }
+        .main-content-wrapper {
+            flex-grow: 1; /* Mendorong footer ke bagian bawah */
+        }
+        /* Header internal dengan bayangan dan sticky */
+        .internal-header { 
+            background-color: white; 
+            box-shadow: var(--shadow-md); 
+            border-bottom: 1px solid var(--border-color); 
+            position: sticky; 
+            top: 0; 
+            z-index: 40; 
+            transition: box-shadow 0.3s ease-in-out;
+        }
+        .logo-text { color: var(--pmii-blue); }
+        .page-title { 
+            color: white; /* Diubah menjadi putih */
+            font-weight: 800; 
+        }
+        
+        /* Gaya tombol umum yang ditingkatkan */
+        .btn { 
+            padding: 0.85rem 1.75rem; /* Padding sedikit lebih besar */
+            border-radius: 0.75rem; /* Sudut sedikit lebih membulat */
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex; align-items: center; justify-content: center;
+            cursor: pointer; text-decoration: none;
+            box-shadow: var(--shadow-md);
+            position: relative; /* Untuk efek glow */
+            overflow: hidden;
+            z-index: 1;
+        }
+        .btn::before { /* Efek glow pada tombol */
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.15); /* Cahaya putih */
+            border-radius: 50%;
+            transition: width 0.4s ease-out, height 0.4s ease-out, top 0.4s ease-out, left 0.4s ease-out;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+        .btn:hover::before {
+            width: 200%;
+            height: 200%;
+            top: 0;
+            left: 0;
+        }
+        .btn:hover { 
+             box-shadow: var(--shadow-xl); /* Bayangan lebih besar */
+             transform: translateY(-4px) scale(1.05); /* Mengangkat lebih tinggi dan membesar lebih banyak */
+        }
+        .btn:active {
+            transform: translateY(0px) scale(0.95); /* Sedikit lebih kecil saat aktif */
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-primary { 
+            background-color: var(--pmii-blue); 
+            color: white; 
+        }
+        .btn-primary:hover:not(:disabled) { 
+            background-color: var(--pmii-darkblue); 
+        }
+        
+        /* Gaya untuk bagian konten, meniru form-section */
+        .content-section-card {
+            background-color: white;
+            border-radius: 1.25rem; /* Sudut lebih membulat */
+            padding: 2.5rem; /* Padding lebih besar */
+            box-shadow: var(--shadow-lg); /* Bayangan lebih kuat */
+            /* Removed animated-section from here, now applies to parent div.rayon-profile-content directly */
+        }
+        .profile-img-display {
+            width: 160px; /* Sedikit lebih besar */
+            height: 160px; /* Sedikit lebih besar */
+            object-fit: cover; /* Changed to cover for image cropping */
+            border-radius: 50%;
+            border: 6px solid var(--pmii-yellow); /* Border lebih tebal */
+            margin-bottom: 1.75rem; /* Margin sedikit lebih besar */
+            box-shadow: var(--shadow-xl); /* Bayangan lebih kuat */
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.4s ease;
+        }
+        .profile-img-display:hover {
+            transform: scale(1.05); /* Membesar saat hover */
+            border-color: var(--pmii-darkblue);
+        }
+
+        /* New: Styling for info sections within the main card */
+        .info-section-card {
+            background-color: var(--background-light); /* Lighter background for sections */
+            border-radius: 1rem;
+            padding: 1.75rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem; /* Spacing between info sections */
+        }
+        .info-section-card h3 {
+            position: relative;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
+            color: var(--pmii-darkblue);
+        }
+        .info-section-card h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--pmii-yellow);
+            border-radius: 2px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: flex-start; /* Mengatur item agar rata atas */
+            margin-bottom: 1rem; /* Margin lebih besar */
+            color: var(--text-secondary);
+        }
+        .detail-item i {
+            color: var(--pmii-blue);
+            margin-right: 1rem; /* Margin lebih besar */
+            font-size: 1.25rem; /* Ukuran ikon lebih besar */
+            width: 24px; /* Lebar tetap untuk ikon */
+            text-align: center;
+            flex-shrink: 0; /* Mencegah ikon menyusut */
+            padding-top: 2px; /* Penyelarasan ikon */
+        }
+        .detail-item strong {
+            color: var(--text-primary);
+            font-weight: 600; /* Sedikit lebih tebal */
+        }
+        .detail-text {
+            font-size: 1.05rem; /* Ukuran teks sedikit lebih besar */
+            line-height: 1.6;
+        }
+        .detail-social-links a {
+            color: var(--pmii-blue);
+            font-size: 1.8rem; /* Ukuran ikon sosial lebih besar */
+            margin-right: 1.25rem; /* Margin lebih besar */
+            transition: color 0.25s ease, transform 0.25s ease;
+        }
+        .detail-social-links a:hover {
+            color: var(--pmii-yellow);
+            transform: scale(1.2); /* Efek membesar yang lebih kuat */
+        }
+
+        /* Footer Styling */
+        .internal-footer {
+            background-color: var(--pmii-darkblue);
+            color: #cbd5e1;
+            padding: 3rem 1rem; /* Padding lebih besar */
+            margin-top: auto;
+        }
+        .internal-footer p {
+            color: #e5e7eb;
+        }
+        .internal-footer .footer-title {
+            color: white;
+            font-weight: 600;
+        }
+        .internal-footer img {
+            filter: brightness(0) invert(1) opacity(0.8);
+        }
+
+        /* Scroll To Top Button */
+        #scrollToTopBtn {
+            background-color: var(--pmii-yellow);
+            color: var(--pmii-darkblue);
+            width: 3rem; /* Sedikit lebih besar */
+            height: 3rem; /* Sedikit lebih besar */
+            border-radius: 50%;
+            box-shadow: var(--shadow-xl); /* Bayangan lebih kuat */
+            transition: background-color 0.25s ease, transform 0.3s ease-out;
+            position: fixed;
+            bottom: 2rem; /* Posisi lebih masuk ke dalam */
+            right: 2rem; /* Posisi lebih masuk ke dalam */
+            z-index: 50;
+            display: none; /* Tersembunyi secara default */
+            align-items: center;
+            justify-content: center;
+        }
+        #scrollToTopBtn:hover {
+            background-color: #fbc02d;
+            transform: scale(1.15) translateY(-3px); /* Efek hover yang lebih kuat */
+        }
+
+        /* Latar belakang header halaman dengan animasi gradien dan parallax */
+        .page-header-bg {
+            position: relative;
+            overflow: hidden;
+            /* Gradasi biru ke ungu */
+            background: linear-gradient(135deg, var(--pmii-blue) 0%, var(--pmii-purple) 100%); 
+            background-size: 400% 400%;
+            animation: gradientAnimation 20s ease infinite; /* Animasi lebih lambat */
+            min-height: 250px; /* Tinggi minimum untuk header */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Peningkatan Judul Halaman & Tagline */
+        .page-header-bg .page-title, .page-header-bg .page-tagline {
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.6); /* Bayangan teks lebih kuat */
+            position: relative;
+            z-index: 10; /* Pastikan teks di atas elemen parallax */
+        }
+        /* Efek parallax container */
+        .parallax-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Biarkan klik melewati */
+            overflow: hidden;
+        }
+        .parallax-item {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.1); /* Bentuk putih transparan */
+            border-radius: 50%; /* Bentuk lingkaran */
+            opacity: 0; /* Awalnya tersembunyi */
+            animation: floatAndFade 20s infinite ease-in-out; /* Animasi mengambang dan memudar */
+            transform-origin: center center;
+        }
+        .parallax-item:nth-child(1) { width: 50px; height: 50px; top: 10%; left: 15%; animation-delay: 0s; }
+        .parallax-item:nth-child(2) { width: 80px; height: 80px; top: 70%; left: 80%; animation-delay: 5s; background-color: rgba(253, 216, 53, 0.15); } /* Yellow tint */
+        .parallax-item:nth-child(3) { width: 30px; height: 30px; top: 40%; left: 50%; animation-delay: 10s; }
+        .parallax-item:nth-child(4) { width: 60px; height: 60px; top: 25%; left: 70%; animation-delay: 15s; background-color: rgba(0, 92, 151, 0.1); } /* Blue tint */
+        .parallax-item:nth-child(5) { width: 40px; height: 40px; top: 85%; left: 30%; animation-delay: 20s; }
+
+
+        @keyframes floatAndFade {
+            0% { transform: translateY(0) translateX(0) scale(0.5); opacity: 0; }
+            10% { opacity: 0.8; }
+            50% { transform: translateY(-50px) translateX(20px) scale(1.2); opacity: 0.6; }
+            90% { opacity: 0; }
+            100% { transform: translateY(-100px) translateX(40px) scale(0.5); opacity: 0; }
+        }
+
+        /* Animasi masuk konten */
+        .animated-section {
+            opacity: 0;
+            transform: translateY(30px); /* Sedikit lebih jauh pergeseran awal */
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out; /* Transisi lebih lambat dan halus */
+        }
+        .animated-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Delay untuk animasi stagger */
+        .stagger-1 { transition-delay: 0.1s; }
+        .stagger-2 { transition-delay: 0.15s; } /* Penyesuaian delay */
+        .stagger-3 { transition-delay: 0.2s; }
+        .stagger-4 { transition-delay: 0.25s; }
+        .stagger-5 { transition-delay: 0.3s; }
+        .stagger-6 { transition-delay: 0.35s; }
+        .stagger-7 { transition-delay: 0.4s; }
+        .stagger-8 { transition-delay: 0.45s; }
+        .stagger-9 { transition-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <div class="main-content-wrapper">
+        <!-- Header -->
+        <header class="internal-header py-3 sticky top-0 z-40">
+            <div class="container mx-auto px-4 lg:px-8 flex justify-between items-center">
+                <a href="index.html" class="flex items-center space-x-2.5 transform hover:scale-105 transition-transform duration-300">
+                    <img src="img/logo-pmii.png" alt="Logo PMII" class="h-9 w-9 rounded-full">
+                    <span class="text-sm md:text-base font-semibold logo-text">PK PMII UIN SGD Bandung</span>
+                </a>
+                <div>
+                    <a href="all-rayons.html" class="btn btn-primary">
+                        <i class="fas fa-arrow-left mr-2"></i> Kembali ke Daftar Rayon
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8 lg:py-12">
+            <div class="max-w-5xl mx-auto"> <!-- Increased max-width for more content space -->
+                <section class="page-header-bg rounded-lg mb-8 animated-section relative overflow-hidden">
+                    <div class="parallax-container">
+                        <div class="parallax-item" data-parallax-speed="-0.1"></div>
+                        <div class="parallax-item" data-parallax-speed="-0.2"></div>
+                        <div class="parallax-item" data-parallax-speed="-0.15"></div>
+                        <div class="parallax-item" data-parallax-speed="-0.25"></div>
+                        <div class="parallax-item" data-parallax-speed="-0.18"></div>
+                    </div>
+                    <div class="container mx-auto px-4 text-center py-16 lg:py-24 relative z-10 text-white">
+                        <h1 class="text-4xl lg:text-5xl font-extrabold mb-4 page-title" id="rayon-page-title">Profil Rayon</h1>
+                        <p class="text-lg opacity-90 page-tagline" id="rayon-tagline">Memuat informasi rayon...</p>
+                    </div>
+                </section>
+
+                <div id="rayon-profile-content" class="content-section-card animated-section">
+                    <div class="flex flex-col items-center mb-8">
+                        <img id="rayon-logo" src="https://placehold.co/150x150/005c97/FFFFFF?text=Logo" alt="Logo Rayon" class="profile-img-display animated-section stagger-1">
+                        <h2 class="text-3xl font-bold text-pmii-darkblue mt-4 animated-section stagger-2" id="rayon-name">Nama Rayon</h2>
+                    </div>
+                    
+                    <!-- Section Informasi Ketua -->
+                    <div class="info-section-card animated-section stagger-3">
+                        <h3 class="text-xl font-bold text-pmii-darkblue mb-3">Informasi Ketua</h3>
+                        <div class="flex flex-col md:flex-row items-center md:items-center md:justify-start gap-6">
+                            <img id="chairman-photo" src="https://placehold.co/160x160/e0e0e0/9e9e9e?text=Ketua" alt="Foto Ketua Rayon" class="profile-img-display" style="border: 4px solid var(--pmii-blue); margin-bottom: 0;">
+                            <div class="flex-grow text-center md:text-left flex flex-col justify-center"> <!-- Added flex and justify-center -->
+                                <p class="text-lg text-text-primary font-semibold">Nama Ketua: <span id="rayon-chairman"></span></p> <!-- Removed mt-2 -->
+                                <p class="text-sm text-text-muted mt-1">Pemimpin yang berdedikasi untuk rayon ini.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section Informasi Umum & Statistik -->
+                    <div class="info-section-card animated-section stagger-4">
+                        <h3 class="text-xl font-bold text-pmii-darkblue mb-3">Ringkasan Rayon</h3>
+                        <p class="mb-6 text-text-secondary" id="rayon-description">Deskripsi lengkap atau sejarah singkat rayon akan ditampilkan di sini.</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+                            <div class="detail-item">
+                                <i class="fas fa-users"></i> <span class="detail-text"><strong>Jumlah Kader:</strong> <span id="rayon-cadre-count"></span></span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-alt"></i> <span class="detail-text"><strong>Berdiri Sejak:</strong> <span id="rayon-established-date"></span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section Visi & Misi -->
+                    <div class="info-section-card animated-section stagger-5">
+                        <h3 class="text-xl font-bold text-pmii-darkblue mb-3">Visi & Misi</h3>
+                        <div>
+                            <h4 class="font-semibold text-pmii-blue mb-2">Visi Rayon:</h4>
+                            <p id="rayon-vision" class="text-text-secondary mb-6">Memuat visi rayon...</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-pmii-blue mb-2">Misi Rayon:</h4>
+                            <p id="rayon-mission" class="text-text-secondary whitespace-pre-wrap">Memuat misi rayon...</p>
+                        </div>
+                    </div>
+
+                    <!-- Section Kontak & Alamat -->
+                    <div class="info-section-card animated-section stagger-6">
+                        <h3 class="text-xl font-bold text-pmii-darkblue mb-3">Kontak & Lokasi</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+                            <div class="detail-item">
+                                <i class="fas fa-phone-alt"></i> <span class="detail-text"><strong>Telepon/WA:</strong> <span id="rayon-contact"></span></span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i> <span class="detail-text"><strong>Email:</strong> <span id="rayon-email"></span></span>
+                            </div>
+                            <div class="detail-item sm:col-span-2">
+                                <i class="fas fa-map-marker-alt"></i> <span class="detail-text"><strong>Alamat Sekretariat:</strong> <span id="rayon-address"></span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section Media Sosial -->
+                    <div class="info-section-card animated-section stagger-7">
+                        <h3 class="text-xl font-bold text-pmii-darkblue mb-3">Media Sosial</h3>
+                        <div class="flex space-x-6 justify-center">
+                            <a href="#" id="social-instagram-link" target="_blank" rel="noopener noreferrer" class="hover:text-pmii-yellow hidden"><i class="fab fa-instagram"></i></a>
+                            <a href="#" id="social-facebook-link" target="_blank" rel="noopener noreferrer" class="hover:text-pmii-yellow hidden"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" id="social-twitter-link" target="_blank" rel="noopener noreferrer" class="hover:text-pmii-yellow hidden"><i class="fab fa-twitter"></i></a>
+                            <a href="#" id="social-youtube-link" target="_blank" rel="noopener noreferrer" class="hover:text-pmii-yellow hidden"><i class="fab fa-youtube"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="internal-footer py-8 mt-auto">
+        <div class="container mx-auto px-4 text-center text-gray-300">
+            <p class="text-sm">&copy; <span id="footer-year"></span> PK PMII UIN Sunan Gunung Djati. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollToTopBtn" title="Kembali ke atas" class="hidden fixed bottom-6 right-6 bg-pmii-yellow text-pmii-darkblue w-11 h-11 rounded-full shadow-xl z-50 items-center justify-center hover:bg-yellow-300 transition-all duration-300 transform hover:scale-110 focus:outline-none">
+        <i class="fas fa-arrow-up text-xl"></i>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const LOCAL_STORAGE_RAYONS_KEY = 'pmiiRayonsData'; // Kunci untuk localStorage
+            let allRayons = [];
+
+            // Fungsi untuk memuat data rayon dari localStorage atau default
+            function loadRayonsData() {
+                // ALWAYS initialize allRayons with the correct default data first
+                allRayons = initializeDefaultRayonsArray(); // Menggunakan fungsi baru untuk mendapatkan array default
+
+                // Kemudian, coba muat dari localStorage untuk menimpa bidang tertentu
+                const storedRayons = localStorage.getItem(LOCAL_STORAGE_RAYONS_KEY);
+                if (storedRayons) {
+                    try {
+                        const parsedStoredRayons = JSON.parse(storedRayons);
+                        parsedStoredRayons.forEach(storedRayon => {
+                            const index = allRayons.findIndex(r => r.id === storedRayon.id);
+                            if (index !== -1) {
+                                allRayons[index] = { ...allRayons[index], ...storedRayon };
+                            } else {
+                                allRayons.push(storedRayon);
+                            }
+                        });
+                    } catch (e) {
+                        console.error("Error parsing rayons from localStorage, using default data.", e);
+                        // allRayons sudah disetel ke default di sini, jadi tidak ada tindakan ekstra yang diperlukan.
+                    }
+                }
+            }
+
+            // Fungsi untuk menginisialisasi data rayon default (dikembalikan sebagai array)
+            function initializeDefaultRayonsArray() {
+                return [
+                    { id: 'rayon_ushuluddin', name: 'PMII Rayon Fakultas Ushuluddin', chairman: 'Sahabat Fulan 1', chairmanPhoto: 'https://placehold.co/160x160/005c97/FFFFFF?text=Ketua1', description: 'Rayon yang berfokus pada kajian ilmu-ilmu dasar keislaman dan filsafat. Membentuk kader yang memiliki pemahaman mendalam tentang prinsip-prinsip agama dan mampu berdialog dengan pemikiran kontemporer.', contact: '081234567891', email: 'ushuluddin@example.com', address: 'Jl. A.H. Nasution No. 105, Cipadung, Cibiru, Kota Bandung', instagram: 'https://instagram.com/pmiiuinsgd.ushuluddin', facebook: 'https://facebook.com/pmiiuinsgd.ushuluddin', twitter: '', youtube: '', logo: 'https://placehold.co/100x100/005c97/FFFFFF?text=FU', cadreCount: 150, establishedDate: '1995-03-10', vision: 'Menjadi rayon terdepan dalam pengembangan intelektual keislaman.', mission: '1. Mengadakan kajian rutin keagamaan dan filsafat.\\n2. Mendorong riset dan publikasi ilmiah kader.\\n3. Menyelenggarakan diskusi interaktif tentang isu-isu kontemporer.' },
+                    { id: 'rayon_tarbiyah', name: 'PMII Rayon Fakultas Tarbiyah dan Keguruan', chairman: 'Sahabat Fulan 2', chairmanPhoto: 'https://placehold.co/160x160/005c97/FFFFFF?text=Ketua2', description: 'Wadah bagi mahasiswa keguruan untuk mengembangkan potensi pendidik muslim yang profesional, inovatif, dan berakhlak mulia. Berkomitmen pada peningkatan kualitas pendidikan Islam.', contact: '081234567892', email: 'tarbiyah@example.com', address: 'Jl. A.H. Nasution No. 105, Cipadung, Cibiru, Kota Bandung', instagram: 'https://instagram.com/pmiiuinsgd.tarbiyah', facebook: 'https://facebook.com/pmiiuinsgd.tarbiyah', twitter: '', youtube: '', logo: 'https://placehold.co/100x100/005c97/FFFFFF?text=FTK', cadreCount: 200, establishedDate: '1992-07-20', vision: 'Mencetak pendidik muslim yang kompeten dan berkarakter.', mission: '1. Mengembangkan kapasitas pedagogik kader.\\n2. Mendorong inovasi dalam metode pengajaran.\\n3. Menjadi teladan dalam praktik pendidikan Islami.' },
+                    { id: 'rayon_syariah', name: 'PMII Rayon Fakultas Syariah dan Hukum', chairman: 'Sahabat Fulan 3', chairmanPhoto: 'https://placehold.co/160x160/005c97/FFFFFF?text=Ketua3', description: 'Mengkaji ilmu syariah dan hukum Islam, serta isu-isu hukum kontemporer. Mencetak kader yang kompeten dalam bidang hukum dan mampu memberikan kontribusi keadilan sosial.', contact: '081234567893', email: 'syariah@example.com', address: 'Jl. A.H. Nasution No. 105, Cipadung, Cibiru, Kota Bandung', instagram: 'https://instagram.com/pmiiuinsgd.syariah', facebook: 'https://facebook.com/pmiiuinsgd.syariah', twitter: '', youtube: '', logo: 'https://placehold.co/100x100/005c97/FFFFFF?text=FSH', cadreCount: 120, establishedDate: '1998-01-15', vision: 'Mewujudkan keadilan sosial melalui pemahaman hukum Islam yang komprehensif.', mission: '1. Mengkaji mendalam fiqh muamalah dan jinayah.\\n2. Menganalisis isu-isu hukum terkini.\\n3. Menyelenggarakan advokasi hukum bagi masyarakat.' },
+                    { id: 'rayon_adab', name: 'PMII Rayon Fakultas Adab dan Humaniora', chairman: 'Sahabat Fulan 4', chairmanPhoto: 'https://placehold.co/160x160/005c97/FFFFFF?text=Ketua4', description: 'Rayon Adab dan Humaniora adalah salah satu rayon di lingkungan Komisariat UIN Sunan Gunung Djati Bandung. Berdiri sejak tahun 1990, rayon ini berkomitmen untuk mencetak kader yang berintelektual, kritis, dan berakhlakul karimah.', contact: '081234567890', email: 'rayon.adab@pmiiuinsgd.or.id', address: 'Jl. A.H. Nasution No. 105, Cipadung, Cibiru, Kota Bandung, Jawa Barat 40614', instagram: 'https://instagram.com/pmiirayonfah', facebook: 'https://facebook.com/pmiirayonfah', twitter: 'https://twitter.com/pmiirayonfah', youtube: 'https://youtube.com/channel/pmiirayonfah', logo: 'https://placehold.co/100x100/005c97/FFFFFF?text=FAH', cadreCount: 180, establishedDate: '1990-09-01', vision: 'Menjadi pusat pengembangan kajian humaniora dan kebudayaan Islam.', mission: '1. Mengadakan riset di bidang sastra, sejarah, dan filsafat.\\n2. Melestarikan khazanah intelektual Islam.\\n3. Mendorong dialog antarbudaya.' },
+                    { id: 'rayon_dakwah', name: 'PMII Rayon Fakultas Dakwah dan Komunikasi', chairman: 'Sahabat Fulan 5', chairmanPhoto: 'https://placehold.co/160x160/005c97/FFFFFF?text=Ketua5', description: 'Menyiapkan kader-kader yang handal dalam bidang dakwah, komunikasi, dan penyiaran Islam. Aktif dalam menyebarkan nilai-nilai keislaman moderat melalui berbagai media.', contact: '081234567895', email: 'dakwah@example.com', address: 'Jl. A.H. Nasution No. 105, Cipadung, Cibiru, Kota Bandung', instagram: 'https://instagram.com/pmiiuinsgd.dakwah', facebook: 'https://facebook.com/pmiiuinsgd.dakwah', twitter: '', youtube: '', logo: 'https://placehold.co/100x100/005c97/FFFFFF?text=FDK', cadreCount: 220, establishedDate: '1993-02-28', vision: 'Mewujudkan dakwah Islam yang efektif dan komunikatif di era digital.', mission: '1. Mengembangkan konten dakwah yang relevan.\\n2. Melatih kader dalam teknik komunikasi publik.\\n3. Membangun jaringan media dakwah.' },
+                    { id: 'rayon_saintek', name: 'PMII Rayon Fakultas Sains dan Teknologi', chairman: 'Sahabat Fulan 6', chairmanPhoto: 'https://placehold.co/160x160/005c97/FFFFFF?text=Ketua6', description: 'Mengembangkan potensi mahasiswa di bidang sains, teknologi, dan informatika. Mendorong inovasi berbasis riset untuk kemajuan ilmu pengetahuan dan teknologi Islami.', contact: '081234567896', email: 'saintek@example.com', address: 'Jl. A.H. Nasution No. 105, Cipadung, Cibiru, Kota Bandung', instagram: 'https://instagram.com/pmiiuinsgd.saintek', facebook: 'https://facebook.com/pmiiuinsgd.saintek', twitter: '', youtube: '', logo: 'https://placehold.co/100x100/005c97/FFFFFF?text=FST', cadreCount: 100, establishedDate: '2000-11-05', vision: 'Menjadi pelopor inovasi sains dan teknologi yang berlandaskan nilai-nilai Islam.', mission: '1. Mengembangkan proyek riset multidisiplin.\\n2. Mendorong partisipasi kader dalam kompetisi ilmiah.\\n3. Membangun ekosistem inovasi di lingkungan kampus.' },
+                    { id: 'rayon_fisip', name: 'PMII Rayon Fakultas Ilmu Sosial dan Ilmu Politik', chairman: 'Sahabat Fulan 7', chairmanPhoto: 'https://placehold.co/160x160/005c97/FFFFFF?text=Ketua7', description: 'Mengkaji dinamika sosial, politik, dan hubungan internasional dari perspektif Islam. Membentuk kader yang peka terhadap isu-isu kebangsaan dan global.', contact: '081234567897', email: 'fisip@example.com', address: 'Jl. A.H. Nasution No. 105, Cipadung, Cibiru, Kota Bandung', instagram: 'https://instagram.com/pmiiuinsgd.fisip', facebook: 'https://facebook.com/pmiiuinsgd.fisip', twitter: '', youtube: '', logo: 'https://placehold.co/100x100/005c97/FFFFFF?text=FISIP', cadreCount: 130, establishedDate: '1997-06-25', vision: 'Mewujudkan masyarakat yang adil dan beradab melalui analisis sosial-politik yang kritis.', mission: '1. Mengkaji teori-teori sosial dan politik Islami.\\n2. Menganalisis kebijakan publik dari perspektif keadilan.\\n3. Mengembangkan kesadaran politik kader.' },
+                    { id: 'rayon_psikologi', name: 'PMII Rayon Fakultas Psikologi', chairman: 'Sahabat Fulan 8', chairmanPhoto: 'https://placehold.co/160x160/005c97/FFFFFF?text=Ketua8', description: 'Fokus pada pemahaman perilaku manusia, kesehatan mental, dan pengembangan diri berdasarkan nilai-nilai Islam. Mengembangkan konseling dan pendampingan psikologis komunitas.', contact: '081234567898', email: 'psikologi@example.com', address: 'Jl. A.H. Nasution No. 105, Cipadung, Cibiru, Kota Bandung', instagram: 'https://instagram.com/pmiiuinsgd.psikologi', facebook: 'https://facebook.com/pmiiuinsgd.psikologi', twitter: '', youtube: '', logo: 'https://placehold.co/100x100/005c97/FFFFFF?text=FPsi', cadreCount: 90, establishedDate: '2005-08-18', vision: 'Membangun generasi muda yang bermental sehat dan berjiwa Islami.', mission: '1. Mengadakan pelatihan soft skill dan pengembangan diri.\\n2. Memberikan layanan konseling sebaya.\\n3. Mengkaji psikologi Islam dan aplikasinya.' },
+                    { id: 'rayon_ekonomi', name: 'PMII Rayon Fakultas Ekonomi dan Bisnis Islam', chairman: 'Sahabat Fulan 9', chairmanPhoto: 'https://placehold.co/160x160/005c97/FFFFFF?text=Ketua9', description: 'Mendalami ekonomi dan bisnis syariah, serta isu-isu ekonomi global. Mencetak wirausahawan dan ekonom muslim yang berintegritas dan mampu bersaing di era modern.', contact: '081234567899', email: 'ekonomi@example.com', address: 'Jl. A.H. Nasution No. 105, Cipadung, Cibiru, Kota Bandung', instagram: 'https://instagram.com/pmiiuinsgd.ekonomi', facebook: 'https://facebook.com/pmiiuinsgd.ekonomi', twitter: '', youtube: '', logo: 'https://placehold.co/100x100/005c97/FFFFFF?text=FEBI', cadreCount: 170, establishedDate: '1999-04-12', vision: 'Mewujudkan ekonomi syariah sebagai pilar kebangkitan umat.', mission: '1. Mengkaji sistem ekonomi Islam secara mendalam.\\n2. Mendorong jiwa wirausaha kader berbasis syariah.\\n3. Mengadakan forum diskusi ekonomi global.' }
+                ];
+            }
+
+            // Dapatkan ID rayon dari URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const rayonId = urlParams.get('id');
+
+            // Muat semua data rayon (dari localStorage atau default)
+            loadRayonsData();
+
+
+            const rayon = allRayons.find(r => r.id === rayonId);
+
+            // Isi halaman dengan data rayon
+            if (rayon) {
+                document.getElementById('rayon-logo').src = rayon.logo || 'https://placehold.co/150x150/005c97/FFFFFF?text=Logo'; 
+                document.getElementById('rayon-name').textContent = rayon.name;
+                
+                document.getElementById('chairman-photo').src = rayon.chairmanPhoto || 'https://placehold.co/160x160/e0e0e0/9e9e9e?text=Ketua'; // New
+                document.getElementById('rayon-chairman').textContent = rayon.chairman; // New
+                document.getElementById('rayon-description').textContent = rayon.description;
+
+                document.getElementById('rayon-vision').textContent = rayon.vision || 'Visi rayon belum tersedia.'; // New
+                document.getElementById('rayon-mission').textContent = rayon.mission || 'Misi rayon belum tersedia.'; // New
+
+                document.getElementById('rayon-cadre-count').textContent = rayon.cadreCount !== undefined ? rayon.cadreCount.toLocaleString('id-ID') : 'N/A'; // New
+                document.getElementById('rayon-established-date').textContent = rayon.establishedDate ? new Date(rayon.establishedDate).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'; // New
+
+                document.getElementById('rayon-contact').textContent = rayon.contact;
+                document.getElementById('rayon-email').textContent = rayon.email;
+                document.getElementById('rayon-address').textContent = rayon.address;
+                
+                document.getElementById('rayon-page-title').textContent = `Profil ${rayon.name}`;
+                document.getElementById('rayon-tagline').textContent = `Informasi lengkap mengenai ${rayon.name} Komisariat UIN Sunan Gunung Djati Cabang Kota Bandung.`;
+                document.title = `Profil ${rayon.name} - Sistem Internal PMII`;
+
+                const instagramLink = document.getElementById('social-instagram-link');
+                const facebookLink = document.getElementById('social-facebook-link');
+                const twitterLink = document.getElementById('social-twitter-link'); // New
+                const youtubeLink = document.getElementById('social-youtube-link'); // New
+
+                if (rayon.instagram && rayon.instagram.trim() !== '') {
+                    instagramLink.href = rayon.instagram;
+                    instagramLink.classList.remove('hidden');
+                } else {
+                    instagramLink.classList.add('hidden');
+                }
+
+                if (rayon.facebook && rayon.facebook.trim() !== '') {
+                    facebookLink.href = rayon.facebook;
+                    facebookLink.classList.remove('hidden');
+                } else {
+                    facebookLink.classList.add('hidden');
+                }
+                
+                // New social media links
+                if (rayon.twitter && rayon.twitter.trim() !== '') {
+                    twitterLink.href = rayon.twitter;
+                    twitterLink.classList.remove('hidden');
+                } else {
+                    twitterLink.classList.add('hidden');
+                }
+
+                if (rayon.youtube && rayon.youtube.trim() !== '') {
+                    youtubeLink.href = rayon.youtube;
+                    youtubeLink.classList.remove('hidden');
+                } else {
+                    youtubeLink.classList.add('hidden');
+                }
+
+
+                // Tambahkan kelas is-visible ke bagian konten untuk animasi
+                document.querySelector('.page-header-bg').classList.add('is-visible');
+                document.getElementById('rayon-profile-content').classList.add('is-visible');
+                // Terapkan animasi stagger ke elemen anak
+                document.querySelectorAll('#rayon-profile-content .animated-section').forEach((el, index) => {
+                    el.style.transitionDelay = `${(index + 1) * 0.1}s`;
+                    el.classList.add('is-visible');
+                });
+
+
+            } else {
+                // Tangani kasus di mana rayonId tidak ditemukan
+                const mainContent = document.querySelector('main .max-w-4xl');
+                mainContent.innerHTML = `
+                    <div class="content-section-card text-center p-8 animated-section is-visible">
+                        <h2 class="text-2xl font-bold text-red-600 mb-4">Rayon Tidak Ditemukan</h2>
+                        <p class="text-md text-text-secondary mb-6">Maaf, profil rayon yang Anda cari tidak dapat ditemukan.</p>
+                        <a href="all-rayons.html" class="btn btn-primary">
+                            <i class="fas fa-arrow-left mr-2"></i> Kembali ke Daftar Rayon
+                        </a>
+                    </div>
+                `;
+                document.getElementById('rayon-page-title').textContent = 'Rayon Tidak Ditemukan';
+                document.getElementById('rayon-tagline').textContent = 'Terjadi kesalahan saat memuat profil rayon.';
+                document.title = 'Rayon Tidak Ditemukan';
+            }
+
+            // Setel tahun saat ini di footer
+            if (document.getElementById('footer-year')) {
+                document.getElementById('footer-year').textContent = new Date().getFullYear();
+            }
+
+            // Fungsionalitas tombol gulir ke atas
+            const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+            window.addEventListener('scroll', () => {
+                if (scrollToTopBtn) {
+                    scrollToTopBtn.classList.toggle('hidden', window.pageYOffset <= 300);
+                    scrollToTopBtn.classList.toggle('flex', window.pageYOffset > 300);
+                }
+            });
+            if (scrollToTopBtn) scrollToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+            // Tambahkan Efek Parallax ke header
+            const parallaxContainer = document.querySelector('.page-header-bg .parallax-container');
+            if (parallaxContainer) {
+                const parallaxItems = parallaxContainer.querySelectorAll('.parallax-item');
+                window.addEventListener('scroll', () => {
+                    const scrollY = window.pageYOffset;
+                    parallaxItems.forEach(item => {
+                        const speed = parseFloat(item.dataset.parallaxSpeed);
+                        item.style.transform = `translateY(${scrollY * speed}px)`;
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

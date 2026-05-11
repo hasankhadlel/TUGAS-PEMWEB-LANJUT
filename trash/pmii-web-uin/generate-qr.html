@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate QR TTD Digital - PK PMII UIN Sunan Gunung Djati</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="img/logo-pmii.png" type="image/png" onerror="this.onerror=null;this.src='https://placehold.co/100x100/005c97/FFFFFF?text=P';">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <style>
+        /* CSS Variables for consistent theming based on PMII colors and general UI elements */
+        :root {
+            --pmii-blue: #005c97;
+            --pmii-darkblue: #004a7c;
+            --pmii-yellow: #fdd835;
+            --pmii-purple: #6A0DAD; /* Added purple color variable */
+            --text-primary: #111827; /* Dark text for light backgrounds */
+            --text-secondary: #374151; /* Medium dark text */
+            --text-muted: #6b7280; /* Lighter text for subtle info */
+            --border-color: #e5e7eb; /* Light gray border */
+            --background-light: #f9fafb; /* Very light background */
+            --background-page: #f3f4f6; /* Default page background */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --input-bg: white; /* Default for input fields */
+            --navbar-height: 70px; /* Estimated height of your navbar */
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+        }
+
+        /* Base body styles, enabling smooth scrolling, Inter font preference, and fade-out transition */
+        body {
+            font-family: 'Inter', 'Poppins', sans-serif; /* Prioritize Inter */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            background: linear-gradient(135deg, var(--pmii-blue) 0%, var(--pmii-darkblue) 100%); /* Apply gradient background */
+            color: white; /* Default text color for the body */
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            transition: opacity 0.5s ease-out; /* Smooth fade-out for page transitions */
+            position: relative;
+        }
+
+        /* Pattern overlay for the body */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                radial-gradient(circle at 15% 25%, rgba(253, 216, 53, 0.05) 1px, transparent 1.5px),
+                radial-gradient(circle at 85% 75%, rgba(253, 216, 53, 0.03) 1px, transparent 1.5px),
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0.5px, transparent 1px);
+            background-size: 80px 80px, 100px 100px, 60px 60px;
+            animation: subtlePatternMoveBody 60s linear infinite;
+            z-index: 0;
+        }
+        @keyframes subtlePatternMoveBody {
+            0% { background-position: 0 0, 0 0, 0 0; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Class for fading out the page content */
+        body.fade-out-page {
+            opacity: 0;
+        }
+
+        /* Main content wrapper to correctly position content below the potentially transparent/sticky navbar */
+        .main-content-wrapper {
+            flex-grow: 1; /* Allows content to push footer to bottom */
+            padding-top: var(--navbar-height); /* Push content down to start below the navbar */
+            position: relative; /* Establishes stacking context */
+            z-index: 1; /* Ensures content is above elements rendered below it */
+        }
+
+        /* Navbar Styling: sticky position and dynamic appearance on scroll */
+        .navbar-sticky {
+            position: sticky; top: 0; z-index: 50;
+            background-color: transparent; /* Initially transparent */
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Subtle initial shadow */
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Navbar links styling for the glossy/transparent state */
+        .nav-link, .dropdown-toggle, #auth-link-main {
+            color: white !important; /* Always white for glossy state */
+            text-shadow: 0 0 5px rgba(255,255,255,0.3); /* Subtle text shadow for white text */
+            transform: translateY(0); /* Initial state for transform animation */
+            transition: color 0.25s ease-out, text-shadow 0.25s ease-out, transform 0.25s ease-out; /* Include transform in transition */
+        }
+
+        /* Underline effect for nav links, brighter for glossy state */
+        .nav-link::after, .dropdown-toggle::after, #auth-link-main::after {
+            content: ''; display: block; width: 0; height: 2px;
+            background-color: var(--pmii-yellow); /* Base color */
+            box-shadow: 0 0 10px rgba(253, 216, 53, 0.8); /* Brighter glow */
+            transition: width 0.3s ease-out;
+        }
+        .nav-link:hover::after, .dropdown-toggle:hover::after, #auth-link-main:hover::after {
+            width: 100%;
+        }
+
+        /* Hover effect for nav links */
+        .nav-link:hover, .dropdown-toggle:hover, #auth-link-main:hover {
+            color: var(--pmii-yellow) !important; /* Yellow on hover for glossy state */
+            text-shadow: 0 0 15px var(--pmii-yellow); /* Stronger glow on hover */
+            transform: translateY(-1px); /* Add the subtle lift effect back */
+        }
+
+        /* Dropdown chevron rotation on hover */
+        .dropdown-toggle i {
+            transition: transform 0.2s ease-out;
+        }
+        .dropdown-toggle:hover i {
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        /* Dropdown Menu specific styles for modern look */
+        .dropdown-menu {
+            background-color: var(--pmii-darkblue); /* Darker blue background for dropdown menu */
+            backdrop-filter: blur(5px); /* Apply blur to dropdown menus */
+            color: white; /* Ensure text in dropdown is white for good contrast */
+            box-shadow: var(--shadow-lg);
+            z-index: 100; min-width: 280px; border-radius: 0.5rem;
+            opacity: 0; visibility: hidden; transform: translateY(10px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s;
+            position: absolute; /* Ensures it's positioned relative to parent dropdown */
+            min-width: 150px; /* Adjust minimum width as needed */
+            left: 50%; /* Center dropdown under its parent button */
+            transform: translateX(-50%) translateY(10px); /* Center and offset initially */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+            max-height: 300px; /* Added: Max height for scrollable dropdown */
+            overflow-y: auto; /* Added: Enable vertical scrolling */
+        }
+        .dropdown:hover .dropdown-menu,
+        .dropdown.active .dropdown-menu { /* .active class for mobile/JS control */
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0); /* Final state on hover/active */
+        }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: white; /* White text for dropdown items */
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
+            font-size: 0.875rem;
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+        .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--pmii-yellow);
+        }
+        .dropdown-item i {
+            margin-right: 0.75rem;
+            color: var(--pmii-yellow);
+        }
+
+        /* Mobile Menu Transitions */
+        #mobile-menu-content {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh; /* Full viewport height */
+            width: calc(100% - 50px); /* Adjust width to leave a small gap on smaller screens */
+            max-width: 320px; /* Max width for larger mobiles */
+            background: linear-gradient(to bottom, var(--pmii-blue), var(--pmii-darkblue)); /* Gradient background */
+            color: white;
+            padding: 6px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.4); /* Strong shadow */
+            z-index: 40;
+            transform: translateX(100%); /* Start off-screen */
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none; /* Prevent interaction when hidden */
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease-out, visibility 0.35s;
+            box-sizing: border-box; /* Include padding in element's total width and height */
+            padding-bottom: 2rem; /* Add padding to the bottom */
+        }
+        /* State when menu is active/open */
+        #mobile-menu-content.menu-active {
+            transform: translateX(0); /* Slide in */
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto; /* Allow interaction when visible */
+        }
+
+        /* Mobile Menu Overlay */
+        #mobile-menu-overlay {
+            position: fixed;
+            inset: 0; /* Cover the whole viewport */
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+            backdrop-filter: blur(5px); /* Blur effect on the overlay */
+            z-index: 30;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease-out, visibility 0.3s;
+        }
+        /* State when overlay is active/open */
+        #mobile-menu-overlay.menu-active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        /* Mobile menu links */
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
+            border-radius: 0.375rem; /* rounded-md */
+        }
+        .mobile-nav-link i {
+            margin-right: 0.75rem; /* mr-3 */
+            width: 1.5rem; /* Fixed width for icons */
+            text-align: center;
+            color: var(--pmii-yellow);
+        }
+        .mobile-nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--pmii-yellow);
+        }
+
+        .mobile-submenu-title {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 600; /* font-semibold */
+            color: var(--pmii-yellow); /* Yellow color for sub-menu titles */
+            margin-top: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 0.5rem;
+        }
+        .mobile-submenu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1.5rem; /* Indent sub-menu items */
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
+            font-size: 0.8125rem; /* text-sm slightly smaller */
+            border-radius: 0.375rem; /* rounded-md */
+        }
+        .mobile-submenu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--pmii-yellow);
+        }
+        .mobile-submenu-item:hover i {
+            color: var(--pmii-yellow);
+        }
+
+        /* General Button Styling for consistent look and feel */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex; align-items: center; justify-content: center;
+            cursor: pointer; text-decoration: none;
+            box-shadow: var(--shadow-md);
+            z-index: 10; /* Ensure buttons are clickable */
+            position: relative; /* Needed for z-index to work */
+        }
+        .btn:hover {
+             box-shadow: var(--shadow-lg);
+             transform: translateY(-2px) scale(1.03); /* Subtle lift and scale on hover */
+        }
+        .btn:active {
+            transform: translateY(0px) scale(0.98); /* Slight press down effect on click */
+            box-shadow: var(--shadow-sm);
+        }
+        /* Primary button with PMII blue color */
+        .btn-primary-pmii {
+            background-color: var(--pmii-blue); color: white;
+        }
+        .btn-primary-pmii:hover { background-color: var(--pmii-darkblue); }
+        /* Secondary button with PMII yellow color */
+        .btn-secondary-pmii {
+            background-color: var(--pmii-yellow); color: var(--pmii-darkblue);
+        }
+        .btn-secondary-pmii:hover { background-color: #fbc02d; }
+
+        /* Auth Link Styling (Login/Logout button in navbar) */
+        #auth-link-main, #auth-link-mobile {
+            transition: all 0.25s ease; /* Ensure all properties transition */
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+        }
+        /* Styles for logged-out state (yellow button) */
+        .logged-out-styles {
+            background-color: var(--pmii-yellow);
+            color: var(--pmii-blue);
+        }
+        .logged-out-styles:hover {
+            background-color: #fbc02d;
+        }
+        /* Styles for logged-in state (red logout button) */
+        #auth-link-main.logout-active, #auth-link-mobile.logout-active {
+            background-image: linear-gradient(to right, #ef4444, #dc2626) !important; /* Red gradient */
+            color: white !important;
+        }
+        #auth-link-main.logout-active:hover, #auth-link-mobile.logout-active:hover {
+            background-image: linear-gradient(to right, #dc2626, #b91c1c) !important; /* Darker red on hover */
+        }
+
+        /* Custom Confirmation Modal Styles */
+        .custom-confirm-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Dark semi-transparent background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999; /* Ensure it's on top of everything */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .custom-confirm-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .custom-confirm-modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-lg);
+            max-width: 400px; /* Fixed max width for the modal */
+            width: 90%; /* Responsive width */
+            text-align: center;
+            transform: translateY(-20px) scale(0.95); /* Initial state for animation */
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease;
+        }
+        .custom-confirm-modal-overlay.active .custom-confirm-modal-content {
+            transform: translateY(0) scale(1); /* Final state for animation */
+            opacity: 1;
+        }
+        .custom-confirm-modal-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--pmii-darkblue);
+            margin-bottom: 1rem;
+        }
+        .custom-confirm-modal-content p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        .custom-confirm-modal-content .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .custom-confirm-modal-content .modal-actions .btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* New general background style for blue sections with subtle pattern */
+        .section-pmii-bg-pattern {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--pmii-blue) 0%, var(--pmii-darkblue) 100%);
+            color: white; /* Default text color for the entire section */
+        }
+        /* Mobile menu logo and text size adjustment */
+        #mobile-menu-content > div.flex.justify-between.items-center.mb-10 > a > img {
+            height: 2.25rem; /* h-9 */
+            width: auto; /* Maintain aspect ratio */
+        }
+        #mobile-menu-content > div.flex.justify-between.items-center.mb-10 > a > span {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+        }
+        /* Pseudo-element for pattern within blue sections */
+        .section-pmii-bg-pattern::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                radial-gradient(circle at 15% 25%, rgba(253, 216, 53, 0.07) 1px, transparent 1.5px),
+                radial-gradient(circle at 85% 75%, rgba(253, 216, 53, 0.05) 1px, transparent 1.5px),
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0.5px, transparent 1px);
+            background-size: 80px 80px, 100px 100px, 60px 60px;
+            animation: subtlePatternMoveContactKeyframe 40s linear infinite;
+            z-index: 0;
+        }
+        /* Keyframe for background pattern movement */
+        @keyframes subtlePatternMoveContactKeyframe {
+            0% { background-position: 0 0, 0 0, 0 0; }
+            100% { background-position: 80px 80px, -100px -100px, 60px -60px; }
+        }
+
+        /* Ensure specific elements like titles are yellow in these sections */
+        .section-pmii-bg-pattern .section-title {
+            color: var(--pmii-yellow);
+        }
+
+        .page-title { color: white; font-weight: 800; text-shadow: 1px 1px 2px rgba(0,0,0,0.05); }
+
+        .content-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+            color: white; /* Ensure text inside is white for contrast */
+        }
+        .content-card:hover {
+            box-shadow: var(--shadow-lg);
+            background-color: rgba(255, 255, 255, 0.15);
+            border-color: rgba(253, 216, 53, 0.5);
+        }
+
+        /* Form Input Styling for a clean and modern look */
+        .form-input {
+            width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color);
+            border-radius: 0.5rem; font-size: 0.875rem; color: var(--text-primary);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: var(--input-bg);
+            color: var(--text-primary); /* Ensure text is readable */
+        }
+        .form-input:focus {
+            border-color: var(--pmii-blue); box-shadow: 0 0 0 3px rgba(0, 92, 151, 0.15); outline: none;
+            background-color: white; /* White background on focus */
+        }
+        .form-input.dark-mode {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        .form-input.dark-mode::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .form-input.dark-mode:focus {
+            border-color: var(--pmii-yellow);
+            box-shadow: 0 0 0 3px rgba(253, 216, 53, 0.2);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        /* Label for form inputs */
+        .form-label {
+            display: block; font-size: 0.875rem; font-weight: 500;
+            color: white; /* Labels in dark theme should be white */
+            margin-bottom: 0.375rem;
+        }
+
+        /* Form Message Styling (for feedback messages) */
+        .form-message-container {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease-out; /* Smooth transition for show/hide */
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            margin-bottom: 0;
+        }
+        .form-message-container.show {
+            opacity: 1;
+            max-height: 100px; /* Adjust based on content height */
+            margin-bottom: 1.25rem;
+        }
+        .form-message-success { background-color: #dcfce7; color: #166534; border: 1px solid #86efac; } /* Green theme */
+        .form-message-error { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; } /* Red theme */
+        .form-message-info { background-color: #bfdbfe; color: #1e40af; border: 1px solid #93c5fd; } /* Blue theme */
+
+        /* Scroll To Top Button Styling */
+        #scrollToTopBtnDashboard { /* Renamed from #scrollToTopBtn for specific page */
+            background-color: var(--pmii-yellow);
+            color: var(--pmii-darkblue);
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 50%;
+            box-shadow: var(--shadow-lg);
+            transition: background-color 0.2s, transform 0.2s;
+            position: fixed; /* Fixed position on viewport */
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50; /* Ensure it's above other content */
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+        }
+        #scrollToTopBtnDashboard:hover {
+            transform: scale(1.1) translateY(-2px); /* Slight lift and scale on hover */
+        }
+
+        /* Logo Preview Styling */
+        #logoPreview {
+            max-width: 100px;
+            max-height: 100px;
+            margin-top: 10px;
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+            object-fit: contain; /* Ensure the image fits within the bounds without stretching */
+            background-color: rgba(255,255,255,0.1); /* Subtle background for preview area */
+            padding: 5px;
+        }
+        /* Styles for TTD Status section on generate-qr.html */
+        .komisariat-logo-display {
+            max-width: 120px; /* Adjust size as needed */
+            margin: 0 auto 1.5rem auto; /* Center and add margin below */
+            display: block;
+            border-radius: 8px; /* Rounded corners for the logo */
+            box-shadow: var(--shadow-md); /* Subtle shadow */
+            background-color: rgba(255,255,255,0.1); /* Light background for logo */
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="customMessageBox" class="fixed top-4 right-4 z-[9999] px-6 py-3 rounded-lg shadow-xl text-white text-sm font-semibold transition-all duration-300 transform translate-x-full opacity-0">
+        Pesan kustom di sini!
+    </div>
+
+    <div id="customConfirmModal" class="custom-confirm-modal-overlay">
+        <div class="custom-confirm-modal-content">
+            <h3 id="confirmModalTitle">Konfirmasi Aksi</h3>
+            <p id="confirmModalMessage">Apakah Anda yakin ingin melanjutkan?</p>
+            <div class="modal-actions">
+                <button id="confirmCancelBtn" class="btn btn-secondary-pmii">Tidak</button>
+                <button id="confirmYesBtn" class="btn btn-primary-pmii">Ya</button>
+            </div>
+        </div>
+    </div>
+
+    <nav id="navbar" class="text-white py-3.5 navbar-sticky">
+        <div class="container mx-auto px-4 lg:px-8 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2.5 transform hover:scale-105 transition-transform duration-300">
+                <img src="img/logo-pmii.png" alt="Logo PMII" class="h-9" onerror="this.onerror=null;this.src='https://placehold.co/100x100/005c97/FFFFFF?text=P';">
+                <span id="header-title-text" class="text-[0.65rem] lg:text-xs font-semibold logo-text tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
+                    PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung
+                </span>
+            </a>
+            <div class="hidden lg:flex space-x-6 items-center">
+                <a href="#beranda" class="nav-link text-sm">Beranda</a>
+                <a href="#tentang" class="nav-link text-sm">Tentang Kami</a>
+                <a href="#berita" class="nav-link text-sm">Berita</a>
+                <a href="digilib.html" class="nav-link text-sm" target="_self">📚 Digilib</a>
+                <a href="#kegiatan" class="nav-link text-sm">Kegiatan</a>
+                <a href="#galeri" class="nav-link text-sm">Galeri</a>
+                <div id="desktop-kader-menu-container" class="relative dropdown hidden">
+                    <button class="dropdown-toggle nav-link focus:outline-none text-sm">
+                        Profil Kader <i class="fas fa-chevron-down text-xs ml-1"></i>
+                    </button>
+                    <div class="dropdown-menu mt-3.5">
+                        <a href="edit-profil-kader.html" id="edit-profil-kader-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-user-edit"></i> Edit Profil</a>
+                        <a href="pengaturan-akun-kader.html" id="pengaturan-akun-kader-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-cog"></i> Pengaturan Akun</a>
+                        <a href="akses-ojs.html" id="jurnal-alharokah-link-desktop-kader" class="dropdown-item" target="_self"><i class="fas fa-book-reader"></i> Jurnal Al Harokah</a>
+                        <a href="pengajuan-surat.html" id="pengajuan-surat-link-desktop-kader" class="dropdown-item" target="_self"><i class="fas fa-file-alt"></i> Pengajuan Surat</a>
+                    </div>
+                </div>
+                <div id="desktop-admin-menu-container" class="relative dropdown hidden">
+                    <button class="dropdown-toggle nav-link focus:outline-none text-sm">
+                        Sistem Internal <i class="fas fa-chevron-down text-xs ml-1"></i>
+                    </button>
+                    <div class="dropdown-menu mt-3.5">
+                        <a href="manajemen-akun.html" id="manajemen-akun-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-user-shield"></i>Manajemen Akun</a>
+                        <a href="manajemen-kader.html" id="manajemen-kader-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-users-cog"></i>Manajemen Kader</a>
+                        <a href="repository-ilmiah.html" id="repository-ilmiah-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-book-open"></i>Jurnal & Karya Ilmiah</a>
+                        <a href="pengajuan-surat.html" id="pengajuan-surat-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-file-alt"></i>Pengajuan Surat</a>
+                        <a href="verifikasi-surat.html" id="verifikasi-surat-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-check-circle"></i>Verifikasi Surat</a>
+                        <a href="admin-dashboard-rayon.html" id="dashboard-rayon-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-tachometer-alt"></i>Dashboard Admin Rayon</a>
+                        <a href="admin-dashboard-komisariat.html" id="admin-dashboard-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-tachometer-alt"></i>Dashboard Admin Kom.</a>
+                        <a href="edit-beranda.html" id="edit-beranda-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-edit"></i>Edit Beranda</a>
+                        <a href="akses-ojs.html" id="jurnal-alharokah-link-desktop-admin" class="dropdown-item" target="_self"><i class="fas fa-book-reader"></i>Jurnal Al Harokah</a>
+                        <hr class="border-gray-200 my-1">
+                        <a href="verifikasi-konten-rayon.html" id="verifikasi-konten-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-check-double"></i>Verifikasi Konten Rayon</a>
+                        <a href="rayon-tambah-berita.html" id="tambah-berita-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-newspaper"></i>Tambah Berita & Artikel</a>
+                        <a href="rayon-tambah-kegiatan.html" id="tambah-kegiatan-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-calendar-plus"></i>Tambah Kegiatan</a>
+                        <a href="rayon-tambah-galeri.html" id="tambah-galeri-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-images"></i>Tambah Galeri Kegiatan</a>
+                        <a href="edit-profil-rayon.html" id="edit-profil-rayon-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-building"></i>Edit Profil Rayon</a>
+                    </div>
+                </div>
+                <a href="#kontak" class="nav-link text-sm">Kontak</a>
+                <a href="login.html" id="auth-link-main" class="btn logged-out-styles text-sm" data-action="login">
+                    Login
+                </a>
+            </div>
+            <div class="lg:hidden">
+                <button id="mobile-menu-button" class="menu-icon focus:outline-none p-2 -mr-2"><i class="fas fa-bars text-2xl"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="mobile-menu-content" class="lg:hidden fixed top-0 right-0 h-full w-4/5 max-w-xs bg-gradient-to-b from-pmii-blue to-pmii-darkblue text-white p-6 shadow-2xl z-40">
+        <div class="flex justify-between items-center mb-10">
+            <a href="index.html" class="flex items-center space-x-2">
+                <img src="img/logo-pmii.png" alt="Logo PMII Mobile" class="h-9" onerror="this.onerror=null;this.src='https://placehold.co/100x100/005c97/FFFFFF?text=P';">
+                <span id="mobile-header-title-text" class="text-[0.6rem] font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
+                    PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung
+                </span>
+            </a>
+            <button id="close-mobile-menu-button" class="focus:outline-none p-2 -mr-2"><i class="fas fa-times text-2xl"></i></button>
+        </div>
+        <nav id="mobile-nav-links" class="flex flex-col space-y-3">
+            <a href="login.html" id="mobile-logout-link" class="btn logged-out-styles text-sm" data-action="login">
+                Login
+            </a>
+        </nav>
+    </div>
+    <div id="mobile-menu-overlay" class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-30"></div>
+
+    <div class="main-content-wrapper">
+        <main class="container mx-auto px-4 py-8 lg:py-12">
+            <div class="text-center mb-10 md:mb-14">
+                <h1 class="text-3xl lg:text-4xl page-title" id="mainPageTitle">Generate QR Code</h1>
+                <p class="text-md text-text-muted mt-2" id="mainPageDescription">Buat dan kelola kode QR untuk berbagai keperluan.</p>
+            </div>
+
+            <section id="qr-type-selection" class="content-card max-w-2xl mx-auto py-6 px-6 lg:px-10 mb-8">
+                <h2 class="text-xl font-bold text-pmii-yellow mb-4 text-center">Pilih Tipe QR Code</h2>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="radio" name="qrType" value="ttdDigital" id="qrTypeTtdDigital" class="form-radio text-pmii-yellow h-5 w-5" checked>
+                        <span class="text-white text-lg">QR Tanda Tangan Digital</span>
+                    </label>
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="radio" name="qrType" value="accessLink" id="qrTypeAccessLink" class="form-radio text-pmii-yellow h-5 w-5">
+                        <span class="text-white text-lg">QR Mengakses Link</span>
+                    </label>
+                </div>
+            </section>
+
+            <section id="qr-ttd-form-section" class="content-card max-w-2xl mx-auto py-8 px-6 lg:px-10">
+                <h2 class="text-2xl font-bold text-pmii-yellow mb-6 text-center">Buat Kode QR TTD Digital</h2>
+                <div id="qr-form-message" class="hidden form-message-container mb-4"></div>
+
+                <form id="qrTtdForm" class="space-y-5">
+                    <div>
+                        <label for="nomorSurat" class="form-label">Nomor Surat</label>
+                        <input type="text" id="nomorSurat" name="nomorSurat" class="form-input dark-mode" placeholder="Contoh: B-1234/Kom.V-03/PMII.01.02/VI/2024" required>
+                    </div>
+                    <div>
+                        <label for="ditandatanganiOleh" class="form-label">Ditandatangani Oleh</label>
+                        <input type="text" id="ditandatanganiOleh" name="ditandatanganiOleh" class="form-input dark-mode" placeholder="Nama Penanggung Jawab" required>
+                    </div>
+                    <div>
+                        <label for="jabatan" class="form-label">Jabatan</label>
+                        <input type="text" id="jabatan" name="jabatan" class="form-input dark-mode" placeholder="Contoh: Ketua Komisariat" required>
+                    </div>
+                    <div>
+                        <label for="tanggalSurat" class="form-label">Tanggal Surat</label>
+                        <input type="date" id="tanggalSurat" name="tanggalSurat" class="form-input dark-mode" required>
+                    </div>
+                    <div>
+                        <label for="perihalSurat" class="form-label">Perihal Surat</label>
+                        <input type="text" id="perihalSurat" name="perihalSurat" class="form-input dark-mode" placeholder="Contoh: Undangan Diskusi Akbar" required>
+                    </div>
+
+                    <div id="logoUploadContainer" class="hidden">
+                        <label for="logoUploadInput" class="form-label">Unggah Logo Rayon (Opsional, untuk Admin Rayon)</label>
+                        <input type="file" id="logoUploadInput" name="logoUploadInput" accept="image/*" class="form-input dark-mode p-2.5">
+                        <p class="text-gray-400 text-xs mt-1">Ukuran logo ideal: persegi (mis. 100x100px). Akan diletakkan di tengah QR.</p>
+                        <img id="logoPreview" src="#" alt="Pratinjau Logo" class="mt-2 hidden"/>
+                    </div>
+
+                    <div class="text-center mt-8">
+                        <button type="submit" id="generateQrTtdBtn" class="btn btn-primary-pmii mb-4">
+                            <i class="fas fa-qrcode mr-2"></i> Generate Kode QR TTD
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <section id="qr-link-form-section" class="content-card max-w-2xl mx-auto py-8 px-6 lg:px-10 hidden">
+                <h2 class="text-2xl font-bold text-pmii-yellow mb-6 text-center">Buat Kode QR Mengakses Link</h2>
+                <div id="qr-link-form-message" class="hidden form-message-container mb-4"></div>
+
+                <form id="qrLinkForm" class="space-y-5">
+                    <div>
+                        <label for="linkUrl" class="form-label">URL Link <span class="text-red-400">*</span></label>
+                        <input type="url" id="linkUrl" name="linkUrl" class="form-input dark-mode" placeholder="Contoh: https://pmii-bandung.or.id/agenda" required>
+                    </div>
+                    <div>
+                        <label for="linkTitle" class="form-label">Judul Link (Opsional)</label>
+                        <input type="text" id="linkTitle" name="linkTitle" class="form-input dark-mode" placeholder="Contoh: Agenda Terkini PK PMII">
+                    </div>
+                    <div>
+                        <label for="linkDescription" class="form-label">Deskripsi Link (Opsional)</label>
+                        <textarea id="linkDescription" name="linkDescription" rows="3" class="form-input dark-mode" placeholder="Deskripsi singkat tentang link ini..."></textarea>
+                    </div>
+                    <div>
+                        <label for="linkCreator" class="form-label">Dibuat Oleh (Opsional)</label>
+                        <input type="text" id="linkCreator" name="linkCreator" class="form-input dark-mode" placeholder="Nama Pembuat QR">
+                    </div>
+
+                    <div class="text-center mt-8">
+                        <button type="submit" id="generateQrLinkBtn" class="btn btn-primary-pmii mb-4">
+                            <i class="fas fa-link mr-2"></i> Generate Kode QR Link
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <div id="qrCodeOutputContainer" class="hidden flex flex-col items-center justify-center content-card max-w-2xl mx-auto py-8 px-6 lg:px-10 mt-8">
+                <h2 class="text-2xl font-bold text-pmii-yellow mb-6 text-center" id="qrOutputTitle">QR Code Anda</h2>
+                <canvas id="qrcodeCanvas" class="w-72 h-72 border-4 border-white rounded-lg shadow-lg bg-white" style="width: 288px; height: 288px;"></canvas>
+                <p class="text-center text-sm text-gray-300 mt-2">Pindai kode QR di atas untuk melihat detail.</p>
+                <button type="button" id="downloadQrBtn" class="btn btn-primary-pmii mt-4">
+                    <i class="fas fa-download mr-2"></i> Unduh QR Code
+                </button>
+            </div>
+
+            <section id="letter-status-section" class="content-card max-w-2xl mx-auto py-8 px-6 lg:px-10 hidden">
+                <h2 class="text-2xl font-bold text-pmii-yellow mb-6 text-center">Status Verifikasi TTD Digital</h2>
+                <div id="komisariatLogoDisplay" class="hidden">
+                    <img src="img/logo-komisariat-uin.png" alt="Logo Komisariat" class="komisariat-logo-display" onerror="this.onerror=null;this.src='https://placehold.co/120x120/005c97/FFFFFF?text=Logo';">
+                </div>
+                <div class="space-y-4 text-white">
+                    <p><strong>Nomor Surat:</strong> <span id="displayNomorSurat"></span></p>
+                    <p><strong>Ditandatangani Oleh:</strong> <span id="displayDitandatanganiOleh"></span></p>
+                    <p><strong>Jabatan:</strong> <span id="displayJabatan"></span></p>
+                    <p><strong>Tanggal Surat:</strong> <span id="displayTanggalSurat"></span></p>
+                    <p><strong>Perihal:</strong> <span id="displayPerihalSurat"></span></p>
+                    <p class="text-success-500 font-semibold text-lg flex items-center justify-center pt-4">
+                        <i class="fas fa-check-circle mr-2 text-green-400"></i> <span class="text-green-400">Tanda Tangan Digital SAH</span>
+                    </p>
+                </div>
+                <div class="text-center mt-8">
+                    <a href="generate-qr.html" class="btn btn-secondary-pmii">
+                        <i class="fas fa-qrcode mr-2"></i> Buat QR Baru
+                    </a>
+                </div>
+            </section>
+
+            <section id="link-status-section" class="content-card max-w-2xl mx-auto py-8 px-6 lg:px-10 hidden">
+                <h2 class="text-2xl font-bold text-pmii-yellow mb-6 text-center">Detail Link yang Diakses</h2>
+                <div class="space-y-4 text-white">
+                    <p><strong>URL:</strong> <a id="displayLinkUrl" class="text-pmii-yellow hover:underline" target="_blank" rel="noopener noreferrer"></a></p>
+                    <p><strong>Judul:</strong> <span id="displayLinkTitle"></span></p>
+                    <p><strong>Deskripsi:</strong> <span id="displayLinkDescription"></span></p>
+                    <p><strong>Dibuat Oleh:</strong> <span id="displayLinkCreator"></span></p>
+                    <p class="text-info-500 font-semibold text-lg flex items-center justify-center pt-4">
+                        <i class="fas fa-info-circle mr-2 text-blue-400"></i> <span class="text-blue-400">Informasi Link</span>
+                    </p>
+                </div>
+                <div class="text-center mt-8">
+                    <a href="generate-qr.html" class="btn btn-secondary-pmii">
+                        <i class="fas fa-qrcode mr-2"></i> Buat QR Baru
+                    </a>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="internal-footer py-10 mt-auto">
+        <div class="container mx-auto px-4 text-center">
+            <img src="img/logo-pmii.png" alt="Logo PMII Footer" class="h-12 w-auto mx-auto mb-2.5 rounded-full" onerror="this.onerror=null;this.src='https://placehold.co/100x100/005c97/FFFFFF?text=P';">
+            <p class="text-md font-semibold footer-title">PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung</p>
+            <p class="text-xs mt-3">&copy; <span id="tahun-footer-dashboard"></span> PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <button id="scrollToTopBtnDashboard" title="Kembali ke atas" class="hidden">
+        <i class="fas fa-arrow-up text-xl"></i>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Global State & Elements (from existing pages for consistency) ---
+            const LOCAL_STORAGE_USER_KEY = 'loggedInUser';
+
+            let loggedInUser = null;
+
+            // Navbar & Auth Elements
+            const headerTitleText = document.getElementById('header-title-text');
+            const mobileHeaderTitleText = document.getElementById('mobile-header-title-text');
+            const authLinkMain = document.getElementById('auth-link-main');
+            const authLinkMobile = document.getElementById('mobile-logout-link');
+
+            // Admin/Kader Links Map: Stores references to both desktop and mobile link elements
+            const adminMenuLinks = {
+                manajemenAkun: { desktop: document.getElementById('manajemen-akun-link-desktop'), mobile: null },
+                manajemenKader: { desktop: document.getElementById('manajemen-kader-link-desktop'), mobile: null },
+                repositoryIlmiah: { desktop: document.getElementById('repository-ilmiah-link-desktop'), mobile: null },
+                pengajuanSurat: { desktop: document.getElementById('pengajuan-surat-link-desktop'), mobile: null },
+                verifikasiSurat: { desktop: document.getElementById('verifikasi-surat-link-desktop'), mobile: null },
+                dashboardRayon: { desktop: document.getElementById('dashboard-rayon-link-desktop'), mobile: null },
+                adminDashboard: { desktop: document.getElementById('admin-dashboard-link-desktop'), mobile: null },
+                editBeranda: { desktop: document.getElementById('edit-beranda-link-desktop'), mobile: null },
+                jurnalAlharokahAdmin: { desktop: document.getElementById('jurnal-alharokah-link-desktop-admin'), mobile: null },
+                editProfilKader: { desktop: document.getElementById('edit-profil-kader-link-desktop'), mobile: null },
+                pengaturanAkunKader: { desktop: document.getElementById('pengaturan-akun-kader-link-desktop'), mobile: null },
+                jurnalAlharokahKader: { desktop: document.getElementById('jurnal-alharokah-link-desktop-kader'), mobile: null },
+                pengajuanSuratKader: { desktop: document.getElementById('pengajuan-surat-link-desktop-kader'), mobile: null },
+                verifikasiKontenRayon: { desktop: document.getElementById('verifikasi-konten-link-desktop'), mobile: null },
+                tambahBeritaRayon: { desktop: document.getElementById('tambah-berita-link-desktop'), mobile: null },
+                tambahKegiatanRayon: { desktop: document.getElementById('tambah-kegiatan-link-desktop'), mobile: null },
+                tambahGaleriRayon: { desktop: document.getElementById('tambah-galeri-link-desktop'), mobile: null },
+                editProfilRayon: { desktop: document.getElementById('edit-profil-rayon-link-desktop'), mobile: null }
+            };
+
+            // Elements specific to this page
+            const qrTypeTtdDigital = document.getElementById('qrTypeTtdDigital');
+            const qrTypeAccessLink = document.getElementById('qrTypeAccessLink');
+            const qrTtdFormSection = document.getElementById('qr-ttd-form-section');
+            const qrLinkFormSection = document.getElementById('qr-link-form-section');
+            const qrTypeSelection = document.getElementById('qr-type-selection'); // New: select type selection section
+
+            const qrTtdForm = document.getElementById('qrTtdForm');
+            const nomorSuratInput = document.getElementById('nomorSurat');
+            const ditandatanganiOlehInput = document.getElementById('ditandatanganiOleh');
+            const jabatanInput = document.getElementById('jabatan');
+            const tanggalSuratInput = document.getElementById('tanggalSurat');
+            const perihalSuratInput = document.getElementById('perihalSurat');
+            const logoUploadContainer = document.getElementById('logoUploadContainer');
+            const logoUploadInput = document.getElementById('logoUploadInput');
+            const logoPreview = document.getElementById('logoPreview');
+            const generateQrTtdBtn = document.getElementById('generateQrTtdBtn');
+
+            const qrLinkForm = document.getElementById('qrLinkForm');
+            const linkUrlInput = document.getElementById('linkUrl');
+            const linkTitleInput = document.getElementById('linkTitle');
+            const linkDescriptionInput = document.getElementById('linkDescription');
+            const linkCreatorInput = document.getElementById('linkCreator');
+            const generateQrLinkBtn = document.getElementById('generateQrLinkBtn');
+
+            const qrcodeCanvas = document.getElementById('qrcodeCanvas');
+            const qrCodeOutputContainer = document.getElementById('qrCodeOutputContainer');
+            const downloadQrBtn = document.getElementById('downloadQrBtn');
+            const qrOutputTitle = document.getElementById('qrOutputTitle');
+
+            // Display elements for TTD status (re-added)
+            const letterStatusSection = document.getElementById('letter-status-section');
+            const displayNomorSurat = document.getElementById('displayNomorSurat');
+            const displayDitandatanganiOleh = document.getElementById('displayDitandatanganiOleh');
+            const displayJabatan = document.getElementById('displayJabatan');
+            const displayTanggalSuratSpan = document.getElementById('displayTanggalSurat'); // Fixed ID for span
+            const displayPerihalSurat = document.getElementById('displayPerihalSurat');
+            const komisariatLogoDisplay = document.getElementById('komisariatLogoDisplay');
+
+            // Display elements for link status (re-added)
+            const linkStatusSection = document.getElementById('link-status-section');
+            const displayLinkUrl = document.getElementById('displayLinkUrl');
+            const displayLinkTitle = document.getElementById('displayLinkTitle');
+            const displayLinkDescription = document.getElementById('displayLinkDescription');
+            const displayLinkCreator = document.getElementById('displayLinkCreator');
+
+            const mainPageTitle = document.getElementById('mainPageTitle');
+            const mainPageDescription = document.getElementById('mainPageDescription');
+
+
+            let qr = null; // Declare qr variable globally accessible
+            let uploadedLogoDataURL = null; // Stores data URL for rayon admin's uploaded logo
+
+            /**
+             * Custom message box function to replace alert() and confirm().
+             * @param {string} message - The message to display.
+             * @param {string} type - 'success', 'error', 'info'.
+             * @param {Function} [callback] - Optional callback function to run after message fades out.
+             */
+            function showCustomMessage(message, type = 'info', callback = null) {
+                const messageBox = document.getElementById('customMessageBox');
+                messageBox.textContent = message;
+                messageBox.className = 'fixed top-4 right-4 z-[9999] px-6 py-3 rounded-lg shadow-xl text-white text-sm font-semibold transition-all duration-300 transform translate-x-full opacity-0'; // Reset classes
+
+                // Apply type-specific styling
+                if (type === 'success') {
+                    messageBox.classList.add('bg-green-500');
+                } else if (type === 'error') {
+                    messageBox.classList.add('bg-red-500');
+                } else { // Default to info (blue)
+                    messageBox.classList.add('bg-blue-500');
+                }
+
+                // Show message
+                messageBox.classList.remove('translate-x-full', 'opacity-0');
+                messageBox.classList.add('translate-x-0', 'opacity-100');
+
+                setTimeout(() => {
+                    messageBox.classList.remove('translate-x-0', 'opacity-100');
+                    messageBox.classList.add('translate-x-full', 'opacity-0');
+                    if (callback) {
+                        // Execute callback after the fade-out transition completes
+                        messageBox.addEventListener('transitionend', function handler() {
+                            callback();
+                            messageBox.removeEventListener('transitionend', handler);
+                        });
+                    }
+                }, 3000);
+            }
+
+            /* Custom Confirmation Modal Logic */
+            const customConfirmModal = document.getElementById('customConfirmModal');
+            const confirmModalTitle = document.getElementById('confirmModalTitle');
+            const confirmModalMessage = document.getElementById('confirmModalMessage');
+            const confirmYesBtn = document.getElementById('confirmYesBtn');
+            const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+            let currentConfirmCallback = null; // To store the callback function
+
+            /**
+             * Shows a custom confirmation modal.
+             * @param {string} title - The title of the confirmation modal.
+             * @param {string} message - The message to display in the modal.
+             * @param {Function} onConfirm - Callback function to execute if 'Yes' is clicked.
+             * @param {Function} [onCancel] - Optional callback function to execute if 'No' is clicked.
+             */
+            function showCustomConfirm(title, message, onConfirm, onCancel = null) {
+                confirmModalTitle.textContent = title;
+                confirmModalMessage.textContent = message;
+                customConfirmModal.classList.add('active'); // Show modal overlay
+                currentConfirmCallback = onConfirm; // Store confirm callback
+
+                // Set up event listeners for modal buttons
+                confirmYesBtn.onclick = () => {
+                    if (currentConfirmCallback) {
+                        currentConfirmCallback(); // Execute confirm callback
+                    }
+                    hideCustomConfirm(); // Hide modal
+                };
+                confirmCancelBtn.onclick = () => {
+                    if (onCancel) {
+                        onCancel(); // Execute cancel callback if provided
+                    }
+                    hideCustomConfirm(); // Hide modal
+                };
+            }
+
+            /**
+             * Hides the custom confirmation modal.
+             */
+            function hideCustomConfirm() {
+                customConfirmModal.classList.remove('active'); // Hide modal overlay
+                currentConfirmCallback = null; // Clear callback
+            }
+
+            // Close modal when clicking outside the content
+            customConfirmModal.addEventListener('click', function(event) {
+                if (event.target === customConfirmModal) { // Check if the click was on the overlay itself
+                    hideCustomConfirm();
+                }
+            });
+
+
+            /**
+             * Simulates login/logout.
+             */
+            function handleAuthClick(e) {
+                e.preventDefault();
+                // Close mobile menu if it's open
+                const mobileMenuContent = document.getElementById('mobile-menu-content');
+                if (mobileMenuContent.classList.contains('menu-active')) {
+                    toggleMobileMenu();
+                }
+
+                const action = e.target.dataset.action || (e.target.closest('a') ? e.target.closest('a').dataset.action : null);
+
+                if (action === 'login') {
+                    // Redirect to login.html when login button is clicked
+                    window.location.href = 'login.html';
+
+                } else if (action === 'logout') {
+                    // Show custom confirmation modal for logout
+                    showCustomConfirm('Konfirmasi Logout', 'Apakah Anda yakin ingin logout?', () => {
+                        // If user confirms (clicks Yes)
+                        document.body.classList.add('fade-out-page');
+                        setTimeout(() => {
+                            loggedInUser = null;
+                            localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+                            localStorage.removeItem('isAdminLoggedIn'); // Clear the admin flag too
+                            window.location.reload();
+                        }, 500); // Match CSS fade-out duration
+                    }, () => {
+                        // If user cancels (clicks No), do nothing or provide a message
+                        showCustomMessage('Logout dibatalkan.', 'info');
+                    });
+                }
+            }
+
+
+            function updatePageSpecificUI() {
+                // Determine if user is logged in and their role
+                const isLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
+                const storedUser = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
+
+                if (isLoggedIn && storedUser) {
+                    try {
+                        loggedInUser = JSON.parse(storedUser);
+                    } catch (e) {
+                        console.error("Error parsing loggedInUser from localStorage:", e);
+                        localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+                        localStorage.removeItem('isAdminLoggedIn');
+                        loggedInUser = null;
+                    }
+                }
+
+                // If not logged in or role is invalid, show a message and disable forms
+                if (!loggedInUser || (loggedInUser.role !== 'rayon' && loggedInUser.role !== 'komisariat')) { // Only Rayon and Komisariat can access this page
+                    const mainContentWrapper = document.querySelector('.main-content-wrapper');
+                    if (mainContentWrapper) {
+                        mainContentWrapper.innerHTML = `
+                            <div class="container mx-auto px-4 py-8 lg:py-12 text-center text-white">
+                                <i class="fas fa-exclamation-triangle text-6xl text-yellow-400 mb-4 animate-bounce"></i>
+                                <h1 class="text-3xl lg:text-4xl font-bold mb-4">Akses Ditolak</h1>
+                                <p class="text-lg mb-6">Anda harus login sebagai Admin Rayon atau Admin Komisariat untuk mengakses halaman ini.</p>
+                                <a href="login.html" class="btn btn-primary-pmii inline-flex items-center px-6 py-3 text-lg rounded-lg shadow-md hover:shadow-lg transition-all">
+                                    <i class="fas fa-sign-in-alt mr-2"></i> Menuju Halaman Login
+                                </a>
+                            </div>
+                        `;
+                    }
+                    // Hide all menu containers, as we've replaced the main content
+                    if(document.getElementById('desktop-kader-menu-container')) document.getElementById('desktop-kader-menu-container').classList.add('hidden');
+                    if(document.getElementById('desktop-admin-menu-container')) document.getElementById('desktop-admin-menu-container').classList.add('hidden');
+                    return; // Stop execution
+                }
+
+                // Update common UI elements for logged-in users
+                const authLinkMain = document.getElementById('auth-link-main');
+                const authLinkMobile = document.getElementById('mobile-logout-link');
+
+                if (authLinkMain) {
+                    authLinkMain.innerHTML = `<i class="fas fa-sign-out-alt mr-2"></i> Logout`;
+                    authLinkMain.classList.add('logout-active');
+                    authLinkMain.dataset.action = "logout"; // Ensure data-action is set
+                    authLinkMain.removeEventListener('click', handleAuthClick); // Remove existing listener
+                    authLinkMain.addEventListener('click', handleAuthClick);
+                }
+                // Also update the mobile auth link
+                if (authLinkMobile) {
+                    authLinkMobile.innerHTML = `<i class="fas fa-sign-out-alt mr-2"></i> Logout`;
+                    authLinkMobile.classList.add('logout-active');
+                    authLinkMobile.dataset.action = "logout"; // Ensure data-action is set
+                    authLinkMobile.removeEventListener('click', handleAuthClick); // Remove existing listener
+                    authLinkMobile.addEventListener('click', handleAuthClick);
+                }
+
+                // Update header titles (SINTAKSIS logic)
+                const defaultTitle = 'PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung';
+                const loggedInTitle = 'SINTAKSIS (Sistem Informasi Terintegrasi Kaderisasi)';
+
+                if (headerTitleText) {
+                    headerTitleText.textContent = loggedInTitle;
+                }
+                if (mobileHeaderTitleText) {
+                    mobileHeaderTitleText.textContent = loggedInTitle;
+                }
+
+                // Hide all desktop admin menu links by default before setting specific ones
+                for (const key in adminMenuLinks) {
+                    const desktopLink = adminMenuLinks[key].desktop;
+                    if(desktopLink) desktopLink.style.display = 'none';
+                }
+
+                const desktopAdminMenuContainer = document.getElementById('desktop-admin-menu-container');
+                const desktopKaderMenuContainer = document.getElementById('desktop-kader-menu-container');
+
+                // Show menus based on role
+                if (loggedInUser.role === "rayon" || loggedInUser.role === "komisariat") {
+                    if(desktopAdminMenuContainer) desktopAdminMenuContainer.classList.remove('hidden');
+                } else if (loggedInUser.role === "kader") {
+                    if(desktopKaderMenuContainer) desktopKaderMenuContainer.classList.add('hidden'); // Ensure kader menu is hidden by default here
+                }
+
+
+                // Determine which specific links to display for desktop
+                let visibleDesktopLinksKeys = [];
+                if (loggedInUser.role === "rayon") {
+                    visibleDesktopLinksKeys = [
+                        'manajemenKader', 'repositoryIlmiah',
+                        'pengajuanSurat', 'dashboardRayon',
+                        'jurnalAlharokahAdmin', 'tambahBeritaRayon',
+                        'tambahKegiatanRayon', 'tambahGaleriRayon',
+                        'verifikasiKontenRayon', 'editProfilRayon'
+                    ];
+                } else if (loggedInUser.role === "komisariat") {
+                    visibleDesktopLinksKeys = [
+                        'manajemenAkun', 'manajemenKader',
+                        'repositoryIlmiah', 'pengajuanSurat',
+                        'verifikasiSurat', 'adminDashboard',
+                        'editBeranda', 'jurnalAlharokahAdmin',
+                        'verifikasiKontenRayon', 'editProfilRayon'
+                    ];
+                } else if (loggedInUser.role === "kader") {
+                    visibleDesktopLinksKeys = [
+                        'editProfilKader', 'pengaturanAkunKader',
+                        'jurnalAlharokahKader', 'pengajuanSuratKader'
+                    ];
+                }
+
+                visibleDesktopLinksKeys.forEach(key => {
+                    const linkEl = adminMenuLinks[key].desktop;
+                    if (linkEl) linkEl.style.display = 'flex'; // Use flex for dropdown items
+                });
+
+                populateMobileMenu(); // Re-populate mobile menu to ensure it's up-to-date
+
+                // Handle logo upload/default visibility and source
+                if (loggedInUser.role === 'komisariat') {
+                    if (logoUploadContainer) logoUploadContainer.classList.add('hidden'); // Hide upload for komisariat
+                } else if (loggedInUser.role === 'rayon') {
+                    if (logoUploadContainer) logoUploadContainer.classList.remove('hidden'); // Show upload for rayon
+                    if (logoUploadInput) {
+                        logoUploadInput.onchange = (event) => {
+                            const file = event.target.files[0];
+                            if (file && file.type.startsWith('image/')) {
+                                const reader = new FileReader();
+                                reader.onload = (e) => {
+                                    uploadedLogoDataURL = e.target.result; // Store data URL
+                                    if (logoPreview) {
+                                        logoPreview.src = uploadedLogoDataURL;
+                                        logoPreview.classList.remove('hidden'); // Show preview
+                                        logoPreview.style.display = 'block'; // Ensure display is block
+                                    }
+                                };
+                                reader.onerror = () => {
+                                    console.error("Error reading file.");
+                                    showCustomMessage('Gagal membaca file gambar.', 'error');
+                                    uploadedLogoDataURL = null;
+                                    if (logoPreview) logoPreview.classList.add('hidden'); // Hide preview on error
+                                };
+                                reader.readAsDataURL(file);
+                            } else {
+                                uploadedLogoDataURL = null;
+                                if (file) showCustomMessage('File yang diunggah harus berupa gambar.', 'error');
+                                if (logoPreview) logoPreview.classList.add('hidden'); // Hide preview if not an image
+                            }
+                            // Hide existing QR code output container if logo input changes, forcing regeneration
+                            qrCodeOutputContainer.classList.add('hidden');
+                        };
+                    }
+                } else {
+                    if (logoUploadContainer) logoUploadContainer.classList.add('hidden'); // Hide for non-admins
+                }
+            }
+
+            // Function to populate mobile menu dynamically based on user role and available desktop links
+            function populateMobileMenu() {
+                const mobileNavLinksContainer = document.getElementById('mobile-nav-links');
+                if (!mobileNavLinksContainer) return;
+
+                mobileNavLinksContainer.innerHTML = ''; // Clear existing links
+
+                // General links always present
+                const generalLinksData = [
+                    { text: 'Beranda', href: 'index.html#beranda', icon: 'fas fa-home' },
+                    { text: 'Tentang Kami', href: 'index.html#tentang', icon: 'fas fa-info-circle' },
+                    { text: 'Berita', href: 'index.html#berita', icon: 'fas fa-newspaper' },
+                    { text: '📚 Digilib', href: 'digilib.html', icon: 'fas fa-book' },
+                    { text: 'Kegiatan', href: 'index.html#kegiatan', icon: 'fas fa-calendar-alt' },
+                    { text: 'Galeri', href: 'index.html#galeri', icon: 'fas fa-images' }
+                ];
+
+                generalLinksData.forEach(linkData => {
+                    const link = document.createElement('a');
+                    link.href = linkData.href;
+                    link.classList.add('mobile-nav-link');
+                    link.innerHTML = `<i class="${linkData.icon}"></i><span>${linkData.text}</span>`;
+                    link.addEventListener('click', toggleMobileMenu); // Close menu on click
+                    mobileNavLinksContainer.appendChild(link);
+                });
+
+                // Add System Internal dropdown based on user role's visible desktop links
+                if (loggedInUser && (loggedInUser.role === 'komisariat' || loggedInUser.role === 'rayon' || loggedInUser.role === 'kader')) {
+                    const systemInternalTitle = document.createElement('div');
+                    systemInternalTitle.classList.add('mobile-submenu-title');
+                    systemInternalTitle.textContent = loggedInUser.role === 'kader' ? 'Profil Kader' : 'Sistem Internal';
+                    mobileNavLinksContainer.appendChild(systemInternalTitle);
+
+                    // Iterate through adminMenuLinks and add visible ones
+                    for (const key in adminMenuLinks) {
+                        const desktopLink = adminMenuLinks[key].desktop;
+                        if (desktopLink && desktopLink.style.display !== 'none') { // Only add if desktop version is visible
+                            const link = document.createElement('a');
+                            link.href = desktopLink.href;
+                            link.classList.add('mobile-submenu-item');
+                            link.innerHTML = desktopLink.innerHTML; // Copy icon and text
+                            link.addEventListener('click', toggleMobileMenu); // Close menu on click
+                            mobileNavLinksContainer.appendChild(link);
+                        }
+                    }
+                }
+
+                // Add Kontak link
+                const kontakLink = document.createElement('a');
+                kontakLink.href = 'index.html#kontak';
+                kontakLink.classList.add('mobile-nav-link');
+                kontakLink.innerHTML = `<i class="fas fa-address-book"></i><span>Kontak</span>`;
+                kontakLink.addEventListener('click', toggleMobileMenu); // Close menu on click
+                mobileNavLinksContainer.appendChild(kontakLink);
+
+                // Add Logout link (or Login if not logged in)
+                const authLink = document.getElementById('mobile-logout-link'); // Use the existing element
+                if (authLink) {
+                    authLink.removeEventListener('click', handleAuthClick); // Remove previous listener
+                    authLink.addEventListener('click', handleAuthClick); // Add new listener
+
+                    if (loggedInUser) {
+                        authLink.classList.add('bg-red-500', 'hover:bg-red-600', 'logout-active');
+                        authLink.classList.remove('logged-out-styles');
+                        authLink.innerHTML = `<i class="fas fa-sign-out-alt"></i><span>Logout</span>`;
+                        authLink.dataset.action = "logout";
+                    } else {
+                        authLink.classList.remove('bg-red-500', 'hover:bg-red-600', 'logout-active');
+                        authLink.classList.add('logged-out-styles'); // Apply yellow button styles
+                        authLink.innerHTML = `<i class="fas fa-sign-in-alt"></i><span>Login</span>`;
+                        authLink.dataset.action = "login"; // Set data-action for handling
+                    }
+                }
+            }
+
+
+            function toggleMobileMenu() {
+                // Get elements inside the function to ensure they are defined when called
+                const mobileMenuContent = document.getElementById('mobile-menu-content');
+                const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+
+                const isOpen = mobileMenuContent.classList.contains('menu-active');
+                if (!isOpen) {
+                    populateMobileMenu(); // Populate menu before displaying
+                    mobileMenuContent.classList.add('menu-active');
+                    mobileMenuOverlay.classList.add('menu-active');
+                    document.body.classList.add('overflow-hidden'); // Prevent background scrolling
+                } else {
+                    mobileMenuContent.classList.remove('menu-active');
+                    mobileMenuOverlay.classList.remove('menu-active');
+                    document.body.classList.remove('overflow-hidden'); // Allow background scrolling
+                }
+            }
+
+            // Ensure menu buttons and overlay are found before attaching listeners
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const closeMobileMenuButton = document.getElementById('close-mobile-menu-button');
+            const mobileMenuOverlayElement = document.getElementById('mobile-menu-overlay');
+
+            if (mobileMenuButton) mobileMenuButton.addEventListener('click', toggleMobileMenu);
+            if (closeMobileMenuButton) closeMobileMenuButton.addEventListener('click', toggleMobileMenu);
+            if (mobileMenuOverlayElement) mobileMenuOverlayElement.addEventListener('click', toggleMobileMenu);
+
+
+            // Load user authentication status from localStorage (simulation)
+            try {
+                const storedUser = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
+                if (storedUser) {
+                    loggedInUser = JSON.parse(storedUser);
+                    // Validate user data (e.g., ensure 'role' property exists)
+                    if (typeof loggedInUser !== 'object' || loggedInUser === null || !loggedInUser.role) {
+                        loggedInUser = null; // Invalidate if format is incorrect
+                        localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+                    }
+                }
+            } catch (e) {
+                console.error("Error parsing loggedInUser from localStorage:", e);
+                loggedInUser = null;
+                localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+            }
+
+            updatePageSpecificUI(); // Initial UI update based on login status
+
+            const scrollToTopBtnDashboard = document.getElementById('scrollToTopBtnDashboard');
+            if (scrollToTopBtnDashboard) {
+                window.addEventListener('scroll', () => {
+                    if (window.pageYOffset > 200) {
+                        scrollToTopBtnDashboard.classList.remove('hidden');
+                        scrollToTopBtnDashboard.classList.add('flex');
+                    } else {
+                        scrollToTopBtnDashboard.classList.add('hidden');
+                        scrollToTopBtnDashboard.classList.remove('flex');
+                    }
+                });
+                scrollToTopBtnDashboard.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            // Update footer year
+            const tahunFooterDashboard = document.getElementById('tahun-footer-dashboard');
+            if (tahunFooterDashboard) {
+                tahunFooterDashboard.textContent = new Date().getFullYear();
+            }
+
+            /**
+             * Parses URL query parameters.
+             * @returns {Object} An object containing query parameters.
+             */
+            function getQueryParams() {
+                const params = {};
+                const queryString = window.location.search.substring(1);
+                const regex = /([^&=]+)=([^&]*)/g;
+                let m;
+                while ((m = regex.exec(queryString))) {
+                    params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+                }
+                return params;
+            }
+
+            /**
+             * Initializes or updates the QR code based on form inputs.
+             * @async
+             * @param {string} type - 'ttdDigital' or 'accessLink'.
+             */
+            async function generateQRCode(type) {
+                let qrData = '';
+                let logoToDrawSrc = null;
+                qrOutputTitle.textContent = 'QR Code Anda';
+
+                if (type === 'ttdDigital') {
+                    // Ensure all required fields have values before proceeding
+                    if (!nomorSuratInput.value.trim() || !ditandatanganiOlehInput.value.trim() ||
+                        !jabatanInput.value.trim() || !tanggalSuratInput.value.trim() ||
+                        !perihalSuratInput.value.trim()) {
+                        showCustomMessage('Harap isi semua kolom untuk membuat QR Code TTD Digital.', 'error');
+                        qrCodeOutputContainer.classList.add('hidden');
+                        return;
+                    }
+
+                    // Always use a relative path for local files for linking to status-ttd.html
+                    const statusTtdPageUrl = 'status-ttd.html';
+
+                    const nomor = encodeURIComponent(nomorSuratInput.value || '');
+                    const ditandatangani = encodeURIComponent(ditandatanganiOlehInput.value || '');
+                    const jabatan = encodeURIComponent(jabatanInput.value || '');
+                    const tanggal = encodeURIComponent(tanggalSuratInput.value || '');
+                    const perihal = encodeURIComponent(perihalSuratInput.value || '');
+
+                    // Add komisariatLogo parameter if user is komisariat, for displaying in status section
+                    const komisariatLogoParam = (loggedInUser && loggedInUser.role === 'komisariat') ? '&komisariatLogo=true' : '';
+
+                    qrData = `${statusTtdPageUrl}?nomorSurat=${nomor}&ditandatanganiOleh=${ditandatangani}&jabatan=${jabatan}&tanggal=${tanggal}&perihal=${perihal}${komisariatLogoParam}`;
+                    qrOutputTitle.textContent = 'QR Tanda Tangan Digital Anda';
+
+                    // Log the QR data to console for debugging
+                    console.log('QR TTD Digital Data (encoded):', qrData);
+
+                    // Set logo to be drawn IN THE QR CODE based on user role
+                    if (loggedInUser && loggedInUser.role === 'komisariat') {
+                        logoToDrawSrc = 'img/logo-komisariat-uin.png';
+                    } else if (loggedInUser && loggedInUser.role === 'rayon') {
+                        logoToDrawSrc = uploadedLogoDataURL; // Use uploaded logo for rayon
+                    }
+
+                } else if (type === 'accessLink') {
+                    // Ensure URL is provided and valid
+                    if (!linkUrlInput.value.trim() || !linkUrlInput.checkValidity()) {
+                        showCustomMessage('Harap masukkan URL yang valid.', 'error');
+                        qrCodeOutputContainer.classList.add('hidden');
+                        return;
+                    }
+
+                    // For Access Link, QR data is DIRECTLY the URL provided
+                    qrData = linkUrlInput.value.trim();
+                    qrOutputTitle.textContent = 'QR Link Anda';
+
+                    // Log the QR data to console for debugging
+                    console.log('QR Access Link Data (direct URL):', qrData);
+
+                    // Set logo to be drawn IN THE QR CODE based on user role
+                    if (loggedInUser && loggedInUser.role === 'komisariat') {
+                        logoToDrawSrc = 'img/logo-komisariat-uin.png';
+                    } else if (loggedInUser && loggedInUser.role === 'rayon') {
+                        logoToDrawSrc = uploadedLogoDataURL; // Use uploaded logo for rayon
+                    }
+                }
+
+                // Set canvas dimensions explicitly to avoid rendering issues with QRious
+                const canvasSize = 288; // Fixed size based on w-72 h-72 (18rem * 16px/rem = 288px)
+                qrcodeCanvas.width = canvasSize;
+                qrcodeCanvas.height = canvasSize;
+
+                // Initialize QRious
+                qr = new QRious({
+                    element: qrcodeCanvas,
+                    value: qrData,
+                    size: canvasSize,
+                    padding: 5,
+                    level: 'H', // High error correction level, good for logos
+                    foreground: '#004a7c', // PMII dark blue color
+                    background: '#ffffff' // White background
+                });
+
+                if (logoToDrawSrc) {
+                    const ctx = qrcodeCanvas.getContext('2d');
+                    const img = new Image();
+                    img.src = logoToDrawSrc;
+
+                    await new Promise((resolve, reject) => {
+                        img.onload = resolve;
+                        img.onerror = (e) => { // Add event parameter to onerror
+                            console.error(`Failed to load logo from: ${logoToDrawSrc}`, e); // Log error object
+                            showCustomMessage('Failed to load logo. Ensure URL/file is accessible.', 'error');
+                            reject(e); // Reject with the event or error
+                        };
+                    }).then(() => {
+                        const qrSize = qrcodeCanvas.width;
+                        const logoMaxRatio = 0.30; // Increased logo size for better visibility
+
+                        let drawWidth, drawHeight;
+                        const aspectRatio = img.width / img.height;
+
+                        if (aspectRatio > 1) { // Landscape or square
+                            drawWidth = Math.round(qrSize * logoMaxRatio);
+                            drawHeight = Math.round(drawWidth / aspectRatio);
+                        } else { // Portrait
+                            drawHeight = Math.round(qrSize * logoMaxRatio);
+                            drawWidth = Math.round(drawHeight * aspectRatio);
+                        }
+
+                        const logoX = Math.round((qrSize - drawWidth) / 2);
+                        const logoY = Math.round((qrSize - drawHeight) / 2);
+
+                        // Clear a larger area to ensure the logo is visible
+                        const clearPadding = 10; // Extra padding around the logo area
+                        ctx.clearRect(
+                            logoX - clearPadding,
+                            logoY - clearPadding,
+                            drawWidth + (2 * clearPadding),
+                            drawHeight + (2 * clearPadding)
+                        );
+
+                        ctx.drawImage(img, logoX, logoY, drawWidth, drawHeight);
+                    }).catch(error => {
+                        // Error already handled in img.onerror, this catch prevents unhandled promise rejection
+                        // and logs any subsequent issues in the promise chain
+                        console.error("Logo image processing error:", error);
+                    });
+                }
+                qrCodeOutputContainer.classList.remove('hidden'); // Show the QR code container
+            }
+
+            // Function to handle QR type selection
+            function handleQrTypeChange() {
+                const selectedRadioButton = document.querySelector('input[name="qrType"]:checked');
+                const selectedType = selectedRadioButton ? selectedRadioButton.value : 'ttdDigital';
+
+                // Hide all main content sections initially when changing type
+                qrTtdFormSection.classList.add('hidden');
+                qrLinkFormSection.classList.add('hidden');
+                qrCodeOutputContainer.classList.add('hidden');
+                letterStatusSection.classList.add('hidden');
+                linkStatusSection.classList.add('hidden');
+                qrTypeSelection.classList.remove('hidden'); // Ensure type selection is visible
+
+                mainPageTitle.textContent = "Generate QR Code";
+                mainPageDescription.textContent = "Buat dan kelola kode QR untuk berbagai keperluan.";
+
+
+                if (selectedType === 'ttdDigital') {
+                    qrTtdFormSection.classList.remove('hidden');
+                    // Ensure logo upload is visible if user is rayon admin AND TTD Digital is selected
+                    if (loggedInUser && loggedInUser.role === 'rayon') {
+                        logoUploadContainer.classList.remove('hidden');
+                    } else {
+                        logoUploadContainer.classList.add('hidden');
+                    }
+                } else if (selectedType === 'accessLink') {
+                    qrLinkFormSection.classList.remove('hidden');
+                    // For Access Link, also show logo upload for rayon, but hide for komisariat.
+                    if (loggedInUser && loggedInUser.role === 'rayon') {
+                        logoUploadContainer.classList.remove('hidden');
+                    } else {
+                        logoUploadContainer.classList.add('hidden');
+                    }
+                }
+            }
+
+            // Function to display TTD status from URL parameters
+            function displayTtdStatus(params) {
+                qrTypeSelection.classList.add('hidden'); // Hide type selection
+                qrTtdFormSection.classList.add('hidden');
+                qrLinkFormSection.classList.add('hidden');
+                qrCodeOutputContainer.classList.add('hidden'); // Hide QR output
+
+                letterStatusSection.classList.remove('hidden');
+                linkStatusSection.classList.add('hidden');
+
+                mainPageTitle.textContent = "Status Verifikasi TTD Digital";
+                mainPageDescription.textContent = "Memverifikasi keaslian Tanda Tangan Digital.";
+
+                displayNomorSurat.textContent = params.nomorSurat || 'Tidak Tersedia';
+                displayDitandatanganiOleh.textContent = params.ditandatanganiOleh || 'Tidak Tersedia';
+                displayJabatan.textContent = params.jabatan || 'Tidak Tersedia';
+                displayTanggalSuratSpan.textContent = params.tanggal || 'Tidak Tersedia'; // Corrected to use displayTanggalSuratSpan
+                displayPerihalSurat.textContent = params.perihal || 'Tidak Tersedia';
+
+                // Show Komisariat logo if parameter exists and element is available
+                if (params.komisariatLogo === 'true' && komisariatLogoDisplay) {
+                    komisariatLogoDisplay.classList.remove('hidden');
+                } else if (komisariatLogoDisplay) {
+                    komisariatLogoDisplay.classList.add('hidden');
+                }
+            }
+
+            // Function to display Link details from URL parameters
+            function displayLinkDetails(params) {
+                qrTypeSelection.classList.add('hidden'); // Hide type selection
+                qrTtdFormSection.classList.add('hidden');
+                qrLinkFormSection.classList.add('hidden');
+                qrCodeOutputContainer.classList.add('hidden'); // Hide QR output
+
+                letterStatusSection.classList.add('hidden');
+                linkStatusSection.classList.remove('hidden');
+
+                mainPageTitle.textContent = "Detail Link QR Code";
+                mainPageDescription.textContent = "Menampilkan informasi dari link yang terenkode dalam QR.";
+
+                displayLinkUrl.textContent = params.url || 'Tidak Tersedia';
+                displayLinkUrl.href = params.url || '#'; // Set href for the link
+                displayLinkTitle.textContent = params.title || 'Tidak Tersedia';
+                displayLinkDescription.textContent = params.description || 'Tidak Tersedia';
+                displayLinkCreator.textContent = params.creator || 'Tidak Tersedia';
+            }
+
+
+            // Event listeners for QR type radio buttons
+            qrTypeTtdDigital.addEventListener('change', handleQrTypeChange);
+            qrTypeAccessLink.addEventListener('change', handleQrTypeChange);
+
+            // Check URL parameters on page load
+            const queryParams = getQueryParams();
+
+            if (Object.keys(queryParams).length > 0 && queryParams.type) {
+                // If parameters exist, display appropriate status
+                if (queryParams.type === 'ttdDigital') {
+                    displayTtdStatus(queryParams);
+                } else if (queryParams.type === 'accessLink') {
+                    displayLinkDetails(queryParams);
+                }
+            } else {
+                // If no parameters, display QR generation forms initially
+                handleQrTypeChange(); // This will show the default TTD form
+            }
+
+            // Add event listener to the TTD Digital generate button
+            if (generateQrTtdBtn) {
+                generateQrTtdBtn.addEventListener('click', async function(event) {
+                    event.preventDefault(); // Prevent default form submission
+
+                    // Basic form validation for TTD Digital is now handled inside generateQRCode
+                    // For Rayon Admin, check if a logo is uploaded or warn them
+                    if (loggedInUser && loggedInUser.role === 'rayon' && !uploadedLogoDataURL) {
+                        showCustomConfirm(
+                            'Konfirmasi Logo',
+                            'Anda belum mengunggah logo rayon. Kode QR akan dibuat tanpa logo. Lanjutkan?',
+                            async () => {
+                                await generateQRCode('ttdDigital'); // User confirmed, generate without logo
+                            },
+                            () => {
+                                showCustomMessage('Pembuatan QR Code TTD Digital dibatalkan.', 'info');
+                                qrCodeOutputContainer.classList.add('hidden');
+                            }
+                        );
+                    } else {
+                        await generateQRCode('ttdDigital'); // Generate QR code (with logo if Komisariat or Rayon uploaded one)
+                    }
+                });
+            }
+
+            // Add event listener to the Access Link generate button
+            if (generateQrLinkBtn) {
+                generateQrLinkBtn.addEventListener('click', async function(event) {
+                    event.preventDefault(); // Prevent default form submission
+
+                    // Basic form validation for Access Link is now handled inside generateQRCode
+                    // For Rayon Admin, check if a logo is uploaded or warn them (for access link too)
+                    if (loggedInUser && loggedInUser.role === 'rayon' && !uploadedLogoDataURL) {
+                        showCustomConfirm(
+                            'Konfirmasi Logo',
+                            'Anda belum mengunggah logo rayon. Kode QR link akan dibuat tanpa logo. Lanjutkan?',
+                            async () => {
+                                await generateQRCode('accessLink'); // User confirmed, generate without logo
+                            },
+                            () => {
+                                showCustomMessage('Pembuatan QR Code Link dibatalkan.', 'info');
+                                qrCodeOutputContainer.classList.add('hidden');
+                            }
+                        );
+                    } else {
+                        await generateQRCode('accessLink'); // Generate QR code (with logo if Komisariat or Rayon uploaded one)
+                    }
+                });
+            }
+
+            // Download QR button functionality
+            if (downloadQrBtn) {
+                downloadQrBtn.addEventListener('click', function() {
+                    console.log("Attempting QR download. qr object:", qr);
+                    // Make sure QR code is generated before attempting to download
+                    if (!qr) {
+                        showCustomMessage('Tidak ada QR Code yang dapat diunduh. Harap buat QR Code terlebih dahulu.', 'error');
+                        return;
+                    }
+
+                    const img = qrcodeCanvas.toDataURL("image/png");
+                    console.log("QR canvas data URL:", img.substring(0, 100) + "..."); // Log first 100 chars to avoid huge console output
+
+                    const link = document.createElement('a');
+                    link.href = img;
+                    const selectedRadioButton = document.querySelector('input[name="qrType"]:checked');
+                    const selectedType = selectedRadioButton ? selectedRadioButton.value : 'QR_Code'; // Default filename type
+                    let fileName = 'QR_Code';
+
+                    if (selectedType === 'ttdDigital') {
+                        const nomor = nomorSuratInput.value || 'Surat';
+                        const ttdOleh = ditandatanganiOlehInput.value || 'TidakDikenal';
+                        // Sanitize filename to remove invalid characters
+                        fileName = `QR_TTD_${nomor.replace(/[^a-zA-Z0-9]/g, '_')}_${ttdOleh.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                    } else if (selectedType === 'accessLink') {
+                        const title = linkTitleInput.value || 'Link';
+                        // Sanitize filename to remove invalid characters
+                        fileName = `QR_Link_${title.replace(/[^a-zA-Z0-9]/g, '_')}`;
+                    }
+                    link.download = `${fileName}.png`;
+                    document.body.appendChild(link); // Required for Firefox and some other browsers for dynamic downloads
+                    link.click();
+                    document.body.removeChild(link); // Clean up
+                    showCustomMessage('QR Code berhasil diunduh!', 'success');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
