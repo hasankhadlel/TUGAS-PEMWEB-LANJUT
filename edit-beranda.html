@@ -1,0 +1,2099 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Beranda - PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="img/logo-pmii.png" type="image/png" onerror="this.onerror=null;this.src='https://placehold.co/100x100/005c97/FFFFFF?text=P';">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <style>
+        /* CSS Variables for consistent theming based on PMII colors and general UI elements */
+        :root {
+            --pmii-blue: #005c97;
+            --pmii-darkblue: #004a7c;
+            --pmii-yellow: #fdd835;
+            --pmii-purple: #6A0DAD; /* Added purple color variable */
+            --text-primary: #111827; /* Dark text for light backgrounds */
+            --text-secondary: #374151; /* Medium dark text */
+            --text-muted: #6b7280; /* Lighter text for subtle info */
+            --border-color: #e5e7eb; /* Light gray border */
+            --background-light: #f9fafb; /* Very light background */
+            --background-page: #f3f4f6; /* Default page background */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --input-bg: white; /* Default for input fields */
+            --navbar-height: 70px; /* Estimated height of your navbar */
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+        }
+
+        /* Base body styles, enabling smooth scrolling, Inter font preference, and fade-out transition */
+        body {
+            font-family: 'Inter', 'Poppins', sans-serif; /* Prioritize Inter */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            background-color: var(--background-page); /* Changed to light background */
+            color: var(--text-primary); /* Default text color for the body */
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            transition: opacity 0.5s ease-out; /* Smooth fade-out for page transitions */
+            position: relative;
+        }
+        
+        /* Main content wrapper to correctly position content below the potentially transparent/sticky navbar */
+        .main-content-wrapper {
+            flex-grow: 1; /* Allows content to push footer to bottom */
+            padding-top: var(--navbar-height); /* Push content down to start below the navbar */
+            position: relative; /* Establishes stacking context */
+            z-index: 1; /* Ensures content is above elements rendered below it */
+        }
+
+        /* Navbar Styling: sticky position and dynamic appearance on scroll */
+        .navbar-sticky {
+            position: sticky; top: 0; z-index: 50;
+            background-color: transparent; /* Initially transparent */
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Subtle initial shadow */
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Navbar links styling for the transparent/glossy state with blue text */
+        .nav-link, .dropdown-toggle, #auth-link-main, #header-title-text, #mobile-header-title-text {
+            color: var(--pmii-darkblue) !important; /* Always blue for this page's header */
+            text-shadow: none; /* No text shadow for clear blue text */
+            transform: translateY(0);
+            transition: color 0.25s ease-out, transform 0.2s ease-out;
+        }
+        /* Mobile menu button icon color (should also be blue on this header) */
+        .menu-icon i {
+            color: var(--pmii-darkblue) !important;
+        }
+
+        /* Underline effect for nav links, in blue tone */
+        .nav-link::after, .dropdown-toggle::after, #auth-link-main::after {
+            content: ''; display: block; width: 0; height: 2px;
+            background-color: var(--pmii-blue); /* Blue underline */
+            box-shadow: none; /* No glow */
+            transition: width 0.3s ease-out;
+        }
+        .nav-link:hover::after, .dropdown-toggle:hover::after, #auth-link-main:hover::after {
+            width: 100%;
+        }
+
+        /* Hover effect for nav links, slightly lighter blue */
+        .nav-link:hover, .dropdown-toggle:hover, #auth-link-main:hover {
+            color: var(--pmii-blue) !important; /* Lighter blue on hover */
+            transform: translateY(-1px); /* Subtle lift */
+            text-shadow: none; /* Ensure no text shadow */
+        }
+        /* Active link styling when on current page */
+        .nav-link.active-nav-link {
+            color: var(--pmii-blue) !important; /* Lighter blue for active state */
+            font-weight: 700;
+            text-shadow: none;
+        }
+        .nav-link.active-nav-link::after {
+            width: 100% !important;
+            background-image: linear-gradient(to right, var(--pmii-blue), var(--pmii-darkblue)); /* Blue gradient underline */
+            box-shadow: none;
+        }
+
+        /* Dropdown chevron rotation on hover */
+        .dropdown-toggle i {
+            transition: transform 0.2s ease-out;
+        }
+        .dropdown-toggle:hover i {
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        /* Dropdown Menu specific styles for modern look */
+        .dropdown-menu {
+            background-color: var(--pmii-darkblue); /* Darker blue background for dropdown menu */
+            backdrop-filter: blur(5px); /* Apply blur to dropdown menus */
+            color: white; /* Ensure text in dropdown is white for good contrast */
+            box-shadow: var(--shadow-lg);
+            z-index: 100; min-width: 280px; border-radius: 0.5rem;
+            opacity: 0; visibility: hidden; transform: translateY(10px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s;
+            position: absolute; /* Ensures it's positioned relative to parent dropdown */
+            min-width: 150px; /* Adjust minimum width as needed */
+            left: 50%; /* Center dropdown under its parent button */
+            transform: translateX(-50%) translateY(10px); /* Center and offset initially */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+            max-height: 300px; /* Added: Max height for scrollable dropdown */
+            overflow-y: auto; /* Added: Enable vertical scrolling */
+        }
+        .dropdown:hover .dropdown-menu,
+        .dropdown.active .dropdown-menu { /* .active class for mobile/JS control */
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0); /* Final state on hover/active */
+        }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: white; /* White text for dropdown items */
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
+            font-size: 0.875rem;
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+        .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.1); /* Lighter background on hover */
+            color: var(--pmii-yellow); /* Yellow text on hover */
+        }
+        .dropdown-item i {
+            margin-right: 0.75rem;
+            color: var(--pmii-yellow); /* Icon color matches theme */
+        }
+        
+        /* Mobile Menu Transitions */
+        #mobile-menu-content { 
+            position: fixed; 
+            top: 0; 
+            right: 0; 
+            height: 100vh; /* Full viewport height */
+            width: calc(100% - 50px); /* Adjust width to leave a small gap on smaller screens */
+            max-width: 320px; /* Max width for larger mobiles */
+            background: linear-gradient(to bottom, var(--pmii-blue), var(--pmii-darkblue)); /* Gradient background */
+            color: white; 
+            padding: 6px; 
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.4); /* Strong shadow */
+            z-index: 40; 
+            transform: translateX(100%); /* Start off-screen */
+            opacity: 0; 
+            visibility: hidden; 
+            pointer-events: none; /* Prevent interaction when hidden */
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease-out, visibility 0.35s;
+            overflow-y: auto; /* Enable scrolling for long content */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+            padding-bottom: 2rem; /* Add padding to the bottom */
+        }
+        /* State when menu is active/open */
+        #mobile-menu-content.menu-active {
+            transform: translateX(0); /* Slide in */
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto; /* Allow interaction when visible */
+        }
+
+        /* Mobile Menu Overlay */
+        #mobile-menu-overlay {
+            position: fixed;
+            inset: 0; /* Cover the whole viewport */
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+            backdrop-filter: blur(5px); /* Blur effect on the overlay */
+            z-index: 30;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease-out, visibility 0.3s;
+        }
+        /* State when overlay is active/open */
+        #mobile-menu-overlay.menu-active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        /* Mobile menu links */
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
+            border-radius: 0.375rem; /* rounded-md */
+        }
+        .mobile-nav-link i {
+            margin-right: 0.75rem; /* mr-3 */
+            width: 1.5rem; /* Fixed width for icons */
+            text-align: center;
+            color: var(--pmii-yellow);
+        }
+        .mobile-nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--pmii-yellow);
+        }
+
+        .mobile-submenu-title {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 600; /* font-semibold */
+            color: var(--pmii-yellow); /* Yellow color for sub-menu titles */
+            margin-top: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 0.5rem;
+        }
+        .mobile-submenu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1.5rem; /* Indent sub-menu items */
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
+            font-size: 0.8125rem; /* text-sm slightly smaller */
+            border-radius: 0.375rem; /* rounded-md */
+        }
+        .mobile-submenu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--pmii-yellow);
+        }
+        .mobile-submenu-item:hover i {
+            color: var(--pmii-yellow);
+        }
+
+        /* General Button Styling for consistent look and feel */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex; align-items: center; justify-content: center;
+            cursor: pointer; text-decoration: none;
+            box-shadow: var(--shadow-md);
+            z-index: 10; /* Ensure buttons are clickable */
+            position: relative; /* Needed for z-index to work */
+        }
+        .btn:hover {
+             box-shadow: var(--shadow-lg);
+             transform: translateY(-2px) scale(1.03); /* Subtle lift and scale on hover */
+        }
+        .btn:active {
+            transform: translateY(0px) scale(0.98); /* Slight press down effect on click */
+            box-shadow: var(--shadow-sm);
+        }
+        /* Primary button with PMII blue color */
+        .btn-primary-pmii {
+            background-color: var(--pmii-blue); color: white;
+        }
+        .btn-primary-pmii:hover { background-color: var(--pmii-darkblue); }
+        /* Secondary button with PMII yellow color */
+        .btn-secondary-pmii {
+            background-color: var(--pmii-yellow); color: var(--pmii-darkblue);
+        }
+        .btn-secondary-pmii:hover { background-color: #fbc02d; }
+
+        /* Auth Link Styling (Login/Logout button in navbar) */
+        #auth-link-main, #auth-link-mobile { 
+            transition: all 0.25s ease; /* Ensure all properties transition */
+            padding: 0.625rem 1.25rem; 
+            font-size: 0.875rem; 
+        }
+        /* Styles for logged-out state (yellow button) */
+        .logged-out-styles {
+            background-color: var(--pmii-yellow);
+            color: var(--pmii-blue);
+        }
+        .logged-out-styles:hover {
+            background-color: #fbc02d;
+        }
+        /* Styles for logged-in state (red logout button) */
+        #auth-link-main.logout-active, #auth-link-mobile.logout-active {
+            background-image: linear-gradient(to right, #ef4444, #dc2626) !important; /* Red gradient */
+            color: white !important;
+        }
+        #auth-link-main.logout-active:hover, #auth-link-mobile.logout-active:hover {
+            background-image: linear-gradient(to right, #dc2626, #b91c1c) !important; /* Darker red on hover */
+        }
+
+        /* Custom Confirmation Modal Styles */
+        .custom-confirm-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Dark semi-transparent background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999; /* Ensure it's on top of everything */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .custom-confirm-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .custom-confirm-modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-lg);
+            max-width: 400px; /* Fixed max width for the modal */
+            width: 90%; /* Responsive width */
+            text-align: center;
+            transform: translateY(-20px) scale(0.95); /* Initial state for animation */
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease;
+        }
+        .custom-confirm-modal-overlay.active .custom-confirm-modal-content {
+            transform: translateY(0) scale(1); /* Final state for animation */
+            opacity: 1;
+        }
+        .custom-confirm-modal-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--pmii-darkblue);
+            margin-bottom: 1rem;
+        }
+        .custom-confirm-modal-content p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        .custom-confirm-modal-content .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .custom-confirm-modal-content .modal-actions .btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* New general background style for blue sections with subtle pattern */
+        .section-pmii-bg-pattern {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--pmii-blue) 0%, var(--pmii-darkblue) 100%);
+            color: white; /* Default text color for the entire section */
+        }
+        /* Mobile menu logo and text size adjustment */
+        #mobile-menu-content > div.flex.justify-between.items-center.mb-10 > a > img {
+            height: 2.25rem; /* h-9 */
+            width: auto; /* Maintain aspect ratio */
+        }
+        #mobile-menu-content > div.flex.justify-between.items-center.mb-10 > a > span {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+        }
+        /* Pseudo-element for pattern within blue sections */
+        .section-pmii-bg-pattern::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                radial-gradient(circle at 15% 25%, rgba(253, 216, 53, 0.07) 1px, transparent 1.5px),
+                radial-gradient(circle at 85% 75%, rgba(253, 216, 53, 0.05) 1px, transparent 1.5px),
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0.5px, transparent 1px);
+            background-size: 80px 80px, 100px 100px, 60px 60px;
+            animation: subtlePatternMoveContactKeyframe 40s linear infinite;
+            z-index: 0;
+        }
+        /* Keyframe for background pattern movement */
+        @keyframes subtlePatternMoveContactKeyframe {
+            0% { background-position: 0 0, 0 0, 0 0; }
+            100% { background-position: 80px 80px, -100px -100px, 60px -60px; }
+        }
+        /* Ensure specific elements like titles are yellow in these sections */
+        .section-pmii-bg-pattern .section-title {
+            color: var(--pmii-yellow);
+        }
+
+        /* Styling formulir & kartu */
+        .form-input { 
+            width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color);
+            border-radius: 0.5rem; font-size: 0.875rem; color: var(--text-primary);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: var(--input-bg);
+        }
+        .form-input:focus {
+            border-color: var(--pmii-blue); box-shadow: 0 0 0 3px rgba(0, 92, 151, 0.15); outline: none;
+        }
+        .form-input.invalid {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
+        }
+        .form-label { 
+            display: block; font-size: 0.875rem; font-weight: 600;
+            color: var(--text-secondary); margin-bottom: 0.5rem; 
+        }
+        .btn-sm { padding: 0.5rem 1rem; font-size: 0.875rem; }
+        
+        /* Pesan respons formulir */
+        .form-message { padding: 1rem; border-radius: 0.5rem; font-weight: 500; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.5rem;}
+        .form-message-success { background-color: #d1fae5; color: #065f46; }
+        .form-message-error { background-color: #fce7e7; color: #cc3333; }
+        .form-message-info { background-color: #dbeafe; color: #1e40af; }
+
+
+        /* Styling kartu */
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Styling daftar item dinamis (berita, kegiatan) */
+        .item-list-entry {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s, transform 0.2s;
+            cursor: grab; /* Kursor grab untuk item yang bisa di-drag */
+            border: 1px solid transparent; /* Untuk umpan balik visual drag */
+        }
+        .item-list-entry:nth-child(odd) {
+            background-color: var(--background-light);
+        }
+         .item-list-entry:hover {
+            background-color: #e9ecef;
+        }
+        .item-list-entry.dragging {
+            opacity: 0.5;
+            border: 1px dashed var(--pmii-blue);
+        }
+        .item-list-entry.drag-over {
+            border-top: 2px solid var(--pmii-blue); /* Indikator visual untuk target drop */
+        }
+
+        /* Styling modal kustom */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .modal-overlay.open .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Area unggah gambar */
+        .image-upload-area {
+            width: 100%;
+            height: 120px; /* Disesuaikan untuk pratinjau lebih kecil di item daftar */
+            background-color: var(--input-bg);
+            border: 2px dashed var(--border-color);
+            border-radius: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+        }
+        .image-upload-area:hover {
+            border-color: var(--pmii-blue);
+            background-color: rgba(0, 92, 151, 0.05);
+        }
+        .image-upload-area input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .image-preview-upload {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none; /* Tersembunyi secara default */
+        }
+        .image-upload-placeholder-text {
+            color: var(--text-muted);
+            font-size: 0.8rem; /* Font lebih kecil untuk item daftar */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            pointer-events: none; /* Memungkinkan klik melewati input */
+        }
+        .image-upload-placeholder-text i {
+            font-size: 1.5rem; /* Ikon lebih kecil untuk item daftar */
+            color: var(--text-muted);
+        }
+        /* Untuk gambar galeri, buat responsif di dalam grid */
+        .gallery-item-edit-image {
+            width: 100%;
+            height: 80px; /* Tinggi tetap untuk thumbnail di daftar */
+            object-fit: cover;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Styling Footer */
+        .internal-footer {
+            background-color: var(--pmii-darkblue); 
+            color: #cbd5e1; 
+            padding: 2.5rem 1rem; 
+            margin-top: auto; 
+        }
+        .internal-footer p { 
+            color: #e5e7eb; 
+        }
+        .internal-footer .footer-title { 
+            color: white; 
+            font-weight: 600; 
+        }
+        .internal-footer img {
+            filter: none; /* Removed filter to show original logo colors */
+            -webkit-filter: none;
+        }
+
+        /* Scroll To Top Button Styling */
+        #scrollToTopBtnManajemenAkun { /* Menggunakan ID yang konsisten dengan manajemen-akun.html */
+            background-color: var(--pmii-yellow);
+            color: var(--pmii-darkblue);
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 50%;
+            box-shadow: var(--shadow-lg);
+            transition: background-color 0.2s, transform 0.2s;
+            position: fixed; /* Fixed position on viewport */
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50; /* Ensure it's above other content */
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+        }
+        #scrollToTopBtnManajemenAkun:hover {
+            transform: scale(1.1) translateY(-2px); /* Slight lift and scale on hover */
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div id="customMessageBox" class="fixed top-4 right-4 z-[9999] px-6 py-3 rounded-lg shadow-xl text-white text-sm font-semibold transition-all duration-300 transform translate-x-full opacity-0">
+        Pesan kustom di sini!
+    </div>
+
+    <div id="customConfirmModal" class="custom-confirm-modal-overlay">
+        <div class="custom-confirm-modal-content">
+            <h3 id="confirmModalTitle">Konfirmasi Aksi</h3>
+            <p id="confirmModalMessage">Apakah Anda yakin ingin melanjutkan?</p>
+            <div class="modal-actions">
+                <button id="confirmCancelBtn" class="btn btn-secondary-pmii">Tidak</button>
+                <button id="confirmYesBtn" class="btn btn-primary-pmii">Ya</button>
+            </div>
+        </div>
+    </div>
+
+    <nav id="navbar" class="text-white py-3.5 navbar-sticky">
+        <div class="container mx-auto px-4 lg:px-8 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2.5 transform hover:scale-105 transition-transform duration-300">
+                <img src="img/logo-pmii.png" alt="Logo PMII" class="h-9" onerror="this.onerror=null;this.src='https://placehold.co/100x100/005c97/FFFFFF?text=P';">
+                <span id="header-title-text" class="text-[0.65rem] lg:text-xs font-semibold logo-text tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
+                    PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung
+                </span>
+            </a>
+            <div class="hidden lg:flex space-x-6 items-center">
+                <a href="index.html#beranda" class="nav-link text-sm">Beranda</a>
+                <a href="index.html#tentang" class="nav-link text-sm">Tentang Kami</a>
+                <a href="index.html#berita" class="nav-link text-sm">Berita</a>
+                <a href="digilib.html" class="nav-link text-sm" target="_self">📚 Digilib</a>
+                <a href="index.html#kegiatan" class="nav-link text-sm">Kegiatan</a>
+                <a href="index.html#galeri" class="nav-link text-sm">Galeri</a>
+                <div id="desktop-kader-menu-container" class="relative dropdown hidden">
+                    <button class="dropdown-toggle nav-link focus:outline-none text-sm">
+                        Profil Kader <i class="fas fa-chevron-down text-xs ml-1"></i>
+                    </button>
+                    <div class="dropdown-menu mt-3.5">
+                        <a href="edit-profil-kader.html" id="edit-profil-kader-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-user-edit"></i> Edit Profil</a>
+                        <a href="pengaturan-akun-kader.html" id="pengaturan-akun-kader-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-cog"></i> Pengaturan Akun</a>
+                        <a href="akses-ojs.html" id="jurnal-alharokah-link-desktop-kader" class="dropdown-item" target="_self"><i class="fas fa-book-reader"></i> Jurnal Al Harokah</a>
+                        <a href="pengajuan-surat.html" id="pengajuan-surat-link-desktop-kader" class="dropdown-item" target="_self"><i class="fas fa-file-alt"></i> Pengajuan Surat</a>
+                    </div>
+                </div>
+                <div id="desktop-admin-menu-container" class="relative dropdown hidden">
+                    <button class="dropdown-toggle nav-link focus:outline-none text-sm">
+                        Sistem Internal <i class="fas fa-chevron-down text-xs ml-1"></i>
+                    </button>
+                    <div class="dropdown-menu mt-3.5">
+                        <a href="manajemen-akun.html" id="manajemen-akun-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-user-shield"></i>Manajemen Akun</a>
+                        <a href="manajemen-kader.html" id="manajemen-kader-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-users-cog"></i>Manajemen Kader</a>
+                        <a href="repository-ilmiah.html" id="repository-ilmiah-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-book-open"></i>Jurnal & Karya Ilmiah</a>
+                        <a href="pengajuan-surat.html" id="pengajuan-surat-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-file-alt"></i>Pengajuan Surat</a>
+                        <a href="verifikasi-surat.html" id="verifikasi-surat-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-check-circle"></i>Verifikasi Surat</a>
+                        <a href="admin-dashboard-rayon.html" id="dashboard-rayon-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-tachometer-alt"></i>Dashboard Admin Rayon</a>
+                        <a href="admin-dashboard-komisariat.html" id="admin-dashboard-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-tachometer-alt"></i>Dashboard Admin Kom.</a>
+                        <a href="edit-beranda.html" id="edit-beranda-link-desktop" class="dropdown-item active-nav-link" target="_self"><i class="fas fa-edit"></i>Edit Beranda</a>
+                        <a href="akses-ojs.html" id="jurnal-alharokah-link-desktop-admin" class="dropdown-item" target="_self"><i class="fas fa-book-reader"></i>Jurnal Al Harokah</a>
+                        <hr class="border-gray-200 my-1">
+                        <a href="verifikasi-konten-rayon.html" id="verifikasi-konten-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-check-double"></i>Verifikasi Konten Rayon</a>
+                        <a href="rayon-tambah-berita.html" id="tambah-berita-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-newspaper"></i>Tambah Berita & Artikel</a>
+                        <a href="rayon-tambah-kegiatan.html" id="tambah-kegiatan-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-calendar-plus"></i>Tambah Kegiatan</a>
+                        <a href="rayon-tambah-galeri.html" id="tambah-galeri-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-images"></i>Tambah Galeri Kegiatan</a>
+                        <a href="edit-profil-rayon.html" id="edit-profil-rayon-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-building"></i>Edit Profil Rayon</a>
+                    </div>
+                </div>
+                <a href="index.html#kontak" class="nav-link text-sm">Kontak</a>
+                <a href="login.html" id="auth-link-main" class="btn logged-out-styles text-sm" data-action="login">
+                    Login
+                </a>
+            </div>
+            <div class="lg:hidden">
+                <button id="mobile-menu-button" class="menu-icon focus:outline-none p-2 -mr-2"><i class="fas fa-bars text-2xl"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="mobile-menu-content" class="lg:hidden fixed top-0 right-0 h-full w-4/5 max-w-xs bg-gradient-to-b from-pmii-blue to-pmii-darkblue text-white p-6 shadow-2xl z-40">
+        <div class="flex justify-between items-center mb-10">
+            <a href="index.html" class="flex items-center space-x-2">
+                <img src="img/logo-pmii.png" alt="Logo PMII Mobile" class="h-9" onerror="this.onerror=null;this.src='https://placehold.co/100x100/005c97/FFFFFF?text=P';">
+                <span id="mobile-header-title-text" class="text-[0.6rem] font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
+                    PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung
+                </span>
+            </a>
+            <button id="close-mobile-menu-button" class="focus:outline-none p-2 -mr-2"><i class="fas fa-times text-2xl"></i></button>
+        </div>
+        <nav id="mobile-nav-links" class="flex flex-col space-y-3">
+            </nav>
+        <a href="#" id="mobile-logout-link" class="mobile-nav-link mt-4 justify-center logged-out-styles" data-action="login">
+            <i class="fas fa-sign-in-alt"></i><span>Login</span>
+        </a>
+    </div>
+    <div id="mobile-menu-overlay" class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-30"></div>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 main-content-wrapper">
+        <div id="form-response-message" class="hidden mb-6 max-w-4xl mx-auto form-message"></div>
+        <form id="edit-homepage-form" class="space-y-10">
+            
+            <div class="card" id="hero-announcement-section">
+                <h2 class="text-2xl font-bold text-pmii-darkblue border-b-2 border-pmii-yellow pb-2 mb-6">Bagian Hero & Pengumuman</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-gray-700">Tampilan Utama (Hero)</h3>
+                        <div>
+                            <label for="heroTitle" class="form-label">Judul Utama <span class="text-red-500">*</span></label>
+                            <input type="text" id="heroTitle" name="heroTitle" class="form-input" required placeholder="Contoh: Pergerakan Mahasiswa Islam Indonesia">
+                        </div>
+                        <div>
+                            <label for="heroSubtitle" class="form-label">Subjudul <span class="text-red-500">*</span></label>
+                            <input type="text" id="heroSubtitle" name="heroSubtitle" class="form-input" required placeholder="Contoh: Komisariat Se-Bandung Raya">
+                        </div>
+                        <div>
+                            <label for="heroMotto" class="form-label">Motto <span class="text-red-500">*</span></label>
+                            <input type="text" id="heroMotto" name="heroMotto" class="form-input" required placeholder="Contoh: Dzikir, Fikir, Amal Shalih">
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-gray-700">Pengumuman Penting</h3>
+                        <div>
+                            <label for="announcementText" class="form-label">Teks Pengumuman</label>
+                            <textarea id="announcementText" name="announcementText" rows="3" class="form-input tinymce-editor" placeholder="Tulis teks pengumuman di sini..."></textarea>
+                            <p class="text-xs text-gray-500 mt-1">Tautan "di sini" akan ditambahkan secara otomatis.</p>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-700 mt-6">Tentang Kami</h3>
+                        <div>
+                            <label for="aboutP1" class="form-label">Paragraf 1</label>
+                            <textarea id="aboutP1" name="aboutP1" rows="5" class="form-input tinymce-editor" placeholder="Jelaskan tentang organisasi Anda..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="text-2xl font-bold text-pmii-darkblue border-b-2 border-pmii-yellow pb-2 mb-6">Bagian Berita & Artikel</h2>
+                <div id="news-list" class="space-y-2 mb-6"></div>
+                <button type="button" id="add-news-btn" class="btn btn-primary-pmii btn-sm"><i class="fas fa-plus mr-2"></i>Tambah Berita Baru</button>
+            </div>
+
+            <div class="card">
+                <h2 class="text-2xl font-bold text-pmii-darkblue border-b-2 border-pmii-yellow pb-2 mb-6">Bagian Agenda Kegiatan</h2>
+                <div id="activities-list" class="space-y-2 mb-6"></div>
+                 <button type="button" id="add-activity-btn" class="btn btn-primary-pmii btn-sm"><i class="fas fa-plus mr-2"></i>Tambah Kegiatan Baru</button>
+            </div>
+
+            <div class="card">
+                <h2 class="text-2xl font-bold text-pmii-darkblue border-b-2 border-pmii-yellow pb-2 mb-6">Bagian Galeri</h2>
+                <div id="gallery-list" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6"></div>
+                <button type="button" id="add-gallery-btn" class="btn btn-primary-pmii btn-sm"><i class="fas fa-plus mr-2"></i>Tambah Foto Galeri</button>
+            </div>
+
+
+            <div class="flex items-center justify-end space-x-4 pt-6 mt-6 border-t border-gray-200 sticky bottom-0 bg-white/80 backdrop-blur-sm py-4 rounded-lg">
+                <button type="button" id="cancel-button" class="btn btn-secondary-pmii">Batal</button>
+                <button type="submit" class="btn btn-primary-pmii">
+                    <i class="fas fa-save mr-2"></i>Simpan Semua Perubahan
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <div id="custom-modal" class="modal-overlay"> <div class="modal-content">
+            <p id="modal-message" class="text-lg font-semibold text-gray-800 mb-6"></p>
+            <div class="flex justify-center space-x-4">
+                <button id="modal-cancel-btn" class="btn bg-gray-200 text-gray-700 hover:bg-gray-300 btn-sm">Tidak</button>
+                <button id="modal-confirm-btn" class="btn bg-red-500 text-white hover:bg-red-600 btn-sm">Ya, Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="internal-footer py-10 mt-auto">
+        <div class="container mx-auto px-4 text-center">
+            <img src="img/logo-pmii.png" alt="Logo PMII Footer" class="h-12 w-auto mx-auto mb-2.5 rounded-full" onerror="this.onerror=null;this.src='https://placehold.co/100x100/005c97/FFFFFF?text=P';">
+            <p class="text-md font-semibold footer-title">PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung</p>
+            <p class="text-xs mt-3">&copy; <span id="tahun-footer-manajemen-akun"></span> PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <button id="scrollToTopBtnManajemenAkun" title="Kembali ke atas" class="hidden">
+        <i class="fas fa-arrow-up text-xl"></i>
+    </button>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- Global State & Elements (from manajemen-akun.html) ---
+        const LOCAL_STORAGE_USER_KEY = 'loggedInUser';
+        let loggedInUser = null; // This will hold the parsed user data from localStorage
+        let userRole = 'public'; // 'public', 'kader', 'rayon', 'komisariat'
+
+        // Navbar & Auth Elements
+        const headerTitleText = document.getElementById('header-title-text');
+        const mobileHeaderTitleText = document.getElementById('mobile-header-title-text');
+        const authLinkMain = document.getElementById('auth-link-main');
+        const authLinkMobile = document.getElementById('mobile-logout-link');
+
+        // Admin/Kader Links Map: Stores references to both desktop and mobile link elements
+        const adminMenuLinks = {
+            manajemenAkun: { desktop: document.getElementById('manajemen-akun-link-desktop'), mobile: null },
+            manajemenKader: { desktop: document.getElementById('manajemen-kader-link-desktop'), mobile: null },
+            repositoryIlmiah: { desktop: document.getElementById('repository-ilmiah-link-desktop'), mobile: null },
+            pengajuanSurat: { desktop: document.getElementById('pengajuan-surat-link-desktop'), mobile: null },
+            verifikasiSurat: { desktop: document.getElementById('verifikasi-surat-link-desktop'), mobile: null },
+            dashboardRayon: { desktop: document.getElementById('dashboard-rayon-link-desktop'), mobile: null },
+            adminDashboard: { desktop: document.getElementById('admin-dashboard-link-desktop'), mobile: null },
+            editBeranda: { desktop: document.getElementById('edit-beranda-link-desktop'), mobile: null },
+            jurnalAlharokahAdmin: { desktop: document.getElementById('jurnal-alharokah-link-desktop-admin'), mobile: null },
+            editProfilKader: { desktop: document.getElementById('edit-profil-kader-link-desktop'), mobile: null },
+            pengaturanAkunKader: { desktop: document.getElementById('pengaturan-akun-kader-link-desktop'), mobile: null },
+            jurnalAlharokahKader: { desktop: document.getElementById('jurnal-alharokah-link-desktop-kader'), mobile: null },
+            pengajuanSuratKader: { desktop: document.getElementById('pengajuan-surat-link-desktop-kader'), mobile: null },
+            verifikasiKontenRayon: { desktop: document.getElementById('verifikasi-konten-link-desktop'), mobile: null },
+            tambahBeritaRayon: { desktop: document.getElementById('tambah-berita-link-desktop'), mobile: null },
+            tambahKegiatanRayon: { desktop: document.getElementById('tambah-kegiatan-link-desktop'), mobile: null },
+            tambahGaleriRayon: { desktop: document.getElementById('tambah-galeri-link-desktop'), mobile: null },
+            editProfilRayon: { desktop: document.getElementById('edit-profil-rayon-link-desktop'), mobile: null }
+        };
+
+        const desktopKaderMenuContainer = document.getElementById('desktop-kader-menu-container');
+        const desktopAdminMenuContainer = document.getElementById('desktop-admin-menu-container');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const closeMobileMenuButton = document.getElementById('close-mobile-menu-button');
+        const mobileMenuContent = document.getElementById('mobile-menu-content');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const mobileNavLinksContainer = document.getElementById('mobile-nav-links');
+
+        // Custom Message Box (from manajemen-akun.html)
+        const customMessageBox = document.getElementById('customMessageBox');
+        function showCustomMessage(message, type = 'info', callback = null) {
+            customMessageBox.textContent = message;
+            customMessageBox.className = 'fixed top-4 right-4 z-[9999] px-6 py-3 rounded-lg shadow-xl text-white text-sm font-semibold transition-all duration-300 transform translate-x-full opacity-0'; // Reset kelas
+
+            if (type === 'success') {
+                customMessageBox.classList.add('bg-green-500');
+            } else if (type === 'error') {
+                customMessageBox.classList.add('bg-red-500');
+            } else {
+                customMessageBox.classList.add('bg-blue-500');
+            }
+
+            customMessageBox.classList.remove('translate-x-full', 'opacity-0');
+            customMessageBox.classList.add('translate-x-0', 'opacity-100');
+
+            setTimeout(() => {
+                customMessageBox.classList.remove('translate-x-0', 'opacity-100');
+                customMessageBox.classList.add('translate-x-full', 'opacity-0');
+                if (callback) {
+                    customMessageBox.addEventListener('transitionend', function handler() {
+                        callback();
+                        customMessageBox.removeEventListener('transitionend', handler);
+                    });
+                }
+            }, 3000);
+        }
+
+        /* Custom Confirmation Modal Logic (from manajemen-akun.html) */
+        const customConfirmModal = document.getElementById('customConfirmModal');
+        const confirmModalTitle = document.getElementById('confirmModalTitle');
+        const confirmModalMessage = document.getElementById('confirmModalMessage');
+        const confirmYesBtn = document.getElementById('confirmYesBtn');
+        const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+        let currentConfirmCallback = null;
+
+        function showCustomConfirm(title, message, onConfirm, onCancel = null) {
+            confirmModalTitle.textContent = title;
+            confirmModalMessage.textContent = message;
+            customConfirmModal.classList.add('active');
+            currentConfirmCallback = onConfirm;
+
+            confirmYesBtn.onclick = () => {
+                if (currentConfirmCallback) {
+                    currentConfirmCallback();
+                }
+                hideCustomConfirm();
+            };
+            confirmCancelBtn.onclick = () => {
+                if (onCancel) {
+                    onCancel();
+                }
+                hideCustomConfirm();
+            };
+        }
+
+        function hideCustomConfirm() {
+            customConfirmModal.classList.remove('active');
+            currentConfirmCallback = null;
+        }
+
+        customConfirmModal.addEventListener('click', function(event) {
+            if (event.target === customConfirmModal) {
+                hideCustomConfirm();
+            }
+        });
+
+        /**
+         * Handles authentication clicks (login/logout).
+         * @param {Event} e - The click event object.
+         */
+        function handleAuthClick(e) {
+            e.preventDefault();
+            // Close mobile menu if it's open
+            if (mobileMenuContent.classList.contains('menu-active')) {
+                toggleMobileMenu();
+            }
+
+            const action = e.target.dataset.action || (e.target.closest('a') ? e.target.closest('a').dataset.action : null);
+
+            if (action === 'login') {
+                // Redirect to login.html when login button is clicked
+                window.location.href = 'login.html';
+                
+            } else if (action === 'logout') {
+                // Show custom confirmation modal for logout
+                showCustomConfirm('Konfirmasi Logout', 'Apakah Anda yakin ingin logout?', () => {
+                    // If user confirms (clicks Yes)
+                    document.body.classList.add('fade-out-page');
+                    setTimeout(() => {
+                        loggedInUser = null;
+                        localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+                        localStorage.removeItem('isAdminLoggedIn'); // Clear the admin flag too
+                        window.location.reload(); 
+                    }, 500); // Match CSS fade-out duration
+                }, () => {
+                    // If user cancels (clicks No), do nothing or provide a message
+                    showCustomMessage('Logout dibatalkan.', 'info');
+                });
+            }
+        }
+
+        /**
+         * Updates the page-specific UI based on the user's authentication status and role.
+         * This includes showing/hiding specific navigation links and content sections.
+         */
+        function updatePageSpecificUI() {
+            // Determine if user is logged in and their role
+            const isLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
+            const storedUser = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
+
+            if (isLoggedIn && storedUser) {
+                try {
+                    loggedInUser = JSON.parse(storedUser);
+                    if (loggedInUser && ['komisariat', 'rayon', 'kader'].includes(loggedInUser.role)) {
+                        userRole = loggedInUser.role;
+                    } else {
+                        userRole = 'public';
+                    }
+                }
+                catch (e) {
+                    console.error("Error parsing loggedInUser from localStorage:", e);
+                    localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+                    localStorage.removeItem('isAdminLoggedIn');
+                    loggedInUser = null;
+                    userRole = 'public';
+                }
+            } else {
+                loggedInUser = null;
+                userRole = 'public';
+            }
+
+            // Update common UI elements for logged-in users
+            if (authLinkMain) {
+                if (userRole !== 'public') {
+                    authLinkMain.innerHTML = `<i class="fas fa-sign-out-alt mr-2"></i> Logout`;
+                    authLinkMain.classList.add('logout-active');
+                    authLinkMain.dataset.action = "logout";
+                } else {
+                    authLinkMain.innerHTML = `Login`;
+                    authLinkMain.classList.remove('logout-active');
+                    authLinkMain.classList.add('logged-out-styles');
+                    authLinkMain.dataset.action = "login";
+                }
+                authLinkMain.removeEventListener('click', handleAuthClick);
+                authLinkMain.addEventListener('click', handleAuthClick);
+            }
+
+            // Also update the mobile auth link
+            if (authLinkMobile) {
+                if (userRole !== 'public') {
+                    authLinkMobile.innerHTML = `<i class="fas fa-sign-out-alt mr-2"></i> Logout`;
+                    authLinkMobile.classList.add('logout-active');
+                    authLinkMobile.dataset.action = "logout";
+                } else {
+                    authLinkMobile.innerHTML = `<i class="fas fa-sign-in-alt"></i><span>Login</span>`;
+                    authLinkMobile.classList.remove('logout-active');
+                    authLinkMobile.classList.add('logged-out-styles');
+                    authLinkMobile.dataset.action = "login";
+                }
+                authLinkMobile.removeEventListener('click', handleAuthClick);
+                authLinkMobile.addEventListener('click', handleAuthClick);
+            }
+
+            // Update header titles (SINTAKSIS logic)
+            const defaultTitle = 'PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung';
+            const loggedInTitle = 'SINTAKSIS (Sistem Informasi Terintegrasi Kaderisasi)';
+
+            if (headerTitleText) {
+                headerTitleText.textContent = (userRole !== 'public') ? loggedInTitle : defaultTitle;
+            }
+            if (mobileHeaderTitleText) {
+                mobileHeaderTitleText.textContent = (userRole !== 'public') ? loggedInTitle : defaultTitle;
+            }
+
+            // Hide all desktop admin menu links by default before setting specific ones
+            for (const key in adminMenuLinks) {
+                const desktopLink = adminMenuLinks[key].desktop;
+                if(desktopLink) desktopLink.style.display = 'none';
+            }
+            
+            // Show/hide desktop menu containers based on role
+            if (desktopKaderMenuContainer) {
+                if (userRole === 'kader') desktopKaderMenuContainer.classList.remove('hidden');
+                else desktopKaderMenuContainer.classList.add('hidden');
+            }
+            if (desktopAdminMenuContainer) {
+                if (userRole === 'komisariat' || userRole === 'rayon') desktopAdminMenuContainer.classList.remove('hidden');
+                else desktopAdminMenuContainer.classList.add('hidden');
+            }
+
+            // Show relevant links based on user role
+            if (userRole === 'komisariat') {
+                if (adminMenuLinks.manajemenAkun.desktop) adminMenuLinks.manajemenAkun.desktop.style.display = 'flex';
+                if (adminMenuLinks.manajemenKader.desktop) adminMenuLinks.manajemenKader.desktop.style.display = 'flex';
+                if (adminMenuLinks.repositoryIlmiah.desktop) adminMenuLinks.repositoryIlmiah.desktop.style.display = 'flex';
+                if (adminMenuLinks.verifikasiSurat.desktop) adminMenuLinks.verifikasiSurat.desktop.style.display = 'flex';
+                if (adminMenuLinks.jurnalAlharokahAdmin.desktop) adminMenuLinks.jurnalAlharokahAdmin.desktop.style.display = 'flex';
+                if (adminMenuLinks.editBeranda.desktop) adminMenuLinks.editBeranda.desktop.style.display = 'flex';
+                if (adminMenuLinks.dashboardRayon.desktop) adminMenuLinks.dashboardRayon.desktop.style.display = 'flex';
+                if (adminMenuLinks.adminDashboard.desktop) adminMenuLinks.adminDashboard.desktop.style.display = 'flex';
+                if (adminMenuLinks.verifikasiKontenRayon.desktop) adminMenuLinks.verifikasiKontenRayon.desktop.style.display = 'flex';
+                if (adminMenuLinks.editProfilRayon.desktop) adminMenuLinks.editProfilRayon.desktop.style.display = 'flex';
+                if (adminMenuLinks.tambahBeritaRayon.desktop) adminMenuLinks.tambahBeritaRayon.desktop.style.display = 'flex';
+                if (adminMenuLinks.tambahKegiatanRayon.desktop) adminMenuLinks.tambahKegiatanRayon.desktop.style.display = 'flex';
+                if (adminMenuLinks.tambahGaleriRayon.desktop) adminMenuLinks.tambahGaleriRayon.desktop.style.display = 'flex';
+
+            } else if (userRole === 'rayon') {
+                if (adminMenuLinks.manajemenKader.desktop) adminMenuLinks.manajemenKader.desktop.style.display = 'flex';
+                if (adminMenuLinks.repositoryIlmiah.desktop) adminMenuLinks.repositoryIlmiah.desktop.style.display = 'flex';
+                if (adminMenuLinks.pengajuanSurat.desktop) adminMenuLinks.pengajuanSurat.desktop.style.display = 'flex';
+                if (adminMenuLinks.dashboardRayon.desktop) adminMenuLinks.dashboardRayon.desktop.style.display = 'flex';
+                if (adminMenuLinks.jurnalAlharokahAdmin.desktop) adminMenuLinks.jurnalAlharokahAdmin.desktop.style.display = 'flex';
+                if (adminMenuLinks.verifikasiKontenRayon.desktop) adminMenuLinks.verifikasiKontenRayon.desktop.style.display = 'flex';
+                if (adminMenuLinks.tambahBeritaRayon.desktop) adminMenuLinks.tambahBeritaRayon.desktop.style.display = 'flex';
+                if (adminMenuLinks.tambahKegiatanRayon.desktop) adminMenuLinks.tambahKegiatanRayon.desktop.style.display = 'flex';
+                if (adminMenuLinks.tambahGaleriRayon.desktop) adminMenuLinks.tambahGaleriRayon.desktop.style.display = 'flex';
+                if (adminMenuLinks.editProfilRayon.desktop) adminMenuLinks.editProfilRayon.desktop.style.display = 'flex';
+            } else if (userRole === 'kader') {
+                if (adminMenuLinks.editProfilKader.desktop) adminMenuLinks.editProfilKader.desktop.style.display = 'flex';
+                if (adminMenuLinks.pengaturanAkunKader.desktop) adminMenuLinks.pengaturanAkunKader.desktop.style.display = 'flex';
+                if (adminMenuLinks.jurnalAlharokahKader.desktop) adminMenuLinks.jurnalAlharokahKader.desktop.style.display = 'flex';
+                if (adminMenuLinks.pengajuanSuratKader.desktop) adminMenuLinks.pengajuanSuratKader.desktop.style.display = 'flex';
+            }
+            populateMobileMenu(); // Re-populate mobile menu to ensure it's up-to-date
+        }
+
+        /**
+         * Toggles the visibility of the mobile menu and its overlay.
+         */
+        function toggleMobileMenu() {
+            const isOpen = mobileMenuContent.classList.contains('menu-active');
+            if (!isOpen) {
+                populateMobileMenu(); // Populate menu before displaying
+                mobileMenuContent.classList.add('menu-active');
+                mobileMenuOverlay.classList.add('menu-active');
+                document.body.classList.add('overflow-hidden'); // Prevent background scrolling
+            } else {
+                mobileMenuContent.classList.remove('menu-active');
+                mobileMenuOverlay.classList.remove('menu-active');
+                document.body.classList.remove('overflow-hidden'); // Allow background scrolling
+            }
+        }
+        
+        // Ensure menu buttons and overlay are found before attaching listeners
+        if (mobileMenuButton) mobileMenuButton.addEventListener('click', toggleMobileMenu);
+        if (closeMobileMenuButton) closeMobileMenuButton.addEventListener('click', toggleMobileMenu);
+        if (mobileMenuOverlay) mobileMenuOverlay.addEventListener('click', toggleMobileMenu);
+
+
+        // Function to populate mobile menu dynamically based on user role and available desktop links
+        function populateMobileMenu() {
+            if (!mobileNavLinksContainer) return;
+
+            mobileNavLinksContainer.innerHTML = ''; // Clear existing links
+
+            // General links always present
+            const generalLinksData = [
+                { text: 'Beranda', href: 'index.html#beranda', icon: 'fas fa-home' },
+                { text: 'Tentang Kami', href: 'index.html#tentang', icon: 'fas fa-info-circle' },
+                { text: 'Berita', href: 'index.html#berita', icon: 'fas fa-newspaper' },
+                { text: '📚 Digilib', href: 'digilib.html', icon: 'fas fa-book' },
+                { text: 'Kegiatan', href: 'index.html#kegiatan', icon: 'fas fa-calendar-alt' },
+                { text: 'Galeri', href: 'index.html#galeri', icon: 'fas fa-images' }
+            ];
+
+            generalLinksData.forEach(linkData => {
+                const link = document.createElement('a');
+                link.href = linkData.href;
+                link.classList.add('mobile-nav-link');
+                link.innerHTML = `<i class="${linkData.icon}"></i><span>${linkData.text}</span>`;
+                link.addEventListener('click', toggleMobileMenu); // Close menu on click
+                mobileNavLinksContainer.appendChild(link);
+            });
+
+            // Add System Internal dropdown based on user role's visible desktop links
+            if (loggedInUser && (loggedInUser.role === 'komisariat' || loggedInUser.role === 'rayon' || loggedInUser.role === 'kader')) {
+                const systemInternalTitle = document.createElement('div');
+                systemInternalTitle.classList.add('mobile-submenu-title');
+                systemInternalTitle.textContent = loggedInUser.role === 'kader' ? 'Profil Kader' : 'Sistem Internal';
+                mobileNavLinksContainer.appendChild(systemInternalTitle);
+
+                // Iterate through adminMenuLinks and add visible ones
+                for (const key in adminMenuLinks) {
+                    const desktopLink = adminMenuLinks[key].desktop;
+                    // For mobile links, use the specific mobile ID if it exists, otherwise assume the desktop link applies
+                    const mobileLinkElement = adminMenuLinks[key].mobile || desktopLink; 
+                    if (desktopLink && desktopLink.style.display !== 'none') { // Only add if desktop version is visible
+                        const link = document.createElement('a');
+                        link.href = desktopLink.href; // Use desktop href for consistency
+                        link.classList.add('mobile-submenu-item');
+                        link.innerHTML = desktopLink.innerHTML; // Copy icon and text
+                        link.addEventListener('click', toggleMobileMenu); // Close menu on click
+                        mobileNavLinksContainer.appendChild(link);
+                    }
+                }
+            }
+            
+            // Add Kontak link
+            const kontakLink = document.createElement('a');
+            kontakLink.href = 'index.html#kontak';
+            kontakLink.classList.add('mobile-nav-link');
+            kontakLink.innerHTML = `<i class="fas fa-address-book"></i><span>Kontak</span>`;
+            kontakLink.addEventListener('click', toggleMobileMenu); // Close menu on click
+            mobileNavLinksContainer.appendChild(kontakLink);
+
+            // Add Logout link (or Login if not logged in)
+            const authLink = document.getElementById('mobile-logout-link'); // Use the existing element
+            if (authLink) {
+                authLink.removeEventListener('click', handleAuthClick); // Remove previous listener
+                authLink.addEventListener('click', handleAuthClick); // Add new listener
+
+                if (loggedInUser) {
+                    authLink.classList.add('bg-red-500', 'hover:bg-red-600', 'logout-active');
+                    authLink.classList.remove('logged-out-styles');
+                    authLink.innerHTML = `<i class="fas fa-sign-out-alt"></i><span>Logout</span>`;
+                    authLink.dataset.action = "logout";
+                } else {
+                    authLink.classList.remove('bg-red-500', 'hover:bg-red-600', 'logout-active');
+                    authLink.classList.add('logged-out-styles'); // Apply yellow button styles
+                    authLink.innerHTML = `<i class="fas fa-sign-in-alt"></i><span>Login</span>`;
+                    authLink.dataset.action = "login"; // Set data-action for handling
+                }
+            }
+        }
+
+        // SIMULASI LOGIN PENGGUNA UNTUK PENGUJIAN (Uncomment salah satu)
+        localStorage.setItem('loggedInUser', JSON.stringify({ role: 'komisariat', nama: 'Admin Utama Komisariat', namaRayon: 'Komisariat' })); localStorage.setItem('isAdminLoggedIn', 'true');
+        // localStorage.setItem('loggedInUser', JSON.stringify({ role: 'rayon', nama: 'Admin Rayon', namaRayon: 'PMII Rayon Fakultas Ushuluddin' })); localStorage.setItem('isAdminLoggedIn', 'true');
+        // localStorage.setItem('loggedInUser', JSON.stringify({ role: 'kader', nama: 'Kader Aktif', namaRayon: 'PMII Rayon Fakultas Syariah' })); localStorage.setItem('isAdminLoggedIn', 'true');
+
+        // Load user authentication status from localStorage (simulation)
+        try {
+            const storedUser = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
+            if (storedUser) {
+                loggedInUser = JSON.parse(storedUser);
+                // Validate user data (e.g., ensure 'role' property exists)
+                if (typeof loggedInUser !== 'object' || loggedInUser === null || !loggedInUser.role) {
+                    loggedInUser = null; // Invalidate if format is incorrect
+                    localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+                }
+            }
+        }
+        catch (e) {
+            console.error("Error parsing loggedInUser from localStorage:", e);
+            loggedInUser = null;
+            localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+        }
+        // --- Akhir Header/Footer Global Logic ---
+
+        // --- Pemeriksaan Otentikasi (untuk halaman ini) ---
+        // Pindahkan pemeriksaan otentikasi di sini, setelah semua fungsi global didefinisikan
+        if (!loggedInUser || loggedInUser.role !== 'komisariat') {
+            document.body.innerHTML = `<div class="text-center p-8 bg-white max-w-lg mx-auto mt-10 rounded-lg shadow-md">
+                <h1 class="text-2xl font-bold text-red-600 mb-4">Akses Ditolak</h1>
+                <p>Anda harus login sebagai Admin Komisariat untuk mengakses halaman ini.</p>
+                <a href="login.html" class="mt-6 inline-block bg-pmii-blue text-white px-6 py-2 rounded-lg hover:bg-pmii-darkblue">Ke Halaman Login</a>
+            </div>`;
+            return; // Hentikan eksekusi skrip lebih lanjut jika akses ditolak
+        }
+
+        updatePageSpecificUI(); // Panggil ini untuk menangani otentikasi dan tampilan menu
+
+        // --- Elemen Konten Utama edit-beranda.html ---
+        const form = document.getElementById('edit-homepage-form');
+        const responseMessage = document.getElementById('form-response-message');
+        const cancelButton = document.getElementById('cancel-button');
+        
+        // Elemen modal kustom (INI ADALAH MODAL UNTUK DRAG&DROP/KONFIRMASI PENGHAPUSAN, BUKAN MODAL UMUM customConfirmModal)
+        // Saya akan mengganti ID agar tidak terjadi konflik dan mempertahankan fungsi yang spesifik untuk halaman ini.
+        const pageSpecificModal = document.getElementById('custom-modal');
+        const pageSpecificModalMessage = document.getElementById('modal-message');
+        const pageSpecificModalConfirmBtn = document.getElementById('modal-confirm-btn');
+        const pageSpecificModalCancelBtn = document.getElementById('modal-cancel-btn');
+        let pageSpecificModalCallback = null;
+
+        // Data konten halaman beranda yang akan diedit
+        let homepageContent = {};
+
+        // Bidang formulir statis yang tidak berulang
+        const staticFields = ['heroTitle', 'heroSubtitle', 'heroMotto', 'announcementText', 'aboutP1'];
+        
+        // --- Fungsi Modal Kustom (pengganti alert/confirm) untuk halaman ini ---
+        function showPageSpecificModal(message, confirmText, callback) {
+            pageSpecificModalMessage.textContent = message;
+            pageSpecificModalConfirmBtn.textContent = confirmText;
+            // Sesuaikan warna tombol berdasarkan tindakan
+            if (confirmText.includes('Hapus')) {
+                pageSpecificModalConfirmBtn.className = 'btn bg-red-500 text-white hover:bg-red-600 btn-sm';
+            } else {
+                pageSpecificModalConfirmBtn.className = 'btn btn-primary-pmii btn-sm';
+            }
+            pageSpecificModal.classList.add('open');
+            pageSpecificModalCallback = callback; // Simpan callback untuk dieksekusi saat konfirmasi
+        }
+
+        // Event listener untuk tombol konfirmasi modal
+        pageSpecificModalConfirmBtn.addEventListener('click', () => {
+            if (pageSpecificModalCallback) {
+                pageSpecificModalCallback(true); // Panggil callback dengan true (konfirmasi)
+            }
+            pageSpecificModal.classList.remove('open'); // Tutup modal
+            pageSpecificModalCallback = null; // Reset callback
+        });
+
+        // Event listener untuk tombol batal modal
+        pageSpecificModalCancelBtn.addEventListener('click', () => {
+            if (pageSpecificModalCallback) {
+                pageSpecificModalCallback(false); // Panggil callback dengan false (batal)
+            }
+            pageSpecificModal.classList.remove('open'); // Tutup modal
+            pageSpecificModalCallback = null; // Reset callback
+        });
+
+        // --- Logika Drag & Drop ---
+        let draggedItem = null; // Menyimpan item yang sedang di-drag
+
+        function handleDragStart(e) {
+            draggedItem = this;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML); 
+            this.classList.add('dragging'); // Tambahkan kelas dragging untuk styling
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault(); // Penting: Izinkan drop
+            e.dataTransfer.dropEffect = 'move';
+            // Pastikan kita tidak menyeret ke atas diri sendiri
+            if (this !== draggedItem && this.classList.contains('item-list-entry')) {
+                this.classList.add('drag-over'); // Tambahkan kelas drag-over untuk styling
+            }
+        }
+
+        function handleDragLeave() {
+            this.classList.remove('drag-over'); // Hapus kelas saat meninggalkan area
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+
+            if (draggedItem && this !== draggedItem && this.classList.contains('item-list-entry')) {
+                const parentId = this.parentElement.id;
+                let sectionArray;
+                if (parentId === 'news-list') sectionArray = homepageContent.news;
+                else if (parentId === 'activities-list') sectionArray = homepageContent.activities;
+                else if (parentId === 'gallery-list') sectionArray = homepageContent.gallery;
+
+                if (sectionArray) {
+                    const fromId = draggedItem.dataset.id; // Gunakan ID unik
+                    const toId = this.dataset.id; // Gunakan ID unik
+
+                    const fromIndex = sectionArray.findIndex(item => item.id === fromId);
+                    const toIndex = sectionArray.findIndex(item => item.id === toId);
+                    
+                    if (fromIndex !== -1 && toIndex !== -1) {
+                        const [itemToMove] = sectionArray.splice(fromIndex, 1); // Hapus item dari posisi lama
+                        sectionArray.splice(toIndex, 0, itemToMove); // Masukkan item di posisi baru
+
+                        // Render ulang bagian spesifik setelah pengurutan
+                        if (parentId === 'news-list') newsManager.render();
+                        else if (parentId === 'activities-list') activityManager.render();
+                        else if (parentId === 'gallery-list') galleryManager.render();
+                    } else {
+                        showResponseMessage('Error: Posisi drag-and-drop tidak valid.', 'error');
+                    }
+                }
+            }
+        }
+
+        function handleDragEnd() {
+            // Hapus kelas dragging dari item yang diseret
+            if (draggedItem) {
+                draggedItem.classList.remove('dragging');
+            }
+            // Hapus kelas drag-over dari semua item
+            document.querySelectorAll('.item-list-entry').forEach(item => {
+                item.classList.remove('drag-over');
+            });
+            draggedItem = null; // Reset item yang di-drag
+        }
+
+        // Fungsi untuk menghasilkan ID unik (digunakan untuk item dinamis)
+        function generateUniqueId() {
+            return '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // --- Manajer Bagian Dinamis (Buat/Render/Perbarui/Hapus) ---
+
+        // Fungsi generik untuk mengelola bagian daftar (Berita, Kegiatan, Galeri)
+        function createSectionManager(sectionName, listContainerId, addButtonId, itemFields, renderItemHtmlFunction) {
+            const listContainer = document.getElementById(listContainerId);
+            const addButton = document.getElementById(addButtonId);
+
+            function renderList() {
+                // Hancurkan semua editor TinyMCE yang ada sebelum me-render ulang
+                listContainer.querySelectorAll('textarea.tinymce-editor').forEach(textarea => {
+                    const editor = tinymce.get(textarea.id);
+                    if (editor) {
+                        editor.destroy(); // Hancurkan instance TinyMCE
+                    }
+                });
+
+                listContainer.innerHTML = ''; // Kosongkan container
+                if (!homepageContent[sectionName] || homepageContent[sectionName].length === 0) {
+                    listContainer.innerHTML = `<p class="text-gray-500 text-sm italic">Belum ada item ditambahkan di bagian ini.</p>`;
+                    return;
+                }
+                homepageContent[sectionName].forEach((item, index) => {
+                    // Beri ID unik ke setiap item dinamis jika belum ada (untuk TinyMCE dan referensi)
+                    if (!item.id) item.id = generateUniqueId();
+                    const itemElement = renderItemHtmlFunction(item, index);
+                    itemElement.dataset.id = item.id; // Set ID unik ke dataset
+                    itemElement.setAttribute('draggable', true); // Jadikan item dapat di-drag
+                    itemElement.dataset.index = index; // Simpan indeks saat ini untuk drag/drop (berguna untuk urutan visual sebelum render ulang)
+
+                    // Tambahkan event listener drag & drop
+                    itemElement.addEventListener('dragstart', handleDragStart);
+                    itemElement.addEventListener('dragover', handleDragOver);
+                    itemElement.addEventListener('dragleave', handleDragLeave);
+                    itemElement.addEventListener('drop', handleDrop);
+                    itemElement.addEventListener('dragend', handleDragEnd);
+                    listContainer.appendChild(itemElement);
+
+                    // Inisialisasi TinyMCE untuk textarea di dalam item yang baru ditambahkan
+                    const textareaId = `${sectionName}-desc-${item.id}`; // Contoh ID untuk textarea deskripsi
+                    const textareaEl = document.getElementById(textareaId);
+                    if (textareaEl) {
+                        // Periksa apakah TinyMCE sudah aktif pada elemen ini untuk mencegah masalah re-inisialisasi
+                        if (!tinymce.get(textareaId)) {
+                             tinymce.init({
+                                selector: `#${textareaId}`,
+                                plugins: 'autolink lists link image anchor',
+                                toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+                                menubar: false,
+                                branding: false,
+                                height: 100, // Tinggi lebih kecil untuk item daftar
+                                content_style: 'body { font-family: \'Poppins\', sans-serif; font-size: 13px; }',
+                                setup: function (editor) {
+                                    editor.on('change', function () {
+                                        // Perbarui nilai textarea yang mendasari dan model data
+                                        editor.save();
+                                        // Secara manual picu event change pada textarea untuk logika kita
+                                        const event = new Event('change', { bubbles: true });
+                                        textareaEl.dispatchEvent(event);
+                                    });
+                                    editor.on('init', function () {
+                                        // Set konten setelah editor diinisialisasi
+                                        if (item.description) {
+                                            editor.setContent(item.description);
+                                        }
+                                    });
+                                }
+                            });
+                        } else {
+                            // Jika editor ada, cukup perbarui kontennya
+                            tinymce.get(textareaId).setContent(item.description || '');
+                        }
+                    }
+                });
+            }
+
+            function addItem() {
+                const newItem = {};
+                itemFields.forEach(field => {
+                    newItem[field.name] = field.default || '';
+                });
+                newItem.id = generateUniqueId(); // Tetapkan ID unik
+                if (!homepageContent[sectionName]) {
+                    homepageContent[sectionName] = [];
+                }
+                homepageContent[sectionName].push(newItem);
+                renderList(); // Render ulang seluruh daftar
+                // Gulir ke item yang baru ditambahkan
+                listContainer.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            if (addButton) addButton.addEventListener('click', addItem);
+            return { render: renderList }; // Mengembalikan objek dengan metode render
+        }
+
+        // --- Manajer Bagian Berita ---
+        const newsManager = createSectionManager(
+            'news', 'news-list', 'add-news-btn',
+            [{name: 'category', default: 'Berita'}, {name: 'title', default: 'Judul Berita Baru'}, {name: 'description', default: ''}, {name: 'imageUrl', default: 'https://placehold.co/600x400/eeeeee/cccccc?text=Gambar'}],
+            (item, index) => {
+                const el = document.createElement('div');
+                el.className = 'item-list-entry flex-col sm:flex-row items-start sm:items-center relative group';
+                // Gunakan ID unik untuk textarea TinyMCE
+                const newsDescriptionId = `news-desc-${item.id}`;
+                // Tentukan tampilan awal untuk nama file
+                const filenameInitialStyle = (item.imageUrl && item.imageUrl.startsWith('data:image')) ? 'block' : 'none';
+                const filenameInitialText = (item.imageUrl && item.imageUrl.startsWith('data:image')) ? 'Gambar diunggah sebelumnya' : '';
+
+                el.innerHTML = `
+                    <div class="flex-grow pr-4 w-full sm:w-auto">
+                        <label for="news-title-${item.id}" class="sr-only">Judul Berita</label>
+                        <input type="text" id="news-title-${item.id}" value="${item.title}" data-id="${item.id}" data-field="title" class="form-input form-input-sm mb-1 news-field font-semibold" placeholder="Judul Berita" required>
+                        <label for="news-category-${item.id}" class="sr-only">Kategori</label>
+                        <input type="text" id="news-category-${item.id}" value="${item.category}" data-id="${item.id}" data-field="category" class="form-input form-input-sm text-xs w-1/3 mb-2 news-field" placeholder="Kategori">
+                        <label for="${newsDescriptionId}" class="sr-only">Deskripsi singkat</label>
+                        <textarea id="${newsDescriptionId}" data-id="${item.id}" data-field="description" class="form-input form-input-sm text-xs news-field tinymce-editor" rows="2" placeholder="Deskripsi singkat">${item.description}</textarea>
+                        
+                        <div class="mt-2">
+                            <label for="news-image-upload-${item.id}" class="block text-xs font-medium text-text-secondary">Unggah Gambar</label>
+                            <div class="image-upload-area">
+                                <input type="file" id="news-image-upload-${item.id}" data-id="${item.id}" data-field="uploadedImage" class="news-field" accept="image/png, image/jpeg, image/gif">
+                                <img id="news-preview-${item.id}" src="${item.imageUrl}" onerror="this.onerror=null;this.src='https://placehold.co/100x100/eeeeee/cccccc?text=Error';" class="image-preview-upload" style="${item.imageUrl ? 'display:block;' : 'display:none;'}" alt="News Image Preview">
+                                <div id="news-filename-${item.id}" class="text-xs text-text-muted mt-1" style="display: ${filenameInitialStyle};">${filenameInitialText}</div> 
+                                <div class="image-upload-placeholder-text" style="${item.imageUrl ? 'display:none;' : 'display:flex;'}">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span>Klik atau Seret</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-text-muted text-center mt-1">ATAU</p>
+                            <label for="news-image-url-${item.id}" class="sr-only">URL Gambar</label>
+                            <input type="url" id="news-image-url-${item.id}" value="${item.imageUrl && !item.imageUrl.startsWith('data:image') ? item.imageUrl : ''}" data-id="${item.id}" data-field="imageUrl" class="form-input form-input-sm text-xs mt-1 news-field" placeholder="URL Gambar (http://...)" pattern="https?://.+">
+                            <p class="text-xs text-gray-500 mt-1">Isi salah satu saja (URL atau Unggah)</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn bg-red-500 text-white hover:bg-red-600 btn-sm delete-news-btn absolute top-2 right-2 sm:relative sm:top-auto sm:right-auto sm:ml-4 mt-2 sm:mt-0" data-id="${item.id}" title="Hapus Berita"><i class="fas fa-trash"></i></button>
+                `;
+                return el;
+            }
+        );
+
+        // Event listener delegasi untuk perubahan input berita
+        document.getElementById('news-list').addEventListener('input', (e) => { 
+            const target = e.target;
+            const { id, field } = target.dataset;
+            if (!id || !field || !target.classList.contains('news-field')) return;
+
+            const itemIndex = homepageContent.news.findIndex(item => item.id === id);
+            if (itemIndex === -1) return;
+
+            if (target.type === 'file') {
+                const file = target.files[0];
+                const filenameDisplay = document.getElementById(`news-filename-${id}`); 
+                const imageUrlInput = document.getElementById(`news-image-url-${id}`);
+
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        homepageContent.news[itemIndex].imageUrl = event.target.result; // Simpan Base64
+                        document.getElementById(`news-preview-${id}`).src = event.target.result;
+                        document.getElementById(`news-preview-${id}`).style.display = 'block';
+                        imageUrlInput.value = ''; // Kosongkan input URL
+                        imageUrlInput.classList.remove('invalid'); // Hapus validasi URL jika file ada
+                        const placeholderText = target.closest('.image-upload-area').querySelector('.image-upload-placeholder-text');
+                        if (placeholderText) placeholderText.style.display = 'none';
+                        
+                        if (filenameDisplay) { 
+                            filenameDisplay.textContent = file.name;
+                            filenameDisplay.style.display = 'block';
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    // Jika input file dikosongkan dan tidak ada URL, kembali ke placeholder
+                    if (!imageUrlInput.value) { // Hanya kosongkan jika input URL juga kosong
+                        homepageContent.news[itemIndex].imageUrl = '';
+                        document.getElementById(`news-preview-${id}`).src = '';
+                        document.getElementById(`news-preview-${id}`).style.display = 'none';
+                        const placeholderText = target.closest('.image-upload-area').querySelector('.image-upload-placeholder-text');
+                        if (placeholderText) placeholderText.style.display = 'flex';
+
+                        if (filenameDisplay) { 
+                            filenameDisplay.textContent = '';
+                            filenameDisplay.style.display = 'none';
+                        }
+                    }
+                }
+            } else if (field === 'imageUrl') {
+                const imageUrlInput = target;
+                const fileInput = document.getElementById(`news-image-upload-${id}`);
+                const filenameDisplay = document.getElementById(`news-filename-${id}`); 
+
+                homepageContent.news[itemIndex].imageUrl = imageUrlInput.value;
+                document.getElementById(`news-preview-${id}`).src = imageUrlInput.value;
+                document.getElementById(`news-preview-${id}`).style.display = 'block';
+                fileInput.value = ''; // Kosongkan input file
+                const placeholderText = target.closest('.image-upload-area').querySelector('.image-upload-placeholder-text');
+                if (placeholderText) placeholderText.style.display = 'none';
+                
+                if (filenameDisplay) {
+                    filenameDisplay.textContent = '';
+                    filenameDisplay.style.display = 'none';
+                }
+            } else if (field !== 'description') { // Deskripsi ditangani oleh TinyMCE setup
+                homepageContent.news[itemIndex][field] = target.value;
+            }
+        });
+
+        // Event listener delegasi untuk penghapusan berita
+        document.getElementById('news-list').addEventListener('click', (e) => {
+            if (e.target.closest('.delete-news-btn')) {
+                const idToDelete = e.target.closest('.delete-news-btn').dataset.id;
+                showPageSpecificModal('Apakah Anda yakin ingin menghapus berita ini?', 'Ya, Hapus', (confirmed) => { // Menggunakan showPageSpecificModal
+                    if (confirmed) {
+                        // Hancurkan TinyMCE editor sebelum menghapus elemen
+                        const textareaId = `news-desc-${idToDelete}`;
+                        const editor = tinymce.get(textareaId);
+                        if (editor) editor.destroy();
+
+                        homepageContent.news = homepageContent.news.filter(item => item.id !== idToDelete);
+                        newsManager.render();
+                        showResponseMessage('Berita berhasil dihapus!', 'success');
+                    }
+                });
+            }
+        });
+
+        // --- Manajer Bagian Kegiatan ---
+        const activityManager = createSectionManager(
+            'activities', 'activities-list', 'add-activity-btn',
+            [{name: 'day', default: '01'}, {name: 'month', default: 'JAN'}, {name: 'year', default: new Date().getFullYear().toString()}, {name: 'title', default: 'Judul Kegiatan Baru'}, {name: 'time', default: '00:00 - 00:00 WIB'}, {name: 'location', default: 'Lokasi Kegiatan'}, {name: 'link', default: '#'}, {name: 'imageUrl', default: 'https://placehold.co/600x400/eeeeee/cccccc?text=Gambar'}],
+            (item, index) => {
+                const el = document.createElement('div');
+                el.className = 'item-list-entry flex-wrap relative group';
+                // Tentukan tampilan awal untuk nama file
+                const filenameInitialStyle = (item.imageUrl && item.imageUrl.startsWith('data:image')) ? 'block' : 'none';
+                const filenameInitialText = (item.imageUrl && item.imageUrl.startsWith('data:image')) ? 'Gambar diunggah sebelumnya' : '';
+
+                el.innerHTML = `
+                     <div class="flex items-center gap-2 mb-2 w-full sm:w-auto">
+                        <label for="activity-day-${item.id}" class="sr-only">Tanggal</label>
+                        <input type="number" id="activity-day-${item.id}" value="${item.day}" data-id="${item.id}" data-field="day" class="form-input form-input-sm w-16 text-center activity-field" placeholder="Tgl (ex: 01)" min="1" max="31" required>
+                        <label for="activity-month-${item.id}" class="sr-only">Bulan</label>
+                        <input type="text" id="activity-month-${item.id}" value="${item.month}" data-id="${item.id}" data-field="month" class="form-input form-input-sm w-20 text-center activity-field" placeholder="Bulan (ex: JAN)" required>
+                        <label for="activity-year-${item.id}" class="sr-only">Tahun</label>
+                        <input type="number" id="activity-year-${item.id}" value="${item.year}" data-id="${item.id}" data-field="year" class="form-input form-input-sm w-20 text-center activity-field" placeholder="Tahun" min="2000" max="2100" required>
+                    </div>
+                    <div class="flex-grow pl-0 sm:pl-4 w-full sm:w-auto">
+                        <label for="activity-title-${item.id}" class="sr-only">Judul Kegiatan</label>
+                        <input type="text" id="activity-title-${item.id}" value="${item.title}" data-id="${item.id}" data-field="title" class="form-input form-input-sm mb-1 activity-field font-semibold" placeholder="Judul Kegiatan" required>
+                        <label for="activity-time-${item.id}" class="sr-only">Waktu Kegiatan</label>
+                        <input type="text" id="activity-time-${item.id}" value="${item.time}" data-id="${item.id}" data-field="time" class="form-input form-input-sm text-xs mb-1 activity-field" placeholder="Waktu (e.g., 13:00 - 16:00 WIB)">
+                        <label for="activity-location-${item.id}" class="sr-only">Lokasi Kegiatan</label>
+                        <input type="text" id="activity-location-${item.id}" value="${item.location}" data-id="${item.id}" data-field="location" class="form-input form-input-sm text-xs mb-1 activity-field" placeholder="Lokasi">
+                        <label for="activity-link-${item.id}" class="sr-only">Link Kegiatan</label>
+                        <input type="url" id="activity-link-${item.id}" value="${item.link}" data-id="${item.id}" data-field="link" class="form-input form-input-sm text-xs activity-field" placeholder="Link (opsional)">
+                        
+                        <div class="mt-2">
+                            <label for="activity-image-upload-${item.id}" class="block text-xs font-medium text-text-secondary">Unggah Gambar</label>
+                            <div class="image-upload-area">
+                                <input type="file" id="activity-image-upload-${item.id}" data-id="${item.id}" data-field="uploadedImage" class="activity-field" accept="image/png, image/jpeg, image/gif">
+                                <img id="activity-preview-${item.id}" src="${item.imageUrl}" onerror="this.onerror=null;this.src='https://placehold.co/100x100/eeeeee/cccccc?text=Error';" class="image-preview-upload" style="${item.imageUrl ? 'display:block;' : 'display:none;'}" alt="Activity Image Preview">
+                                <div id="activity-filename-${item.id}" class="text-xs text-text-muted mt-1" style="display: ${filenameInitialStyle};">${filenameInitialText}</div> 
+                                <div class="image-upload-placeholder-text" style="${item.imageUrl ? 'display:none;' : 'display:flex;'}">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span>Klik atau Seret</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-text-muted text-center mt-1">ATAU</p>
+                            <label for="activity-image-url-${item.id}" class="sr-only">URL Gambar</label>
+                            <input type="url" id="activity-image-url-${item.id}" value="${item.imageUrl && !item.imageUrl.startsWith('data:image') ? item.imageUrl : ''}" data-id="${item.id}" data-field="imageUrl" class="form-input form-input-sm text-xs mt-1 activity-field" placeholder="URL Gambar (http://...)" pattern="https?://.+">
+                            <p class="text-xs text-gray-500 mt-1">Isi salah satu saja (URL atau Unggah)</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn bg-red-500 text-white hover:bg-red-600 btn-sm delete-activity-btn absolute top-2 right-2 sm:relative sm:top-auto sm:right-auto sm:ml-4 mt-2 sm:mt-0" data-id="${item.id}" title="Hapus Kegiatan"><i class="fas fa-trash"></i></button>
+                `;
+                return el;
+            }
+        );
+        // Event listener delegasi untuk perubahan input kegiatan
+        document.getElementById('activities-list').addEventListener('input', (e) => {
+            const target = e.target;
+            const { id, field } = target.dataset;
+            if (!id || !field || !target.classList.contains('activity-field')) return;
+
+            const itemIndex = homepageContent.activities.findIndex(item => item.id === id);
+            if (itemIndex === -1) return;
+
+            if (target.type === 'file') {
+                const file = target.files[0];
+                const filenameDisplay = document.getElementById(`activity-filename-${id}`); 
+                const imageUrlInput = document.getElementById(`activity-image-url-${id}`);
+
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        homepageContent.activities[itemIndex].imageUrl = event.target.result;
+                        document.getElementById(`activity-preview-${id}`).src = event.target.result;
+                        document.getElementById(`activity-preview-${id}`).style.display = 'block';
+                        imageUrlInput.value = '';
+                        imageUrlInput.classList.remove('invalid');
+                        const placeholderText = target.closest('.image-upload-area').querySelector('.image-upload-placeholder-text');
+                        if (placeholderText) placeholderText.style.display = 'none';
+
+                        if (filenameDisplay) {
+                            filenameDisplay.textContent = file.name;
+                            filenameDisplay.style.display = 'block';
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    if (!imageUrlInput.value) { // Hanya kosongkan jika input URL juga kosong
+                        homepageContent.activities[itemIndex].imageUrl = '';
+                        document.getElementById(`activity-preview-${id}`).src = '';
+                        document.getElementById(`activity-preview-${id}`).style.display = 'none';
+                        const placeholderText = target.closest('.image-upload-area').querySelector('.image-upload-placeholder-text');
+                        if (placeholderText) placeholderText.style.display = 'flex';
+
+                        if (filenameDisplay) {
+                            filenameDisplay.textContent = '';
+                            filenameDisplay.style.display = 'none';
+                        }
+                    }
+                }
+            } else if (field === 'imageUrl') {
+                const imageUrlInput = target;
+                const fileInput = document.getElementById(`activity-image-upload-${id}`);
+                const filenameDisplay = document.getElementById(`activity-filename-${id}`);
+
+                homepageContent.activities[itemIndex].imageUrl = imageUrlInput.value;
+                document.getElementById(`activity-preview-${id}`).src = imageUrlInput.value;
+                document.getElementById(`activity-preview-${id}`).style.display = 'block';
+                fileInput.value = '';
+                const placeholderText = target.closest('.image-upload-area').querySelector('.image-upload-placeholder-text');
+                if (placeholderText) placeholderText.style.display = 'none';
+
+                if (filenameDisplay) {
+                    filenameDisplay.textContent = '';
+                    filenameDisplay.style.display = 'none';
+                }
+            } else {
+                homepageContent.activities[itemIndex][field] = target.value;
+            }
+        });
+        // Event listener delegasi untuk penghapusan kegiatan
+        document.getElementById('activities-list').addEventListener('click', (e) => {
+             if (e.target.closest('.delete-activity-btn')) {
+                const idToDelete = e.target.closest('.delete-activity-btn').dataset.id;
+                showPageSpecificModal('Apakah Anda yakin ingin menghapus kegiatan ini?', 'Ya, Hapus', (confirmed) => { // Menggunakan showPageSpecificModal
+                    if (confirmed) {
+                        homepageContent.activities = homepageContent.activities.filter(item => item.id !== idToDelete);
+                        activityManager.render();
+                        showResponseMessage('Kegiatan berhasil dihapus!', 'success');
+                    }
+                });
+            }
+        });
+
+        // --- Manajer Bagian Galeri ---
+        const galleryManager = createSectionManager(
+            'gallery', 'gallery-list', 'add-gallery-btn',
+            [{name: 'imageUrl', default: 'https://placehold.co/400x400/eeeeee/cccccc?text=Foto'}, {name: 'caption', default: 'Keterangan Foto'}],
+            (item, index) => {
+                const el = document.createElement('div');
+                el.className = 'relative group rounded-lg overflow-hidden border border-gray-200';
+                // Tentukan tampilan awal untuk nama file
+                const filenameInitialStyle = (item.imageUrl && item.imageUrl.startsWith('data:image')) ? 'block' : 'none';
+                const filenameInitialText = (item.imageUrl && item.imageUrl.startsWith('data:image')) ? 'Gambar diunggah sebelumnya' : '';
+
+                el.innerHTML = `
+                    <div class="image-upload-area mb-2">
+                        <input type="file" id="gallery-image-upload-${item.id}" data-id="${item.id}" data-field="uploadedImage" class="gallery-field" accept="image/png, image/jpeg, image/gif">
+                        <img id="gallery-preview-${item.id}" src="${item.imageUrl}" onerror="this.onerror=null;this.src='https://placehold.co/100x100/eeeeee/cccccc?text=Error';" class="image-preview-upload" style="${item.imageUrl ? 'display:block;' : 'display:none;'}" alt="Gallery Image Preview">
+                        <div id="gallery-filename-${item.id}" class="text-xs text-text-muted mt-1" style="display: ${filenameInitialStyle};">${filenameInitialText}</div> 
+                        <div class="image-upload-placeholder-text" style="${item.imageUrl ? 'display:none;' : 'display:flex;'}">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Klik atau Seret</span>
+                        </div>
+                    </div>
+                    <label for="gallery-caption-${item.id}" class="sr-only">Keterangan Foto</label>
+                    <input type="text" id="gallery-caption-${item.id}" value="${item.caption}" data-id="${item.id}" data-field="caption" class="form-input form-input-sm text-xs gallery-field" placeholder="Keterangan">
+                    <label for="gallery-image-url-${item.id}" class="sr-only">URL Gambar</label>
+                    <input type="url" id="gallery-image-url-${item.id}" value="${item.imageUrl && !item.imageUrl.startsWith('data:image') ? item.imageUrl : ''}" data-id="${item.id}" data-field="imageUrl" class="form-input form-input-sm text-xs mt-1 gallery-field" placeholder="URL Gambar (http://...)" pattern="https?://.+" >
+                    <p class="text-xs text-gray-500 mt-1 mb-2">Isi salah satu saja (URL atau Unggah)</p>
+                    <button type="button" class="btn bg-red-500 text-white hover:bg-red-600 btn-sm delete-gallery-btn absolute top-1 right-1" data-id="${item.id}" title="Hapus Foto"><i class="fas fa-trash"></i></button>
+                `;
+                return el;
+            }
+        );
+        // Event listener delegasi untuk perubahan input galeri
+        document.getElementById('gallery-list').addEventListener('input', (e) => {
+            const target = e.target;
+            const { id, field } = target.dataset;
+            if (!id || !field || !target.classList.contains('gallery-field')) return;
+
+            const itemIndex = homepageContent.gallery.findIndex(item => item.id === id);
+            if (itemIndex === -1) return;
+
+            if (target.type === 'file') {
+                const file = target.files[0];
+                const filenameDisplay = document.getElementById(`gallery-filename-${id}`); 
+                const imageUrlInput = document.getElementById(`gallery-image-url-${id}`);
+
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        homepageContent.gallery[itemIndex].imageUrl = event.target.result;
+                        document.getElementById(`gallery-preview-${id}`).src = event.target.result;
+                        document.getElementById(`gallery-preview-${id}`).style.display = 'block';
+                        imageUrlInput.value = '';
+                        imageUrlInput.classList.remove('invalid');
+                        const placeholderText = target.closest('.image-upload-area').querySelector('.image-upload-placeholder-text');
+                        if (placeholderText) placeholderText.style.display = 'none';
+
+                        if (filenameDisplay) {
+                            filenameDisplay.textContent = file.name;
+                            filenameDisplay.style.display = 'block';
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    if (!imageUrlInput.value) { // Hanya kosongkan jika input URL juga kosong
+                        homepageContent.gallery[itemIndex].imageUrl = '';
+                        document.getElementById(`gallery-preview-${id}`).src = '';
+                        document.getElementById(`gallery-preview-${id}`).style.display = 'none';
+                        const placeholderText = target.closest('.image-upload-area').querySelector('.image-upload-placeholder-text');
+                        if (placeholderText) placeholderText.style.display = 'flex';
+
+                        if (filenameDisplay) {
+                            filenameDisplay.textContent = '';
+                            filenameDisplay.style.display = 'none';
+                        }
+                    }
+                }
+            } else if (field === 'imageUrl') {
+                const imageUrlInput = target;
+                const fileInput = document.getElementById(`gallery-image-upload-${id}`);
+                const filenameDisplay = document.getElementById(`gallery-filename-${id}`);
+
+                homepageContent.gallery[itemIndex].imageUrl = imageUrlInput.value;
+                document.getElementById(`gallery-preview-${id}`).src = imageUrlInput.value;
+                document.getElementById(`gallery-preview-${id}`).style.display = 'block';
+                fileInput.value = '';
+                const placeholderText = target.closest('.image-upload-area').querySelector('.image-upload-placeholder-text');
+                if (placeholderText) placeholderText.style.display = 'none';
+
+                if (filenameDisplay) {
+                    filenameDisplay.textContent = '';
+                    filenameDisplay.style.display = 'none';
+                }
+            } else {
+                homepageContent.gallery[itemIndex][field] = target.value;
+            }
+        });
+        // Event listener delegasi untuk penghapusan galeri
+        document.getElementById('gallery-list').addEventListener('click', (e) => {
+             if (e.target.closest('.delete-gallery-btn')) {
+                const idToDelete = e.target.closest('.delete-gallery-btn').dataset.id;
+                showPageSpecificModal('Apakah Anda yakin ingin menghapus foto ini?', 'Ya, Hapus', (confirmed) => { // Menggunakan showPageSpecificModal
+                    if (confirmed) {
+                        homepageContent.gallery = homepageContent.gallery.filter(item => item.id !== idToDelete);
+                        galleryManager.render();
+                        showResponseMessage('Foto berhasil dihapus!', 'success');
+                    }
+                });
+            }
+        });
+
+
+        // --- Muat dan Simpan Konten Utama ---
+
+        function loadAllContentDataFromStorage() {
+            // Muat konten beranda yang ada dari localStorage
+            const savedContent = localStorage.getItem('homepageContent');
+            // Inisialisasi homepageContent dengan data tersimpan atau objek kosong
+            homepageContent = savedContent ? JSON.parse(savedContent) : {
+                heroTitle: 'Pergerakan Mahasiswa Islam Indonesia', // Default value
+                heroSubtitle: 'Komisariat UIN Sunan Gunung Djati Bandung', // Default value
+                heroMotto: 'Dzikir, Fikir, Amal Shalih', // Default value
+                announcementText: 'Pengumuman penting tentang kegiatan terbaru kami dapat dilihat <a href="#kegiatan">di sini</a>.', // Default value
+                aboutP1: 'PMII (Pergerakan Mahasiswa Islam Indonesia) adalah organisasi kemahasiswaan yang berlandaskan Islam Ahlusunnah Wal Jama\'ah dan berasaskan Pancasila. Berdiri pada tanggal 17 April 1960, PMII berkomitmen untuk menjadi wadah pengembangan diri mahasiswa yang menjunjung tinggi nilai-nilai keislaman, keindonesiaan, dan kemahasiswaan. Kami berupaya mencetak kader-kader ulul albab yang berintelektual, profesional, dan berakhlakul karimah, siap menjadi agen perubahan sosial di tengah masyarakat.', // Default value
+                news: [],
+                activities: [],
+                gallery: []
+            };
+
+            // Isi bidang statis dari homepageContent
+            staticFields.forEach(field => {
+                const element = form.elements[field];
+                if (element) {
+                    const editor = tinymce.get(element.id);
+                    if (editor) {
+                        // Pastikan TinyMCE sudah siap sebelum mengatur konten
+                        editor.on('init', function() {
+                            editor.setContent(homepageContent[field] || '');
+                        });
+                        // Jika sudah siap, langsung set konten
+                        if (editor.initialized) {
+                            editor.setContent(homepageContent[field] || '');
+                        }
+                    } else {
+                        element.value = homepageContent[field] || '';
+                    }
+                }
+            });
+            
+            // Render bagian dinamis (berita, kegiatan, galeri)
+            newsManager.render();
+            activityManager.render();
+            galleryManager.render();
+        }
+
+        // Fungsi untuk menampilkan pesan respons (sukses/error) di bagian atas formulir
+        function showResponseMessage(message, type) {
+            responseMessage.textContent = message; 
+            responseMessage.classList.remove('hidden', 'form-message-success', 'form-message-error', 'form-message-info');
+            responseMessage.innerHTML = ''; 
+            if (type === 'success') {
+                responseMessage.classList.add('form-message-success');
+                responseMessage.innerHTML = '<i class="fas fa-check-circle mr-2"></i>' + message;
+            } else if (type === 'error') {
+                responseMessage.classList.add('form-message-error');
+                responseMessage.innerHTML = '<i class="fas fa-times-circle mr-2"></i>' + message;
+            } else if (type === 'info') {
+                responseMessage.classList.add('form-message-info'); 
+                responseMessage.innerHTML = '<i class="fas fa-info-circle mr-2"></i>' + message;
+            }
+
+            window.scrollTo(0, 0); // Gulir ke atas untuk melihat pesan
+
+            setTimeout(() => {
+                responseMessage.classList.add('hidden'); // Sembunyikan pesan setelah 4 detik
+            }, 4000); 
+        }
+
+        // Muat semua data saat DOM siap
+        loadAllContentDataFromStorage();
+
+        // Tangani pengiriman formulir
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            let isValid = true; // Bendera validasi
+
+            // Validasi dan kumpulkan bidang statis
+            staticFields.forEach(field => {
+                const element = form.elements[field];
+                if (element) {
+                    const editor = tinymce.get(element.id);
+                    let value = editor ? editor.getContent() : element.value;
+
+                    if (element.hasAttribute('required') && value.trim() === '') {
+                        element.classList.add('invalid');
+                        isValid = false;
+                    } else {
+                        element.classList.remove('invalid');
+                    }
+                    homepageContent[field] = value; // Simpan nilai ke objek data
+                }
+            });
+
+            // Validasi bidang dinamis (berita, kegiatan, galeri)
+            // Validasi berita
+            if (homepageContent.news) {
+                homepageContent.news.forEach((item) => { 
+                    const titleInput = document.getElementById(`news-title-${item.id}`);
+                    const imageUrlInput = document.getElementById(`news-image-url-${item.id}`); 
+                    const imageUploadInput = document.getElementById(`news-image-upload-${item.id}`); 
+                    const descriptionTextarea = document.getElementById(`news-desc-${item.id}`); 
+                    
+                    if (titleInput && titleInput.value.trim() === '') {
+                        titleInput.classList.add('invalid');
+                        isValid = false;
+                    } else if (titleInput) {
+                        titleInput.classList.remove('invalid');
+                    }
+                    
+                    // Validasi gambar: salah satu URL atau file harus ada dan valid
+                    let imageIsPresent = false;
+                    // Check if imageUrl is from an uploaded base64 string
+                    if (item.imageUrl && item.imageUrl.startsWith('data:image')) {
+                        imageIsPresent = true;
+                    } else if (imageUrlInput && imageUrlInput.value.trim() !== '') {
+                        if (!imageUrlInput.checkValidity()) {
+                            imageUrlInput.classList.add('invalid');
+                            isValid = false;
+                        } else {
+                            imageUrlInput.classList.remove('invalid');
+                            imageIsPresent = true;
+                        }
+                    } else if (imageUploadInput && imageUploadInput.files && imageUploadInput.files.length > 0) {
+                        imageIsPresent = true;
+                        if (imageUrlInput) imageUrlInput.classList.remove('invalid'); 
+                    } 
+                    
+                    // Jika tidak ada gambar yang diunggah dan tidak ada URL
+                    if (!imageIsPresent) { 
+                         // Pastikan input URL adalah yang divalidasi jika tidak ada file yang diunggah
+                         if (imageUrlInput) imageUrlInput.classList.add('invalid');
+                         isValid = false;
+                    }
+
+
+                    if (descriptionTextarea && tinymce.get(descriptionTextarea.id).getContent().trim() === '') {
+                         descriptionTextarea.classList.add('invalid');
+                         isValid = false;
+                    } else if (descriptionTextarea) {
+                        descriptionTextarea.classList.remove('invalid');
+                    }
+                });
+            }
+            
+            // Validasi kegiatan
+            if (homepageContent.activities) {
+                homepageContent.activities.forEach((item) => { 
+                    const dayInput = document.getElementById(`activity-day-${item.id}`);
+                    const monthInput = document.getElementById(`activity-month-${item.id}`);
+                    const yearInput = document.getElementById(`activity-year-${item.id}`);
+                    const titleInput = document.getElementById(`activity-title-${item.id}`);
+                    const timeInput = document.getElementById(`activity-time-${item.id}`);
+                    const locationInput = document.getElementById(`activity-location-${item.id}`);
+                    const imageUrlInput = document.getElementById(`activity-image-url-${item.id}`); 
+                    const imageUploadInput = document.getElementById(`activity-image-upload-${item.id}`); 
+
+
+                    if (dayInput && (dayInput.value.trim() === '' || parseInt(dayInput.value) < 1 || parseInt(dayInput.value) > 31)) {
+                        dayInput.classList.add('invalid'); isValid = false;
+                    } else if (dayInput) { dayInput.classList.remove('invalid'); }
+                    
+                    const validMonths = ["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "AGS", "SEP", "OKT", "NOV", "DES"];
+                    if (monthInput && (monthInput.value.trim() === '' || !validMonths.includes(monthInput.value.toUpperCase()))) {
+                        monthInput.classList.add('invalid'); isValid = false;
+                    } else if (monthInput) { monthInput.classList.remove('invalid'); }
+
+                    if (yearInput && (yearInput.value.trim() === '' || parseInt(yearInput.value) < 2000 || parseInt(yearInput.value) > 2100)) {
+                        yearInput.classList.add('invalid'); isValid = false;
+                    } else if (yearInput) { yearInput.classList.remove('invalid'); }
+
+                    if (titleInput && titleInput.value.trim() === '') {
+                        titleInput.classList.add('invalid'); isValid = false;
+                    } else if (titleInput) { titleInput.classList.remove('invalid'); }
+
+                    if (timeInput && timeInput.value.trim() === '') {
+                        timeInput.classList.add('invalid'); isValid = false;
+                    } else if (timeInput) { timeInput.classList.remove('invalid'); }
+
+                    if (locationInput && locationInput.value.trim() === '') {
+                        locationInput.classList.add('invalid'); isValid = false;
+                    } else if (locationInput) { locationInput.classList.remove('invalid'); }
+
+                    // Validasi gambar untuk kegiatan
+                    let activityImageIsPresent = false;
+                    if (item.imageUrl && item.imageUrl.startsWith('data:image')) {
+                        activityImageIsPresent = true;
+                    } else if (imageUrlInput && imageUrlInput.value.trim() !== '') {
+                        if (!imageUrlInput.checkValidity()) {
+                            imageUrlInput.classList.add('invalid');
+                            isValid = false;
+                        } else {
+                            imageUrlInput.classList.remove('invalid');
+                            activityImageIsPresent = true;
+                        }
+                    } else if (imageUploadInput && imageUploadInput.files && imageUploadInput.files.length > 0) {
+                        activityImageIsPresent = true;
+                        if (imageUrlInput) imageUrlInput.classList.remove('invalid');
+                    }
+                    
+                    if (!activityImageIsPresent) {
+                         if (imageUrlInput) imageUrlInput.classList.add('invalid');
+                         isValid = false;
+                    }
+                });
+            }
+
+            // Validasi galeri
+            if (homepageContent.gallery) {
+                homepageContent.gallery.forEach((item) => { 
+                    const captionInput = document.getElementById(`gallery-caption-${item.id}`);
+                    const imageUrlInput = document.getElementById(`gallery-image-url-${item.id}`);
+                    const imageUploadInput = document.getElementById(`gallery-image-upload-${item.id}`);
+                    
+                    if (captionInput && captionInput.value.trim() === '') {
+                        captionInput.classList.add('invalid'); isValid = false;
+                    } else if (captionInput) { captionInput.classList.remove('invalid'); }
+
+                    // Validasi gambar galeri 
+                    let galleryImageIsPresent = false;
+                    if (item.imageUrl && item.imageUrl.startsWith('data:image')) {
+                        galleryImageIsPresent = true;
+                    } else if (imageUrlInput && imageUrlInput.value.trim() !== '') {
+                        if (!imageUrlInput.checkValidity()) {
+                            imageUrlInput.classList.add('invalid');
+                            isValid = false;
+                        } else {
+                            imageUrlInput.classList.remove('invalid');
+                            galleryImageIsPresent = true;
+                        }
+                    } else if (imageUploadInput && imageUploadInput.files && imageUploadInput.files.length > 0) {
+                        galleryImageIsPresent = true;
+                        if (imageUrlInput) imageUrlInput.classList.remove('invalid');
+                    }
+                    
+                    if (!galleryImageIsPresent) {
+                         if (imageUrlInput) imageUrlInput.classList.add('invalid');
+                         isValid = false;
+                    }
+                });
+            }
+
+            // Jika ada bidang yang tidak valid, tampilkan pesan kesalahan dan hentikan
+            if (!isValid) {
+                showResponseMessage('Harap lengkapi semua bidang yang wajib diisi dan perbaiki kesalahan input!', 'error');
+                return;
+            }
+
+            // Simpan semua konten ke localStorage jika validasi berhasil
+            localStorage.setItem('homepageContent', JSON.stringify(homepageContent));
+            showResponseMessage('Perubahan berhasil disimpan! Beranda akan diperbarui saat di-refresh.', 'success');
+        });
+        
+        // Tangani tombol batal
+        cancelButton.addEventListener('click', function() {
+            showPageSpecificModal('Apakah Anda yakin ingin membatalkan? Semua perubahan yang belum disimpan akan hilang.', 'Ya, Batalkan', (confirmed) => { // Menggunakan showPageSpecificModal
+                if (confirmed) {
+                    window.location.href = 'index.html'; // Kembali ke halaman utama
+                }
+            });
+        });
+
+        // Inisialisasi TinyMCE untuk textarea statis (tidak memiliki atribut data-field)
+        // TinyMCE untuk elemen dinamis diinisialisasi di dalam `renderList`
+        tinymce.init({
+            selector: 'textarea.tinymce-editor:not([data-field])', 
+            plugins: 'autolink lists link image anchor', /* 'print preview charmap' dihapus */
+            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+            menubar: false,
+            branding: false,
+            height: 200,
+            content_style: 'body { font-family: \'Poppins\', sans-serif; font-size: 14px; }',
+            setup: function (editor) {
+                editor.on('change', function () {
+                    // Perbarui nilai textarea yang mendasari untuk pengiriman formulir
+                    editor.save();
+                });
+            }
+        });
+
+        // --- Navbar Tetap saat Digulir (Menggunakan logika dari manajemen-akun.html) ---
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (navbar) {
+                if (window.scrollY > 50) { // Setelah 50px gulir
+                    navbar.classList.add('navbar-scrolled');
+                } else {
+                    navbar.classList.remove('navbar-scrolled');
+                }
+            }
+        });
+
+        // --- Tombol Gulir ke Atas (Menggunakan ID dari manajemen-akun.html) ---
+        const scrollToTopBtnManajemenAkun = document.getElementById('scrollToTopBtnManajemenAkun');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 200) {
+                scrollToTopBtnManajemenAkun.classList.remove('hidden');
+                scrollToTopBtnManajemenAkun.classList.add('flex');
+            } else {
+                scrollToTopBtnManajemenAkun.classList.add('hidden');
+                scrollToTopBtnManajemenAkun.classList.remove('flex');
+            }
+        });
+
+        if (scrollToTopBtnManajemenAkun) {
+            scrollToTopBtnManajemenAkun.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+        
+        // --- Perbarui Tahun di Footer (Menggunakan ID dari manajemen-akun.html) ---
+        document.getElementById('tahun-footer-manajemen-akun').textContent = new Date().getFullYear();
+    });
+    </script>
+</body>
+</html>

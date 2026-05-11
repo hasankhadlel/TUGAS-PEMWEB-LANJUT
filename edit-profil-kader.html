@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profil Kader - PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="img/logo-pmii.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Variabel CSS dari file yang diberikan (manajemen-akun.html atau admin-dashboard-komisariat.html) */
+        :root {
+            --pmii-blue: #005c97;
+            --pmii-darkblue: #004a7c;
+            --pmii-yellow: #fdd835;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --input-bg: #f9fafb;
+            --background-light: #f9fafb;
+            --background-page: #f3f4f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --danger-color: #ef4444;
+            --danger-hover-color: #dc2626;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Poppins', 'Inter', sans-serif;
+            overflow-x: hidden;
+            background-color: var(--background-page);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: background-color 0.3s, opacity 0.5s ease-out; /* Added opacity transition */
+            line-height: 1.6;
+        }
+        /* New: Fade-out class for body */
+        body.fade-out-page {
+            opacity: 0;
+        }
+        .main-content-wrapper {
+            flex-grow: 1;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: pageFadeInUp 0.7s 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
+        @keyframes pageFadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+        .internal-header {
+            background-color: white;
+            box-shadow: var(--shadow-md);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .internal-header .logo-text { color: var(--pmii-blue); font-weight: 700; }
+        .internal-header #admin-name-header { color: var(--text-secondary); font-weight: 500; }
+        .internal-header #auth-info-header {
+            background-color: var(--pmii-blue); color: white;
+            padding: 0.6rem 1.2rem; border-radius: 0.5rem;
+            transition: background-color 0.25s, transform 0.2s, box-shadow 0.25s;
+            text-decoration: none; font-weight: 500; box-shadow: var(--shadow-sm);
+        }
+        .internal-header #auth-info-header:hover {
+            background-color: var(--pmii-darkblue); transform: translateY(-2px); box-shadow: var(--shadow-md);
+        }
+        .internal-header #auth-info-header.logout-active { background-color: #ef4444 !important; }
+        .internal-header #auth-info-header.logout-active:hover { background-color: #dc2626 !important; }
+
+        .page-title { color: var(--pmii-darkblue); font-weight: 800; text-shadow: 1px 1px 2px rgba(0,0,0,0.05); }
+
+        .content-section {
+            background-color: white; padding: 2rem; border-radius: 0.75rem;
+            box-shadow: var(--shadow-md); border: 1px solid var(--border-color);
+        }
+        .content-section h2, .content-section h3 {
+            color: var(--pmii-darkblue); border-bottom: 2px solid var(--pmii-yellow);
+            padding-bottom: 0.5rem; display: inline-block; font-weight: 700;
+        }
+
+        .input-group-modern { position: relative; margin-bottom: 1.5rem; }
+        .form-input-modern, select.form-input-modern, textarea.form-input-modern {
+            width: 100%; padding: 0.875rem 1rem; padding-top: 1.25rem;
+            border: 1px solid var(--border-color); border-radius: 0.5rem;
+            font-size: 0.875rem; color: var(--text-primary);
+            background-color: var(--input-bg);
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+        }
+        select.form-input-modern {
+             padding-top: 0.875rem; padding-bottom: 0.875rem; appearance: none;
+             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+             background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.25em 1.25em;
+        }
+        textarea.form-input-modern { padding-top: 1.25rem; min-height: 80px; }
+        .form-input-modern:focus, select.form-input-modern:focus, textarea.form-input-modern:focus {
+            border-color: var(--pmii-blue); background-color: white;
+            box-shadow: 0 0 0 3px rgba(0, 92, 151, 0.15); outline: none;
+        }
+        .form-input-modern[readonly] {
+            background-color: #e2e8f0; /* bg-gray-200 */
+            cursor: not-allowed;
+        }
+        .form-label-modern {
+            position: absolute; left: 1rem; top: 0.875rem;
+            color: var(--text-muted); font-size: 0.875rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none; background-color: transparent; padding: 0 0.25rem;
+        }
+        .form-input-modern:focus + .form-label-modern,
+        .form-input-modern.has-value + .form-label-modern,
+        select.form-input-modern:focus + .form-label-modern,
+        select.form-input-modern.has-value + .form-label-modern,
+        textarea.form-input-modern:focus + .form-label-modern,
+        textarea.form-input-modern.has-value + .form-label-modern {
+            top: 0.375rem; left: 0.75rem; font-size: 0.75rem;
+            color: var(--pmii-blue); background-color: white; border-radius: 0.25rem;
+        }
+
+        .btn-modern {
+            padding: 0.625rem 1.25rem; border-radius: 0.5rem; font-weight: 500;
+            font-size: 0.875rem; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex; align-items: center; justify-content: center;
+            cursor: pointer; border: none; text-decoration: none;
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-modern:hover { transform: translateY(-2px) scale(1.02); box-shadow: var(--shadow-md); }
+        .btn-modern:active { transform: translateY(0px) scale(0.98); }
+        .btn-primary-modern { background-color: var(--pmii-blue); color: white; }
+        .btn-primary-modern:hover { background-color: var(--pmii-darkblue); }
+        .btn-danger-modern { background-color: var(--danger-color); color: white; }
+        .btn-danger-modern:hover { background-color: var(--danger-hover-color); }
+        .btn-outline-modern {
+            background-color: transparent; color: var(--pmii-blue); border: 1px solid var(--pmii-blue);
+        }
+        .btn-outline-modern:hover { background-color: rgba(0,92,151,0.05); }
+
+        .form-message-success { background-color: #dcfce7; color: #166534; border: 1px solid #86efac; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; }
+        .form-message-error { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; }
+
+        .profile-picture-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .profile-picture-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--pmii-blue);
+            box-shadow: var(--shadow-md);
+            background-color: #f0f0f0;
+        }
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            background-color: var(--pmii-yellow);
+            color: var(--pmii-darkblue);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+        .upload-btn-wrapper:hover {
+            background-color: #fbc02d;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .upload-btn-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .internal-footer {
+            background-color: var(--pmii-darkblue); color: #cbd5e1;
+            padding: 2.5rem 1rem;
+        }
+        .internal-footer p { color: #e5e7eb; }
+        .internal-footer .footer-title { color: white; font-weight: 600; }
+        .internal-footer img { filter: brightness(0) invert(1) opacity(0.8); }
+
+        #scrollToTopBtnEditProfil {
+            background-color: var(--pmii-yellow); color: var(--pmii-darkblue);
+            width: 2.75rem; height: 2.75rem; border-radius: 50%;
+            box-shadow: var(--shadow-lg); transition: background-color 0.2s, transform 0.2s;
+        }
+        #scrollToTopBtnEditProfil:hover { background-color: #fbc02d; transform: scale(1.1) translateY(-2px); }
+
+        /* File Upload Group Styling */
+        .file-upload-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .file-upload-group .upload-btn-wrapper {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 150px; /* Adjust as needed for button width */
+        }
+        .file-upload-group .file-name-display {
+            flex-grow: 1;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0.5rem 0;
+        }
+        .file-upload-group .required-label {
+            color: #ef4444; /* Red color for required indicator */
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="internal-header py-3 sticky top-0 z-50">
+        <div class="container mx-auto px-4 lg:px-8 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2.5">
+                <img src="img/logo-pmii.png" alt="Logo PMII" class="h-9 w-9 rounded-full">
+                <span class="text-sm md:text-base font-semibold logo-text">PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung - Sistem Internal</span>
+            </a>
+            <div class="flex items-center space-x-3 md:space-x-4">
+                <span id="kader-name-header" class="text-xs sm:text-sm font-medium hidden"></span>
+                <a href="#" id="auth-info-header" class="text-xs sm:text-sm">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content-wrapper">
+        <main class="container mx-auto px-4 py-8 lg:py-12">
+            <!-- Tombol Kembali Ditambahkan Di Sini -->
+            <div class="mb-6">
+                <a href="index.html" class="btn-modern btn-outline-modern">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Kembali ke Beranda
+                </a>
+            </div>
+
+            <section id="edit-profil-kader-content">
+                <div class="text-center mb-10 md:mb-14">
+                    <h1 class="text-3xl lg:text-4xl page-title">Edit Profil Kader</h1>
+                    <p class="text-md text-text-muted mt-2">Perbarui informasi pribadi dan kepengkaderan Anda.</p>
+                </div>
+
+                <div class="content-section mb-8">
+                    <h3 class="text-lg font-semibold mb-6">Informasi Pribadi</h3>
+                    <div id="profile-edit-form-response" class="hidden form-message mb-5"></div>
+                    <form id="profileEditForm" class="space-y-6">
+                        <div class="profile-picture-upload">
+                            <img id="profilePicturePreview" src="https://placehold.co/120x120/cccccc/444444?text=Avatar" alt="Foto Profil" class="profile-picture-preview">
+                            <div class="upload-btn-wrapper">
+                                <i class="fas fa-camera mr-2"></i>Unggah Foto Profil
+                                <input type="file" id="profilePictureInput" name="profilePicture" accept="image/*">
+                            </div>
+                        </div>
+
+                        <!-- Data Diri -->
+                        <h4 class="text-md font-semibold text-pmii-darkblue mb-3 border-b border-gray-200 pb-2">Data Diri</h4>
+                        <div class="input-group-modern">
+                            <input type="text" id="kaderNama" name="nama" class="form-input-modern" required placeholder=" ">
+                            <label for="kaderNama" class="form-label-modern">Nama Lengkap</label>
+                        </div>
+                        <div class="input-group-modern">
+                            <input type="text" id="kaderNIK" name="nik" class="form-input-modern" placeholder=" ">
+                            <label for="kaderNIK" class="form-label-modern">NIK</label>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="input-group-modern">
+                                <input type="text" id="kaderTempatLahir" name="tempat_lahir" class="form-input-modern" placeholder=" ">
+                                <label for="kaderTempatLahir" class="form-label-modern">Tempat Lahir</label>
+                            </div>
+                            <div class="input-group-modern">
+                                <input type="date" id="kaderTanggalLahir" name="tanggal_lahir" class="form-input-modern" placeholder=" ">
+                                <label for="kaderTanggalLahir" class="form-label-modern">Tanggal Lahir</label>
+                            </div>
+                        </div>
+                        <div class="input-group-modern">
+                            <select id="kaderJenisKelamin" name="jenis_kelamin" class="form-input-modern">
+                                <option value=""></option>
+                                <option value="Laki-laki">Laki-laki</option>
+                                <option value="Perempuan">Perempuan</option>
+                            </select>
+                            <label for="kaderJenisKelamin" class="form-label-modern">Jenis Kelamin</label>
+                        </div>
+                        <div class="input-group-modern">
+                            <textarea id="kaderAlamat" name="alamat" class="form-input-modern" rows="3" placeholder=" "></textarea>
+                            <label for="kaderAlamat" class="form-label-modern">Alamat Lengkap</label>
+                        </div>
+                        <div class="input-group-modern">
+                            <input type="tel" id="kaderNoHP" name="no_hp" class="form-input-modern" placeholder=" ">
+                            <label for="kaderNoHP" class="form-label-modern">No. HP / WhatsApp Aktif</label>
+                        </div>
+                        <div class="input-group-modern">
+                            <input type="email" id="kaderEmailPribadi" name="email_pribadi" class="form-input-modern" placeholder=" ">
+                            <label for="kaderEmailPribadi" class="form-label-modern">Email Pribadi (opsional)</label>
+                        </div>
+
+                        <!-- Pendidikan -->
+                        <h4 class="text-md font-semibold text-pmii-darkblue mb-3 border-b border-gray-200 pb-2 pt-4">Pendidikan</h4>
+                        <div class="input-group-modern">
+                            <input type="text" id="kaderUniversitas" name="universitas" class="form-input-modern" placeholder=" ">
+                            <label for="kaderUniversitas" class="form-label-modern">Universitas / Institusi</label>
+                        </div>
+                        <div class="input-group-modern">
+                            <input type="text" id="kaderFakultasJurusan" name="fakultas_jurusan" class="form-input-modern" placeholder=" ">
+                            <label for="kaderFakultasJurusan" class="form-label-modern">Fakultas / Jurusan</label>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="input-group-modern">
+                                <input type="number" id="kaderTahunMasukKuliah" name="tahun_masuk_kuliah" class="form-input-modern" min="1900" max="2100" placeholder=" ">
+                                <label for="kaderTahunMasukKuliah" class="form-label-modern">Tahun Masuk Kuliah</label>
+                            </div>
+                            <div class="input-group-modern">
+                                <select id="kaderStatusMahasiswa" name="status_mahasiswa" class="form-input-modern">
+                                    <option value=""></option>
+                                    <option value="Aktif">Aktif</option>
+                                    <option value="Lulus">Lulus</option>
+                                    <option value="Cuti">Cuti</option>
+                                </select>
+                                <label for="kaderStatusMahasiswa" class="form-label-modern">Status Mahasiswa</label>
+                            </div>
+                        </div>
+                        <div class="input-group-modern">
+                            <input type="number" step="0.01" id="kaderIPK" name="ipk" class="form-input-modern" placeholder=" ">
+                            <label for="kaderIPK" class="form-label-modern">IPK Terakhir</label>
+                        </div>
+                        <!-- New: IPK Transcript/KHS Upload -->
+                        <div class="file-upload-group">
+                            <label class="upload-btn-wrapper">
+                                <i class="fas fa-upload"></i> Unggah Transkrip / KHS
+                                <input type="file" id="uploadIPKTranscript" accept=".pdf,image/*">
+                            </label>
+                            <span id="fileNameIPKTranscript" class="file-name-display">Tidak ada file dipilih.</span>
+                            <span class="required-label">*Wajib</span>
+                        </div>
+
+
+                        <!-- Keanggotaan PMII -->
+                        <h4 class="text-md font-semibold text-pmii-darkblue mb-3 border-b border-gray-200 pb-2 pt-4">Keanggotaan PMII</h4>
+                        <div class="input-group-modern">
+                            <input type="text" id="kaderNIMReadonly" name="nim" class="form-input-modern" required readonly placeholder=" ">
+                            <label for="kaderNIMReadonly" class="form-label-modern">NIM</label>
+                        </div>
+                        <div class="input-group-modern">
+                            <select id="kaderRayon" name="rayon" class="form-input-modern">
+                                <option value=""></option>
+                                <option value="Rayon Syariah">Rayon Syariah</option>
+                                <option value="Rayon Tarbiyah">Rayon Tarbiyah</option>
+                                <option value="Rayon Ushuluddin">Rayon Ushuluddin</option>
+                                <option value="Rayon Dakwah">Rayon Dakwah</option>
+                                <option value="Rayon Sains dan Teknologi">Rayon Sains dan Teknologi</option>
+                                <option value="Rayon Adab dan Humaniora">Rayon Adab dan Humaniora</option>
+                                <option value="Rayon Psikologi">Rayon Psikologi</option>
+                                <option value="Rayon Ilmu Sosial dan Ilmu Politik">Rayon Ilmu Sosial dan Ilmu Politik</option>
+                                <option value="Rayon Ekonomi dan Bisnis Islam">Rayon Ekonomi dan Bisnis Islam</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                            <label for="kaderRayon" class="form-label-modern">Rayon</label>
+                        </div>
+                        <div class="input-group-modern">
+                            <input type="text" id="kaderKomisariat" name="komisariat" class="form-input-modern" readonly placeholder=" ">
+                            <label for="kaderKomisariat" class="form-label-modern">Komisariat</label>
+                        </div>
+                        <div class="input-group-modern">
+                            <select id="kaderKlasifikasi" name="klasifikasi" class="form-input-modern">
+                                <option value=""></option>
+                                <option value="Kader Mu'taqid">Kader Mu’taqid</option>
+                                <option value="Kader Mujahid">Kader Mujahid</option>
+                                <option value="Kader Mujtahid">Kader Mujtahid</option>
+                                <option value="Kader Muharik">Kader Muharik</option>
+                            </select>
+                            <label for="kaderKlasifikasi" class="form-label-modern">Tingkat Kaderisasi</label>
+                        </div>
+                        <div class="input-group-modern">
+                            <input type="number" id="kaderTahunMasukPMII" name="tahun_masuk_pmii" class="form-input-modern" min="1900" max="2100" placeholder=" ">
+                            <label for="kaderTahunMasukPMII" class="form-label-modern">Tahun Masuk PMII</label>
+                        </div>
+                        <div class="input-group-modern">
+                            <textarea id="kaderRiwayatJabatan" name="riwayat_jabatan" class="form-input-modern" rows="2" placeholder=" "></textarea>
+                            <label for="kaderRiwayatJabatan" class="form-label-modern">Riwayat Jabatan (opsional)</label>
+                        </div>
+
+                        <!-- Keterangan Tambahan -->
+                        <h4 class="text-md font-semibold text-pmii-darkblue mb-3 border-b border-gray-200 pb-2 pt-4">Keterangan Tambahan</h4>
+                        <div class="input-group-modern">
+                            <textarea id="kaderKeahlianMinat" name="keahlian_minat" class="form-input-modern" rows="2" placeholder=" "></textarea>
+                            <label for="kaderKeahlianMinat" class="form-label-modern">Keahlian / Minat</label>
+                        </div>
+                        <div class="input-group-modern">
+                            <textarea id="kaderMediaSosial" name="media_sosial" class="form-input-modern" rows="2" placeholder=" "></textarea>
+                            <label for="kaderMediaSosial" class="form-label-modern">Media Sosial (Pisahkan dengan koma)</label>
+                        </div>
+                        <div class="input-group-modern">
+                            <textarea id="kaderKaryaTulis" name="karya_tulis" class="form-input-modern" rows="2" placeholder=" "></textarea>
+                            <label for="kaderKaryaTulis" class="form-label-modern">Karya Tulis / Kontribusi</label>
+                        </div>
+
+                        <!-- Fitur Tambahan yang Disarankan -->
+                        <h4 class="text-md font-semibold text-pmii-darkblue mb-3 border-b border-gray-200 pb-2 pt-4">Dokumen Pendukung</h4>
+                        <!-- New: Separate File Uploads -->
+                        <div class="file-upload-group">
+                            <label class="upload-btn-wrapper">
+                                <i class="fas fa-upload"></i> Unggah KTP
+                                <input type="file" id="uploadKTP" accept=".pdf,image/*">
+                            </label>
+                            <span id="fileNameKTP" class="file-name-display">Tidak ada file dipilih.</span>
+                            <span class="required-label">*Wajib</span>
+                        </div>
+                        <div class="file-upload-group">
+                            <label class="upload-btn-wrapper">
+                                <i class="fas fa-upload"></i> Unggah KTM
+                                <input type="file" id="uploadKTM" accept=".pdf,image/*">
+                            </label>
+                            <span id="fileNameKTM" class="file-name-display">Tidak ada file dipilih.</span>
+                            <span class="required-label">*Wajib</span>
+                        </div>
+                        <div class="file-upload-group">
+                            <label class="upload-btn-wrapper">
+                                <i class="fas fa-upload"></i> Unggah Sertifikat Kaderisasi
+                                <input type="file" id="uploadSertifikatKaderisasi" accept=".pdf,image/*">
+                            </label>
+                            <span id="fileNameSertifikatKaderisasi" class="file-name-display">Tidak ada file dipilih.</span>
+                            <span class="required-label">*Wajib</span>
+                        </div>
+                        <!-- End New: Separate File Uploads -->
+
+
+                        <div class="space-y-4 pt-4">
+                            <button type="submit" class="btn-modern btn-primary-modern w-full">
+                                <i class="fas fa-save mr-2"></i>Simpan Perubahan Profil
+                            </button>
+                            <button type="button" id="ajukanPerubahanBtn" class="btn-modern btn-outline-modern w-full">
+                                <i class="fas fa-paper-plane mr-2"></i>Ajukan Perubahan ke Admin
+                            </button>
+                            <button type="button" id="downloadBiodataBtn" class="btn-modern btn-outline-modern w-full">
+                                <i class="fas fa-download mr-2"></i>Unduh Biodata (PDF)
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="internal-footer py-10 mt-auto">
+        <div class="container mx-auto px-4 text-center">
+            <img src="img/logo-pmii.png" alt="Logo PMII Footer" class="h-12 w-12 mx-auto mb-2.5 rounded-full">
+            <p class="text-md font-semibold footer-title">PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung</p>
+            <p class="text-xs mt-3">&copy; <span id="tahun-footer-kader-profile"></span> PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <button id="scrollToTopBtnEditProfil" title="Kembali ke atas" class="hidden fixed bottom-6 right-6 z-50 items-center justify-center hover:bg-yellow-300 focus:outline-none">
+        <i class="fas fa-arrow-up text-lg"></i>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Cek status login dan peran kader
+            let isKaderLoggedInPage = false;
+            let loggedInUserPage = null;
+            const kaderNameHeader = document.getElementById('kader-name-header');
+            const authInfoHeader = document.getElementById('auth-info-header');
+
+            // Form elements for Edit Profile
+            const profileEditForm = document.getElementById('profileEditForm');
+            const profilePicturePreview = document.getElementById('profilePicturePreview');
+            const profilePictureInput = document.getElementById('profilePictureInput');
+            const kaderNama = document.getElementById('kaderNama');
+            const kaderNIM = document.getElementById('kaderNIM');
+            const kaderNIK = document.getElementById('kaderNIK');
+            const kaderTempatLahir = document.getElementById('kaderTempatLahir');
+            const kaderTanggalLahir = document.getElementById('kaderTanggalLahir');
+            const kaderJenisKelamin = document.getElementById('kaderJenisKelamin');
+            const kaderAlamat = document.getElementById('kaderAlamat');
+            const kaderNoHP = document.getElementById('kaderNoHP');
+            const kaderEmailPribadi = document.getElementById('kaderEmailPribadi');
+            const kaderUniversitas = document.getElementById('kaderUniversitas');
+            const kaderFakultasJurusan = document.getElementById('kaderFakultasJurusan');
+            const kaderTahunMasukKuliah = document.getElementById('kaderTahunMasukKuliah');
+            const kaderStatusMahasiswa = document.getElementById('kaderStatusMahasiswa');
+            const kaderIPK = document.getElementById('kaderIPK');
+            const kaderNIMReadonly = document.getElementById('kaderNIMReadonly');
+            const kaderRayon = document.getElementById('kaderRayon');
+            const kaderKomisariat = document.getElementById('kaderKomisariat');
+            const kaderKlasifikasi = document.getElementById('kaderKlasifikasi');
+            const kaderTahunMasukPMII = document.getElementById('kaderTahunMasukPMII');
+            const kaderRiwayatJabatan = document.getElementById('kaderRiwayatJabatan');
+            const kaderKeahlianMinat = document.getElementById('kaderKeahlianMinat');
+            const kaderMediaSosial = document.getElementById('kaderMediaSosial');
+            const kaderKaryaTulis = document.getElementById('kaderKaryaTulis');
+            const profileEditFormResponse = document.getElementById('profile-edit-form-response');
+
+            // Additional Buttons & New File Uploads
+            const ajukanPerubahanBtn = document.getElementById('ajukanPerubahanBtn');
+            const downloadBiodataBtn = document.getElementById('downloadBiodataBtn');
+
+            // New file upload elements
+            const uploadIPKTranscript = document.getElementById('uploadIPKTranscript');
+            const fileNameIPKTranscript = document.getElementById('fileNameIPKTranscript');
+            const uploadKTP = document.getElementById('uploadKTP');
+            const fileNameKTP = document.getElementById('fileNameKTP');
+            const uploadKTM = document.getElementById('uploadKTM');
+            const fileNameKTM = document.getElementById('fileNameKTM');
+            const uploadSertifikatKaderisasi = document.getElementById('uploadSertifikatKaderisasi');
+            const fileNameSertifikatKaderisasi = document.getElementById('fileNameSertifikatKaderisasi');
+
+
+            if (localStorage.getItem('loggedInUser')) {
+                try {
+                    loggedInUserPage = JSON.parse(localStorage.getItem('loggedInUser'));
+                    if (loggedInUserPage && loggedInUserPage.role === 'kader') {
+                        isKaderLoggedInPage = true;
+                    } else {
+                        // If user is logged in but not a kader, redirect
+                        window.location.assign('index.html');
+                    }
+                } catch (e) {
+                    console.error("Error parsing loggedInUser from localStorage:", e);
+                    localStorage.removeItem('loggedInUser');
+                    window.location.assign('login.html');
+                }
+            }
+
+            function updateKaderAuthUI() {
+                if (isKaderLoggedInPage && loggedInUserPage) {
+                    if(kaderNameHeader) {
+                        kaderNameHeader.textContent = `Halo, ${loggedInUserPage.nama || 'Kader'}`;
+                        kaderNameHeader.classList.remove('hidden');
+                    }
+                    if(authInfoHeader) {
+                        authInfoHeader.textContent = 'Logout';
+                        authInfoHeader.href = '#';
+                        authInfoHeader.classList.add('logout-active');
+                        authInfoHeader.addEventListener('click', handlePageLogout);
+                    }
+                } else {
+                    if(kaderNameHeader) kaderNameHeader.classList.add('hidden');
+                    if(authInfoHeader) {
+                        authInfoHeader.textContent = 'Login';
+                        authInfoHeader.href = 'login.html';
+                        authInfoHeader.classList.remove('logout-active');
+                        authInfoHeader.removeEventListener('click', handlePageLogout);
+                    }
+                    // Only redirect if not already on login page
+                    if (window.location.pathname.split('/').pop() !== 'login.html') {
+                        // Using a non-blocking message, then redirect
+                        const messageContainer = document.createElement('div');
+                        messageContainer.className = 'fixed top-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-lg shadow-xl text-white opacity-0 transition-opacity duration-300 ease-out z-[99999]';
+                        messageContainer.textContent = "Anda harus login sebagai Kader untuk mengakses halaman ini. Mengarahkan ke halaman Login...";
+                        document.body.appendChild(messageContainer);
+                        setTimeout(() => {
+                            window.location.assign('login.html');
+                        }, 2000); // Redirect after 2 seconds
+                    }
+                }
+            }
+
+            function handlePageLogout(e) {
+                e.preventDefault();
+                 // Add fade-out class to body
+                document.body.classList.add('fade-out-page');
+
+                // Delay the redirect to allow the animation to play
+                setTimeout(() => {
+                    localStorage.removeItem('isKaderLoggedIn');
+                    localStorage.removeItem('loggedInUser');
+                    localStorage.removeItem('isAdminLoggedIn');
+                    window.location.assign('index.html');
+                }, 500); // Match this duration with the CSS transition duration
+            }
+
+            updateKaderAuthUI();
+
+            // Fungsi untuk mengupdate kelas floating label
+            function updateLabelClass(input) {
+                const label = input.nextElementSibling;
+                if (label && label.classList.contains('form-label-modern')) {
+                    if (input.value.trim() !== '' || (input.tagName === 'SELECT' && input.value !== '')) {
+                        input.classList.add('has-value');
+                    } else {
+                        input.classList.remove('has-value');
+                    }
+                }
+            }
+
+            // Inisialisasi floating labels untuk semua input
+            const allInputs = document.querySelectorAll('.form-input-modern');
+            allInputs.forEach(input => {
+                updateLabelClass(input);
+                input.addEventListener('input', () => updateLabelClass(input));
+                input.addEventListener('change', () => updateLabelClass(input));
+                input.addEventListener('blur', () => updateLabelClass(input));
+                input.addEventListener('focus', () => {
+                    const label = input.nextElementSibling;
+                    if(label && label.classList.contains('form-label-modern')) label.classList.add('active-label-style');
+                });
+                input.addEventListener('blur', () => {
+                    const label = input.nextElementSibling;
+                    updateLabelClass(input);
+                    if(label && label.classList.contains('form-label-modern')) label.classList.remove('active-label-style');
+                });
+            });
+
+            // Simulasi data profil dan form submission
+            function loadProfileData() {
+                const kaderData = JSON.parse(localStorage.getItem('loggedInUser'));
+                if (kaderData) {
+                    kaderNama.value = kaderData.nama || '';
+                    kaderNIM.value = kaderData.nim || ''; // This NIM is for display/internal data, not login
+                    kaderNIK.value = kaderData.nik || '';
+                    kaderTempatLahir.value = kaderData.tempatLahir || '';
+                    kaderTanggalLahir.value = kaderData.tanggalLahir || ''; //YYYY-MM-DD format
+                    kaderJenisKelamin.value = kaderData.jenisKelamin || '';
+                    kaderAlamat.value = kaderData.alamat || '';
+                    kaderNoHP.value = kaderData.noHP || '';
+                    kaderEmailPribadi.value = kaderData.emailPribadi || '';
+                    kaderUniversitas.value = kaderData.universitas || '';
+                    kaderFakultasJurusan.value = kaderData.fakultasJurusan || '';
+                    kaderTahunMasukKuliah.value = kaderData.tahunMasukKuliah || '';
+                    kaderStatusMahasiswa.value = kaderData.statusMahasiswa || '';
+                    kaderIPK.value = kaderData.ipk || '';
+                    kaderNIMReadonly.value = kaderData.nim || ''; // Readonly NIM
+                    kaderRayon.value = kaderData.rayon || '';
+                    kaderKomisariat.value = kaderData.komisariat || 'UIN Sunan Gunung Djati Bandung'; // Assuming fixed komisariat
+                    kaderKlasifikasi.value = kaderData.klasifikasi || '';
+                    kaderTahunMasukPMII.value = kaderData.tahunMasukPMII || '';
+                    kaderRiwayatJabatan.value = kaderData.riwayatJabatan || '';
+                    kaderKeahlianMinat.value = kaderData.keahlianMinat || '';
+                    kaderMediaSosial.value = kaderData.mediaSosial ? kaderData.mediaSosial.join(', ') : '';
+                    kaderKaryaTulis.value = kaderData.karyaTulis || '';
+
+                    if (kaderData.profilePicture) {
+                        profilePicturePreview.src = kaderData.profilePicture;
+                    }
+                    // Load and display file names if they exist in localStorage
+                    if (kaderData.fileNameIPKTranscript) {
+                        fileNameIPKTranscript.textContent = kaderData.fileNameIPKTranscript;
+                    }
+                    if (kaderData.fileNameKTP) {
+                        fileNameKTP.textContent = kaderData.fileNameKTP;
+                    }
+                    if (kaderData.fileNameKTM) {
+                        fileNameKTM.textContent = kaderData.fileNameKTM;
+                    }
+                    if (kaderData.fileNameSertifikatKaderisasi) {
+                        fileNameSertifikatKaderisasi.textContent = kaderData.fileNameSertifikatKaderisasi;
+                    }
+
+                }
+                allInputs.forEach(input => updateLabelClass(input)); // Pastikan labels terupdate setelah data dimuat
+            }
+
+            profileEditForm?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                let kaderData = JSON.parse(localStorage.getItem('loggedInUser'));
+                if (kaderData) {
+                    // Validate required file uploads for IPK, KTP, KTM, Sertifikat Kaderisasi
+                    if (!kaderData.fileNameIPKTranscript) {
+                        displayMessage('profile-edit-form-response', 'Transkrip Nilai / KHS wajib diunggah.', 'error');
+                        return;
+                    }
+                    if (!kaderData.fileNameKTP) {
+                        displayMessage('profile-edit-form-response', 'File KTP wajib diunggah.', 'error');
+                        return;
+                    }
+                    if (!kaderData.fileNameKTM) {
+                        displayMessage('profile-edit-form-response', 'File KTM wajib diunggah.', 'error');
+                        return;
+                    }
+                    if (!kaderData.fileNameSertifikatKaderisasi) {
+                        displayMessage('profile-edit-form-response', 'File Sertifikat Kaderisasi wajib diunggah.', 'error');
+                        return;
+                    }
+
+                    // Update personal info
+                    kaderData.nama = kaderNama.value;
+                    kaderData.nik = kaderNIK.value;
+                    kaderData.tempatLahir = kaderTempatLahir.value;
+                    kaderData.tanggalLahir = kaderTanggalLahir.value;
+                    kaderData.jenisKelamin = kaderJenisKelamin.value;
+                    kaderData.alamat = kaderAlamat.value;
+                    kaderData.noHP = kaderNoHP.value;
+                    kaderData.emailPribadi = kaderEmailPribadi.value;
+
+                    // Update education info
+                    kaderData.universitas = kaderUniversitas.value;
+                    kaderData.fakultasJurusan = kaderFakultasJurusan.value;
+                    kaderData.tahunMasukKuliah = kaderTahunMasukKuliah.value;
+                    kaderData.statusMahasiswa = kaderStatusMahasiswa.value;
+                    kaderData.ipk = kaderIPK.value;
+
+                    // Update PMII membership info
+                    kaderData.rayon = kaderRayon.value;
+                    kaderData.klasifikasi = kaderKlasifikasi.value;
+                    kaderData.tahunMasukPMII = kaderTahunMasukPMII.value;
+                    kaderData.riwayatJabatan = kaderRiwayatJabatan.value;
+
+                    // Update additional info
+                    kaderData.keahlianMinat = kaderKeahlianMinat.value;
+                    kaderData.mediaSosial = kaderMediaSosial.value.split(',').map(s => s.trim()).filter(Boolean);
+                    kaderData.karyaTulis = kaderKaryaTulis.value;
+
+                    // Update last updated date (simulated)
+                    kaderData.lastUpdated = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                    // Simulate update in 'exampleKaders' global (from login.html)
+                    let exampleKaders = JSON.parse(localStorage.getItem('exampleKaders')) || {};
+                    exampleKaders[kaderData.nim] = kaderData;
+                    localStorage.setItem('exampleKaders', JSON.stringify(exampleKaders));
+                    localStorage.setItem('loggedInUser', JSON.stringify(kaderData)); // Update loggedInUser
+
+                    displayMessage('profile-edit-form-response', 'Profil berhasil diperbarui.', 'success');
+                    console.log('Profil Diperbarui:', kaderData);
+                } else {
+                    displayMessage('profile-edit-form-response', 'Gagal memperbarui profil. Pengguna tidak ditemukan.', 'error');
+                }
+            });
+
+            // Helper function for file uploads
+            function handleFileUpload(inputElement, fileNameDisplayElement, dataKey, fileNameKey) {
+                inputElement?.addEventListener('change', function(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        fileNameDisplayElement.textContent = file.name;
+                        const reader = new FileReader();
+                        reader.onload = function(){
+                            let kaderData = JSON.parse(localStorage.getItem('loggedInUser'));
+                            if (kaderData) {
+                                kaderData[dataKey] = reader.result; // Store as base64 for simulation
+                                kaderData[fileNameKey] = file.name;
+                                // Update last updated date (simulated)
+                                kaderData.lastUpdated = new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+                                let exampleKaders = JSON.parse(localStorage.getItem('exampleKaders')) || {};
+                                exampleKaders[kaderData.nim] = kaderData;
+                                localStorage.setItem('exampleKaders', JSON.stringify(exampleKaders));
+                                localStorage.setItem('loggedInUser', JSON.stringify(kaderData));
+                                displayMessage('profile-edit-form-response', `File "${file.name}" berhasil diunggah.`, 'success');
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        fileNameDisplayElement.textContent = 'Tidak ada file dipilih.';
+                        let kaderData = JSON.parse(localStorage.getItem('loggedInUser'));
+                        if (kaderData) {
+                            delete kaderData[dataKey]; // Remove if no file selected
+                            delete kaderData[fileNameKey];
+                            localStorage.setItem('loggedInUser', JSON.stringify(kaderData));
+                        }
+                    }
+                });
+            }
+
+            // Initialize all file upload handlers
+            handleFileUpload(profilePictureInput, { textContent: '' }, 'profilePicture', 'profilePictureFileName'); // No specific display element for profile pic name, handled by img src
+            handleFileUpload(uploadIPKTranscript, fileNameIPKTranscript, 'uploadedIPKTranscript', 'fileNameIPKTranscript');
+            handleFileUpload(uploadKTP, fileNameKTP, 'uploadedKTP', 'fileNameKTP');
+            handleFileUpload(uploadKTM, fileNameKTM, 'uploadedKTM', 'fileNameKTM');
+            handleFileUpload(uploadSertifikatKaderisasi, fileNameSertifikatKaderisasi, 'uploadedSertifikatKaderisasi', 'fileNameSertifikatKaderisasi');
+
+
+            // Simulate "Ajukan Perubahan"
+            ajukanPerubahanBtn?.addEventListener('click', function() {
+                displayMessage('profile-edit-form-response', 'Perubahan profil Anda telah diajukan untuk ditinjau admin.', 'success');
+                console.log('Perubahan diajukan ke admin.');
+            });
+
+            // Simulate "Unduh Biodata (PDF)" - still generates a text file for simplicity
+            downloadBiodataBtn?.addEventListener('click', function() {
+                if (loggedInUserPage) {
+                    const biodataText = `
+Nama Lengkap: ${loggedInUserPage.nama || ''}
+NIM: ${loggedInUserPage.nim || ''}
+NIK: ${loggedInUserPage.nik || ''}
+Tempat, Tanggal Lahir: ${loggedInUserPage.tempatLahir || ''}, ${loggedInUserPage.tanggalLahir || ''}
+Jenis Kelamin: ${loggedInUserPage.jenisKelamin || ''}
+Alamat: ${loggedInUserPage.alamat || ''}
+No. HP: ${loggedInUserPage.noHP || ''}
+Email Pribadi: ${loggedInUserPage.emailPribadi || ''}
+
+Universitas: ${loggedInUserPage.universitas || ''}
+Fakultas/Jurusan: ${loggedInUserPage.fakultasJurusan || ''}
+Tahun Masuk Kuliah: ${loggedInUserPage.tahunMasukKuliah || ''}
+Status Mahasiswa: ${loggedInUserPage.statusMahasiswa || ''}
+IPK Terakhir: ${loggedInUserPage.ipk || ''}
+File Transkrip/KHS: ${loggedInUserPage.fileNameIPKTranscript || 'Tidak ada'}
+
+Rayon: ${loggedInUserPage.rayon || ''}
+Komisariat: ${loggedInUserPage.komisariat || ''}
+Tingkat Kaderisasi: ${loggedInUserPage.klasifikasi || ''}
+Tahun Masuk PMII: ${loggedInUserPage.tahunMasukPMII || ''}
+Riwayat Jabatan: ${loggedInUserPage.riwayatJabatan || ''}
+
+Keahlian/Minat: ${loggedInUserPage.keahlianMinat || ''}
+Media Sosial: ${loggedInUserPage.mediaSosial ? loggedInUserPage.mediaSosial.join(', ') : ''}
+Karya Tulis/Kontribusi: ${loggedInUserPage.karyaTulis || ''}
+
+Dokumen Unggahan:
+KTP: ${loggedInUserPage.fileNameKTP || 'Tidak ada'}
+KTM: ${loggedInUserPage.fileNameKTM || 'Tidak ada'}
+Sertifikat Kaderisasi: ${loggedInUserPage.fileNameSertifikatKaderisasi || 'Tidak ada'}
+`;
+                    const blob = new Blob([biodataText], { type: 'text/plain;charset=utf-8' });
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = `Biodata_${loggedInUserPage.nama || 'Kader'}_${loggedInUserPage.nim || ''}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    displayMessage('profile-edit-form-response', 'Biodata berhasil diunduh.', 'success');
+                } else {
+                    displayMessage('profile-edit-form-response', 'Tidak ada data profil untuk diunduh.', 'error');
+                }
+            });
+
+
+            function displayMessage(containerId, message, type) {
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.textContent = message;
+                    container.className = `form-message mb-5 ${type === 'success' ? 'form-message-success' : 'form-message-error'}`;
+                    container.classList.remove('hidden');
+                    setTimeout(() => {
+                        container.classList.add('hidden');
+                    }, 5000);
+                }
+            }
+
+            loadProfileData();
+
+            const scrollToTopBtnEditProfil = document.getElementById('scrollToTopBtnEditProfil');
+            if (scrollToTopBtnEditProfil) {
+                window.addEventListener('scroll', () => {
+                    if (window.pageYOffset > 200) {
+                        scrollToTopBtnEditProfil.classList.remove('hidden');
+                        scrollToTopBtnEditProfil.classList.add('flex');
+                    } else {
+                        scrollToTopBtnEditProfil.classList.add('hidden');
+                        scrollToTopBtnEditProfil.classList.remove('flex');
+                    }
+                });
+                scrollToTopBtnEditProfil.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            const tahunFooterKaderProfile = document.getElementById('tahun-footer-kader-profile');
+            if (tahunFooterKaderProfile) {
+                tahunFooterKaderProfile.textContent = new Date().getFullYear();
+            }
+        });
+    </script>
+</body>
+</html>

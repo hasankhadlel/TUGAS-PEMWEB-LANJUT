@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status TTD Digital - PK PMII UIN Sunan Gunung Djati</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="img/logo-pmii.png" type="image/png" onerror="this.onerror=null;this.src='https://placehold.co/100x100/005c97/FFFFFF?text=P';">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for consistent theming based on PMII colors and general UI elements */
+        :root {
+            --pmii-blue: #005c97;
+            --pmii-darkblue: #004a7c;
+            --pmii-yellow: #fdd835;
+            --pmii-purple: #6A0DAD;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --background-light: #f9fafb;
+            --background-page: #f3f4f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --input-bg: white;
+            --navbar-height: 70px;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+        }
+
+        /* Base body styles, enabling smooth scrolling, Inter font preference, and fade-out transition */
+        body {
+            font-family: 'Inter', 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, var(--pmii-blue) 0%, var(--pmii-darkblue) 100%);
+            color: white;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: opacity 0.5s ease-out;
+            position: relative;
+        }
+
+        /* Pattern overlay for the body */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                radial-gradient(circle at 15% 25%, rgba(253, 216, 53, 0.05) 1px, transparent 1.5px),
+                radial-gradient(circle at 85% 75%, rgba(253, 216, 53, 0.03) 1px, transparent 1.5px),
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.02) 0.5px, transparent 1px);
+            background-size: 80px 80px, 100px 100px, 60px 60px;
+            animation: subtlePatternMoveBody 60s linear infinite;
+            z-index: 0;
+        }
+        @keyframes subtlePatternMoveBody {
+            0% { background-position: 0 0, 0 0, 0 0; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Class for fading out the page content */
+        body.fade-out-page {
+            opacity: 0;
+        }
+
+        /* Main content wrapper to correctly position content below the potentially transparent/sticky navbar */
+        .main-content-wrapper {
+            flex-grow: 1;
+            padding-top: var(--navbar-height);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Navbar Styling: sticky position and dynamic appearance on scroll */
+        .navbar-sticky {
+            position: sticky; top: 0; z-index: 50;
+            background-color: transparent;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Navbar links styling for the glossy/transparent state */
+        .nav-link, .dropdown-toggle, #auth-link-main {
+            color: white !important;
+            text-shadow: 0 0 5px rgba(255,255,255,0.3);
+            transform: translateY(0);
+            transition: color 0.25s ease-out, text-shadow 0.25s ease-out, transform 0.25s ease-out;
+        }
+
+        /* Underline effect for nav links, brighter for glossy state */
+        .nav-link::after, .dropdown-toggle::after, #auth-link-main::after {
+            content: ''; display: block; width: 0; height: 2px;
+            background-color: var(--pmii-yellow);
+            box-shadow: 0 0 10px rgba(253, 216, 53, 0.8);
+            transition: width 0.3s ease-out;
+        }
+        .nav-link:hover::after, .dropdown-toggle:hover::after, #auth-link-main:hover::after {
+            width: 100%;
+        }
+
+        /* Hover effect for nav links */
+        .nav-link:hover, .dropdown-toggle:hover, #auth-link-main:hover {
+            color: var(--pmii-yellow) !important;
+            text-shadow: 0 0 15px var(--pmii-yellow);
+            transform: translateY(-1px);
+        }
+
+        /* Dropdown chevron rotation on hover */
+        .dropdown-toggle i {
+            transition: transform 0.2s ease-out;
+        }
+        .dropdown-toggle:hover i {
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        /* Dropdown Menu specific styles for modern look */
+        .dropdown-menu {
+            background-color: var(--pmii-darkblue);
+            backdrop-filter: blur(5px);
+            color: white;
+            box-shadow: var(--shadow-lg);
+            z-index: 100; min-width: 280px; border-radius: 0.5rem;
+            opacity: 0; visibility: hidden; transform: translateY(10px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out, visibility 0.3s;
+            position: absolute;
+            min-width: 150px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .dropdown:hover .dropdown-menu,
+        .dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
+            font-size: 0.875rem;
+            white-space: nowrap;
+        }
+        .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--pmii-yellow);
+        }
+        .dropdown-item i {
+            margin-right: 0.75rem;
+            color: var(--pmii-yellow);
+        }
+
+        /* Mobile Menu Transitions */
+        #mobile-menu-content {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: calc(100% - 50px);
+            max-width: 320px;
+            background: linear-gradient(to bottom, var(--pmii-blue), var(--pmii-darkblue));
+            color: white;
+            padding: 6px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+            z-index: 40;
+            transform: translateX(100%);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease-out, visibility 0.35s;
+            box-sizing: border-box;
+            padding-bottom: 2rem;
+        }
+        /* State when menu is active/open */
+        #mobile-menu-content.menu-active {
+            transform: translateX(0);
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* Mobile Menu Overlay */
+        #mobile-menu-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 30;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease-out, visibility 0.3s;
+        }
+        /* State when overlay is active/open */
+        #mobile-menu-overlay.menu-active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        /* Mobile menu links */
+        .mobile-nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
+            border-radius: 0.375rem;
+        }
+        .mobile-nav-link i {
+            margin-right: 0.75rem;
+            width: 1.5rem;
+            text-align: center;
+            color: var(--pmii-yellow);
+        }
+        .mobile-nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--pmii-yellow);
+        }
+
+        .mobile-submenu-title {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--pmii-yellow);
+            margin-top: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 0.5rem;
+        }
+        .mobile-submenu-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
+            font-size: 0.8125rem;
+            border-radius: 0.375rem;
+        }
+        .mobile-submenu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--pmii-yellow);
+        }
+        .mobile-submenu-item:hover i {
+            color: var(--pmii-yellow);
+        }
+
+        /* General Button Styling for consistent look and feel */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex; align-items: center; justify-content: center;
+            cursor: pointer; text-decoration: none;
+            box-shadow: var(--shadow-md);
+            z-index: 10;
+            position: relative;
+        }
+        .btn:hover {
+             box-shadow: var(--shadow-lg);
+             transform: translateY(-2px) scale(1.03);
+        }
+        .btn:active {
+            transform: translateY(0px) scale(0.98);
+            box-shadow: var(--shadow-sm);
+        }
+        /* Primary button with PMII blue color */
+        .btn-primary-pmii {
+            background-color: var(--pmii-blue); color: white;
+        }
+        .btn-primary-pmii:hover { background-color: var(--pmii-darkblue); }
+        /* Secondary button with PMII yellow color */
+        .btn-secondary-pmii {
+            background-color: var(--pmii-yellow); color: var(--pmii-darkblue);
+        }
+        .btn-secondary-pmii:hover { background-color: #fbc02d; }
+
+        /* Auth Link Styling (Login/Logout button in navbar) */
+        #auth-link-main, #auth-link-mobile {
+            transition: all 0.25s ease;
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+        }
+        /* Styles for logged-out state (yellow button) */
+        .logged-out-styles {
+            background-color: var(--pmii-yellow);
+            color: var(--pmii-blue);
+        }
+        .logged-out-styles:hover {
+            background-color: #fbc02d;
+        }
+        /* Styles for logged-in state (red logout button) */
+        #auth-link-main.logout-active, #auth-link-mobile.logout-active {
+            background-image: linear-gradient(to right, #ef4444, #dc2626) !important;
+            color: white !important;
+        }
+        #auth-link-main.logout-active:hover, #auth-link-mobile.logout-active:hover {
+            background-image: linear-gradient(to right, #dc2626, #b91c1c) !important;
+        }
+
+        /* Custom Confirmation Modal Styles */
+        .custom-confirm-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .custom-confirm-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .custom-confirm-modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-lg);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            transform: translateY(-20px) scale(0.95);
+            opacity: 0;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease;
+        }
+        .custom-confirm-modal-overlay.active .custom-confirm-modal-content {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+        .custom-confirm-modal-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--pmii-darkblue);
+            margin-bottom: 1rem;
+        }
+        .custom-confirm-modal-content p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        .custom-confirm-modal-content .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .custom-confirm-modal-content .modal-actions .btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* New general background style for blue sections with subtle pattern */
+        .section-pmii-bg-pattern {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--pmii-blue) 0%, var(--pmii-darkblue) 100%);
+            color: white;
+        }
+        /* Mobile menu logo and text size adjustment */
+        #mobile-menu-content > div.flex.justify-between.items-center.mb-10 > a > img {
+            height: 2.25rem;
+            width: auto;
+        }
+        #mobile-menu-content > div.flex.justify-between.items-center.mb-10 > a > span {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+        /* Pseudo-element for pattern within blue sections */
+        .section-pmii-bg-pattern::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                radial-gradient(circle at 15% 25%, rgba(253, 216, 53, 0.07) 1px, transparent 1.5px),
+                radial-gradient(circle at 85% 75%, rgba(253, 216, 53, 0.05) 1px, transparent 1.5px),
+                radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0.5px, transparent 1px);
+            background-size: 80px 80px, 100px 100px, 60px 60px;
+            animation: subtlePatternMoveContactKeyframe 40s linear infinite;
+            z-index: 0;
+        }
+        /* Keyframe for background pattern movement */
+        @keyframes subtlePatternMoveContactKeyframe {
+            0% { background-position: 0 0, 0 0, 0 0; }
+            100% { background-position: 80px 80px, -100px -100px, 60px -60px; }
+        }
+
+        /* Ensure specific elements like titles are yellow in these sections */
+        .section-pmii-bg-pattern .section-title {
+            color: var(--pmii-yellow);
+        }
+
+        .page-title { color: white; font-weight: 800; text-shadow: 1px 1px 2px rgba(0,0,0,0.05); }
+
+        .content-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+            color: white;
+        }
+        .content-card:hover {
+            box-shadow: var(--shadow-lg);
+            background-color: rgba(255, 255, 255, 0.15);
+            border-color: rgba(253, 216, 53, 0.5);
+        }
+
+        /* Form Input Styling for a clean and modern look */
+        .form-input {
+            width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color);
+            border-radius: 0.5rem; font-size: 0.875rem; color: var(--text-primary);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background-color: var(--input-bg);
+            color: var(--text-primary);
+        }
+        .form-input:focus {
+            border-color: var(--pmii-blue); box-shadow: 0 0 0 3px rgba(0, 92, 151, 0.15); outline: none;
+            background-color: white;
+        }
+        .form-input.dark-mode {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+        .form-input.dark-mode::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .form-input.dark-mode:focus {
+            border-color: var(--pmii-yellow);
+            box-shadow: 0 0 0 3px rgba(253, 216, 53, 0.2);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        /* Label for form inputs */
+        .form-label {
+            display: block; font-size: 0.875rem; font-weight: 500;
+            color: white;
+            margin-bottom: 0.375rem;
+        }
+
+        /* Form Message Styling (for feedback messages) */
+        .form-message-container {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease-out;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            margin-bottom: 0;
+        }
+        .form-message-container.show {
+            opacity: 1;
+            max-height: 100px;
+            margin-bottom: 1.25rem;
+        }
+        .form-message-success { background-color: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .form-message-error { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .form-message-info { background-color: #bfdbfe; color: #1e40af; border: 1px solid #93c5fd; }
+
+        /* Scroll To Top Button Styling */
+        #scrollToTopBtnDashboard {
+            background-color: var(--pmii-yellow);
+            color: var(--pmii-darkblue);
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 50%;
+            box-shadow: var(--shadow-lg);
+            transition: background-color 0.2s, transform 0.2s;
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        #scrollToTopBtnDashboard:hover {
+            transform: scale(1.1) translateY(-2px);
+        }
+
+        /* Logo Preview Styling */
+        #logoPreview {
+            max-width: 100px;
+            max-height: 100px;
+            margin-top: 10px;
+            border-radius: 8px;
+            display: none;
+            object-fit: contain;
+            background-color: rgba(255,255,255,0.1);
+            padding: 5px;
+        }
+        .komisariat-logo-display {
+            max-width: 120px; /* Adjust size as needed */
+            margin: 0 auto 1.5rem auto; /* Center and add margin below */
+            display: block;
+            border-radius: 8px; /* Rounded corners for the logo */
+            box-shadow: var(--shadow-md); /* Subtle shadow */
+            background-color: rgba(255,255,255,0.1); /* Light background for logo */
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="customMessageBox" class="fixed top-4 right-4 z-[9999] px-6 py-3 rounded-lg shadow-xl text-white text-sm font-semibold transition-all duration-300 transform translate-x-full opacity-0">
+        Pesan kustom di sini!
+    </div>
+
+    <div id="customConfirmModal" class="custom-confirm-modal-overlay">
+        <div class="custom-confirm-modal-content">
+            <h3 id="confirmModalTitle">Konfirmasi Aksi</h3>
+            <p id="confirmModalMessage">Apakah Anda yakin ingin melanjutkan?</p>
+            <div class="modal-actions">
+                <button id="confirmCancelBtn" class="btn btn-secondary-pmii">Tidak</button>
+                <button id="confirmYesBtn" class="btn btn-primary-pmii">Ya</button>
+            </div>
+        </div>
+    </div>
+
+    <nav id="navbar" class="text-white py-3.5 navbar-sticky">
+        <div class="container mx-auto px-4 lg:px-8 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2.5 transform hover:scale-105 transition-transform duration-300">
+                <img src="img/logo-pmii.png" alt="Logo PMII" class="h-9" onerror="this.onerror=null;this.src='https://placehold.co/100x100/005c97/FFFFFF?text=P';">
+                <span id="header-title-text" class="text-[0.65rem] lg:text-xs font-semibold logo-text tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">
+                    PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung
+                </span>
+            </a>
+            <div class="hidden lg:flex space-x-6 items-center">
+                <a href="#beranda" class="nav-link text-sm">Beranda</a>
+                <a href="#tentang" class="nav-link text-sm">Tentang Kami</a>
+                <a href="#berita" class="nav-link text-sm">Berita</a>
+                <a href="digilib.html" class="nav-link text-sm" target="_self">📚 Digilib</a>
+                <a href="#kegiatan" class="nav-link text-sm">Kegiatan</a>
+                <a href="#galeri" class="nav-link text-sm">Galeri</a>
+                <div id="desktop-kader-menu-container" class="relative dropdown hidden">
+                    <button class="dropdown-toggle nav-link focus:outline-none text-sm">
+                        Profil Kader <i class="fas fa-chevron-down text-xs ml-1"></i>
+                    </button>
+                    <div class="dropdown-menu mt-3.5">
+                        <a href="edit-profil-kader.html" id="edit-profil-kader-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-user-edit"></i> Edit Profil</a>
+                        <a href="pengaturan-akun-kader.html" id="pengaturan-akun-kader-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-cog"></i> Pengaturan Akun</a>
+                        <a href="akses-ojs.html" id="jurnal-alharokah-link-desktop-kader" class="dropdown-item" target="_self"><i class="fas fa-book-reader"></i> Jurnal Al Harokah</a>
+                        <a href="pengajuan-surat.html" id="pengajuan-surat-link-desktop-kader" class="dropdown-item" target="_self"><i class="fas fa-file-alt"></i> Pengajuan Surat</a>
+                    </div>
+                </div>
+                <div id="desktop-admin-menu-container" class="relative dropdown hidden">
+                    <button class="dropdown-toggle nav-link focus:outline-none text-sm">
+                        Sistem Internal <i class="fas fa-chevron-down text-xs ml-1"></i>
+                    </button>
+                    <div class="dropdown-menu mt-3.5">
+                        <a href="manajemen-akun.html" id="manajemen-akun-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-user-shield"></i>Manajemen Akun</a>
+                        <a href="manajemen-kader.html" id="manajemen-kader-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-users-cog"></i>Manajemen Kader</a>
+                        <a href="repository-ilmiah.html" id="repository-ilmiah-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-book-open"></i>Jurnal & Karya Ilmiah</a>
+                        <a href="pengajuan-surat.html" id="pengajuan-surat-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-file-alt"></i>Pengajuan Surat</a>
+                        <a href="verifikasi-surat.html" id="verifikasi-surat-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-check-circle"></i>Verifikasi Surat</a>
+                        <a href="admin-dashboard-rayon.html" id="dashboard-rayon-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-tachometer-alt"></i>Dashboard Admin Rayon</a>
+                        <a href="admin-dashboard-komisariat.html" id="admin-dashboard-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-tachometer-alt"></i>Dashboard Admin Kom.</a>
+                        <a href="edit-beranda.html" id="edit-beranda-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-edit"></i>Edit Beranda</a>
+                        <a href="akses-ojs.html" id="jurnal-alharokah-link-desktop-admin" class="dropdown-item" target="_self"><i class="fas fa-book-reader"></i>Jurnal Al Harokah</a>
+                        <hr class="border-gray-200 my-1">
+                        <a href="verifikasi-konten-rayon.html" id="verifikasi-konten-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-check-double"></i>Verifikasi Konten Rayon</a>
+                        <a href="rayon-tambah-berita.html" id="tambah-berita-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-newspaper"></i>Tambah Berita & Artikel</a>
+                        <a href="rayon-tambah-kegiatan.html" id="tambah-kegiatan-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-calendar-plus"></i>Tambah Kegiatan</a>
+                        <a href="rayon-tambah-galeri.html" id="tambah-galeri-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-images"></i>Tambah Galeri Kegiatan</a>
+                        <a href="edit-profil-rayon.html" id="edit-profil-rayon-link-desktop" class="dropdown-item" target="_self"><i class="fas fa-building"></i>Edit Profil Rayon</a>
+                    </div>
+                </div>
+                <a href="#kontak" class="nav-link text-sm">Kontak</a>
+                <a href="login.html" id="auth-link-main" class="btn logged-out-styles text-sm" data-action="login">
+                    Login
+                </a>
+            </div>
+            <div class="lg:hidden">
+                <button id="mobile-menu-button" class="menu-icon focus:outline-none p-2 -mr-2"><i class="fas fa-bars text-2xl"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="mobile-menu-content" class="lg:hidden fixed top-0 right-0 h-full w-4/5 max-w-xs bg-gradient-to-b from-pmii-blue to-pmii-darkblue text-white p-6 shadow-2xl z-40">
+        <div class="flex justify-between items-center mb-10">
+            <a href="index.html" class="flex items-center space-x-2">
+                <img src="img/logo-pmii.png" alt="Logo PMII Mobile" class="h-9" onerror="this.onerror=null;this.src='https://placehold.co/100x100/005c97/FFFFFF?text=P';">
+                <span id="mobile-header-title-text" class="text-[0.6rem] font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
+                    PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung
+                </span>
+            </a>
+            <button id="close-mobile-menu-button" class="focus:outline-none p-2 -mr-2"><i class="fas fa-times text-2xl"></i></button>
+        </div>
+        <nav id="mobile-nav-links" class="flex flex-col space-y-3">
+            <!-- Mobile Navigation Links will be populated here by JavaScript -->
+            <a href="login.html" id="mobile-logout-link" class="btn logged-out-styles text-sm" data-action="login">
+                Login
+            </a>
+        </nav>
+    </div>
+    <div id="mobile-menu-overlay" class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-30"></div>
+
+    <div class="main-content-wrapper">
+        <main class="container mx-auto px-4 py-8 lg:py-12">
+            <div class="text-center mb-10 md:mb-14">
+                <h1 class="text-3xl lg:text-4xl page-title">Status Verifikasi TTD Digital</h1>
+                <p class="text-md text-text-muted mt-2">Memverifikasi keaslian Tanda Tangan Digital.</p>
+            </div>
+
+            <section id="letter-status-section" class="content-card max-w-2xl mx-auto py-8 px-6 lg:px-10">
+                <div id="komisariatLogoDisplay" class="hidden">
+                    <img src="img/logo-komisariat-uin.png" alt="Logo Komisariat" class="komisariat-logo-display" onerror="this.onerror=null;this.src='https://placehold.co/120x120/005c97/FFFFFF?text=Logo';">
+                </div>
+                <div class="space-y-4 text-white">
+                    <p><strong>Nomor Surat:</strong> <span id="displayNomorSurat"></span></p>
+                    <p><strong>Ditandatangani Oleh:</strong> <span id="displayDitandatanganiOleh"></span></p>
+                    <p><strong>Jabatan:</strong> <span id="displayJabatan"></span></p>
+                    <p><strong>Tanggal Surat:</strong> <span id="displayTanggalSurat"></span></p>
+                    <p><strong>Perihal:</strong> <span id="displayPerihalSurat"></span></p>
+                    <p class="text-success-500 font-semibold text-lg flex items-center justify-center pt-4">
+                        <i class="fas fa-check-circle mr-2 text-green-400"></i> <span class="text-green-400">Tanda Tangan Digital SAH</span>
+                    </p>
+                </div>
+                <div class="text-center mt-8">
+                    <a href="generate-qr.html" class="btn btn-secondary-pmii">
+                        <i class="fas fa-qrcode mr-2"></i> Buat QR Baru
+                    </a>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="internal-footer py-10 mt-auto">
+        <div class="container mx-auto px-4 text-center">
+            <img src="img/logo-pmii.png" alt="Logo PMII Footer" class="h-12 w-auto mx-auto mb-2.5 rounded-full" onerror="this.onerror=null;this.src='https://placehold.co/100x100/005c97/FFFFFF?text=P';">
+            <p class="text-md font-semibold footer-title">PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung</p>
+            <p class="text-xs mt-3">&copy; <span id="tahun-footer-dashboard"></span> PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <button id="scrollToTopBtnDashboard" title="Kembali ke atas" class="hidden">
+        <i class="fas fa-arrow-up text-xl"></i>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- Global State & Elements (from existing pages for consistency) ---
+            const LOCAL_STORAGE_USER_KEY = 'loggedInUser';
+            let loggedInUser = null;
+
+            // Navbar & Auth Elements
+            const headerTitleText = document.getElementById('header-title-text');
+            const mobileHeaderTitleText = document.getElementById('mobile-header-title-text');
+            const authLinkMain = document.getElementById('auth-link-main');
+            const authLinkMobile = document.getElementById('mobile-logout-link');
+
+            // Admin/Kader Links Map: Stores references to both desktop and mobile link elements
+            const adminMenuLinks = {
+                manajemenAkun: { desktop: document.getElementById('manajemen-akun-link-desktop'), mobile: null },
+                manajemenKader: { desktop: document.getElementById('manajemen-kader-link-desktop'), mobile: null },
+                repositoryIlmiah: { desktop: document.getElementById('repository-ilmiah-link-desktop'), mobile: null },
+                pengajuanSurat: { desktop: document.getElementById('pengajuan-surat-link-desktop'), mobile: null },
+                verifikasiSurat: { desktop: document.getElementById('verifikasi-surat-link-desktop'), mobile: null },
+                dashboardRayon: { desktop: document.getElementById('dashboard-rayon-link-desktop'), mobile: null },
+                adminDashboard: { desktop: document.getElementById('admin-dashboard-link-desktop'), mobile: null },
+                editBeranda: { desktop: document.getElementById('edit-beranda-link-desktop'), mobile: null },
+                jurnalAlharokahAdmin: { desktop: document.getElementById('jurnal-alharokah-link-desktop-admin'), mobile: null },
+                editProfilKader: { desktop: document.getElementById('edit-profil-kader-link-desktop'), mobile: null },
+                pengaturanAkunKader: { desktop: document.getElementById('pengaturan-akun-kader-link-desktop'), mobile: null },
+                jurnalAlharokahKader: { desktop: document.getElementById('jurnal-alharokah-link-desktop-kader'), mobile: null },
+                pengajuanSuratKader: { desktop: document.getElementById('pengajuan-surat-link-desktop-kader'), mobile: null },
+                verifikasiKontenRayon: { desktop: document.getElementById('verifikasi-konten-link-desktop'), mobile: null },
+                tambahBeritaRayon: { desktop: document.getElementById('tambah-berita-link-desktop'), mobile: null },
+                tambahKegiatanRayon: { desktop: document.getElementById('tambah-kegiatan-link-desktop'), mobile: null },
+                tambahGaleriRayon: { desktop: document.getElementById('tambah-galeri-link-desktop'), mobile: null },
+                editProfilRayon: { desktop: document.getElementById('edit-profil-rayon-link-desktop'), mobile: null }
+            };
+
+            // Elements specific to this page
+            const displayNomorSurat = document.getElementById('displayNomorSurat');
+            const displayDitandatanganiOleh = document.getElementById('displayDitandatanganiOleh');
+            const displayJabatan = document.getElementById('displayJabatan');
+            const displayTanggalSurat = document.getElementById('displayTanggalSurat');
+            const displayPerihalSurat = document.getElementById('displayPerihalSurat');
+            const komisariatLogoDisplay = document.getElementById('komisariatLogoDisplay');
+
+            /**
+             * Custom message box function to replace alert() and confirm().
+             * @param {string} message - The message to display.
+             * @param {string} type - 'success', 'error', 'info'.
+             * @param {Function} [callback] - Optional callback function to run after message fades out.
+             */
+            function showCustomMessage(message, type = 'info', callback = null) {
+                const messageBox = document.getElementById('customMessageBox');
+                messageBox.textContent = message;
+                messageBox.className = 'fixed top-4 right-4 z-[9999] px-6 py-3 rounded-lg shadow-xl text-white text-sm font-semibold transition-all duration-300 transform translate-x-full opacity-0'; // Reset classes
+
+                // Apply type-specific styling
+                if (type === 'success') {
+                    messageBox.classList.add('bg-green-500');
+                } else if (type === 'error') {
+                    messageBox.classList.add('bg-red-500');
+                } else { // Default to info (blue)
+                    messageBox.classList.add('bg-blue-500');
+                }
+
+                // Show message
+                messageBox.classList.remove('translate-x-full', 'opacity-0');
+                messageBox.classList.add('translate-x-0', 'opacity-100');
+
+                setTimeout(() => {
+                    messageBox.classList.remove('translate-x-0', 'opacity-100');
+                    messageBox.classList.add('translate-x-full', 'opacity-0');
+                    if (callback) {
+                        // Execute callback after the fade-out transition completes
+                        messageBox.addEventListener('transitionend', function handler() {
+                            callback();
+                            messageBox.removeEventListener('transitionend', handler);
+                        });
+                    }
+                }, 3000);
+            }
+
+            /* Custom Confirmation Modal Logic */
+            const customConfirmModal = document.getElementById('customConfirmModal');
+            const confirmModalTitle = document.getElementById('confirmModalTitle');
+            const confirmModalMessage = document.getElementById('confirmModalMessage');
+            const confirmYesBtn = document.getElementById('confirmYesBtn');
+            const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+            let currentConfirmCallback = null;
+
+            /**
+             * Shows a custom confirmation modal.
+             * @param {string} title - The title of the confirmation modal.
+             * @param {string} message - The message to display in the modal.
+             * @param {Function} onConfirm - Callback function to execute if 'Yes' is clicked.
+             * @param {Function} [onCancel] - Optional callback function to execute if 'No' is clicked.
+             */
+            function showCustomConfirm(title, message, onConfirm, onCancel = null) {
+                confirmModalTitle.textContent = title;
+                confirmModalMessage.textContent = message;
+                customConfirmModal.classList.add('active');
+                currentConfirmCallback = onConfirm;
+
+                confirmYesBtn.onclick = () => {
+                    if (currentConfirmCallback) {
+                        currentConfirmCallback();
+                    }
+                    hideCustomConfirm();
+                };
+                confirmCancelBtn.onclick = () => {
+                    if (onCancel) {
+                        onCancel();
+                    }
+                    hideCustomConfirm();
+                };
+            }
+
+            /**
+             * Hides the custom confirmation modal.
+             */
+            function hideCustomConfirm() {
+                customConfirmModal.classList.remove('active');
+                currentConfirmCallback = null;
+            }
+
+            // Close modal when clicking outside the content
+            customConfirmModal.addEventListener('click', function(event) {
+                if (event.target === customConfirmModal) {
+                    hideCustomConfirm();
+                }
+            });
+
+            /**
+             * Simulates login/logout.
+             */
+            function handleAuthClick(e) {
+                e.preventDefault();
+                const mobileMenuContent = document.getElementById('mobile-menu-content');
+                if (mobileMenuContent.classList.contains('menu-active')) {
+                    toggleMobileMenu();
+                }
+
+                const action = e.target.dataset.action || (e.target.closest('a') ? e.target.closest('a').dataset.action : null);
+
+                if (action === 'login') {
+                    window.location.href = 'login.html';
+
+                } else if (action === 'logout') {
+                    showCustomConfirm('Konfirmasi Logout', 'Apakah Anda yakin ingin logout?', () => {
+                        document.body.classList.add('fade-out-page');
+                        setTimeout(() => {
+                            loggedInUser = null;
+                            localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+                            localStorage.removeItem('isAdminLoggedIn');
+                            window.location.reload();
+                        }, 500);
+                    }, () => {
+                        showCustomMessage('Logout dibatalkan.', 'info');
+                    });
+                }
+            }
+
+
+            function updatePageSpecificUI() {
+                const isLoggedIn = localStorage.getItem('isAdminLoggedIn') === 'true';
+                const storedUser = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
+
+                if (isLoggedIn && storedUser) {
+                    try {
+                        loggedInUser = JSON.parse(storedUser);
+                    } catch (e) {
+                        console.error("Error parsing loggedInUser from localStorage:", e);
+                        localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+                        localStorage.removeItem('isAdminLoggedIn');
+                        loggedInUser = null;
+                    }
+                }
+
+                // Update common UI elements for logged-in users
+                const authLinkMain = document.getElementById('auth-link-main');
+                const authLinkMobile = document.getElementById('mobile-logout-link');
+
+                if (authLinkMain) {
+                    authLinkMain.innerHTML = `<i class="fas fa-sign-out-alt mr-2"></i> Logout`;
+                    authLinkMain.classList.add('logout-active');
+                    authLinkMain.dataset.action = "logout";
+                    authLinkMain.removeEventListener('click', handleAuthClick);
+                    authLinkMain.addEventListener('click', handleAuthClick);
+                }
+                if (authLinkMobile) {
+                    authLinkMobile.innerHTML = `<i class="fas fa-sign-out-alt mr-2"></i> Logout`;
+                    authLinkMobile.classList.add('logout-active');
+                    authLinkMobile.dataset.action = "logout";
+                    authLinkMobile.removeEventListener('click', handleAuthClick);
+                    authLinkMobile.addEventListener('click', handleAuthClick);
+                }
+
+                // Update header titles (SINTAKSIS logic)
+                const defaultTitle = 'PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung';
+                const loggedInTitle = 'SINTAKSIS (Sistem Informasi Terintegrasi Kaderisasi)';
+
+                if (headerTitleText) {
+                    headerTitleText.textContent = loggedInTitle;
+                }
+                if (mobileHeaderTitleText) {
+                    mobileHeaderTitleText.textContent = loggedInTitle;
+                }
+
+                // Hide all desktop admin menu links by default before setting specific ones
+                for (const key in adminMenuLinks) {
+                    const desktopLink = adminMenuLinks[key].desktop;
+                    if(desktopLink) desktopLink.style.display = 'none';
+                }
+
+                const desktopAdminMenuContainer = document.getElementById('desktop-admin-menu-container');
+                const desktopKaderMenuContainer = document.getElementById('desktop-kader-menu-container');
+
+                if (loggedInUser && (loggedInUser.role === "rayon" || loggedInUser.role === "komisariat")) {
+                    if(desktopAdminMenuContainer) desktopAdminMenuContainer.classList.remove('hidden');
+                } else if (loggedInUser && loggedInUser.role === "kader") {
+                    if(desktopKaderMenuContainer) desktopKaderMenuContainer.classList.remove('hidden');
+                } else {
+                    // Hide both if not logged in or invalid role
+                    if(desktopAdminMenuContainer) desktopAdminMenuContainer.classList.add('hidden');
+                    if(desktopKaderMenuContainer) desktopKaderMenuContainer.classList.add('hidden');
+                }
+
+
+                // Determine which specific links to display for desktop
+                let visibleDesktopLinksKeys = [];
+                if (loggedInUser && loggedInUser.role === "rayon") {
+                    visibleDesktopLinksKeys = [
+                        'manajemenKader', 'repositoryIlmiah',
+                        'pengajuanSurat', 'dashboardRayon',
+                        'jurnalAlharokahAdmin', 'tambahBeritaRayon',
+                        'tambahKegiatanRayon', 'tambahGaleriRayon',
+                        'verifikasiKontenRayon', 'editProfilRayon'
+                    ];
+                } else if (loggedInUser && loggedInUser.role === "komisariat") {
+                    visibleDesktopLinksKeys = [
+                        'manajemenAkun', 'manajemenKader',
+                        'repositoryIlmiah', 'pengajuanSurat',
+                        'verifikasiSurat', 'adminDashboard',
+                        'editBeranda', 'jurnalAlharokahAdmin',
+                        'verifikasiKontenRayon', 'editProfilRayon'
+                    ];
+                } else if (loggedInUser && loggedInUser.role === "kader") {
+                    visibleDesktopLinksKeys = [
+                        'editProfilKader', 'pengaturanAkunKader',
+                        'jurnalAlharokahKader', 'pengajuanSuratKader'
+                    ];
+                }
+
+                visibleDesktopLinksKeys.forEach(key => {
+                    const linkEl = adminMenuLinks[key].desktop;
+                    if (linkEl) linkEl.style.display = 'flex'; // Use flex for dropdown items
+                });
+
+                populateMobileMenu();
+            }
+
+            // Function to populate mobile menu dynamically based on user role and available desktop links
+            function populateMobileMenu() {
+                const mobileNavLinksContainer = document.getElementById('mobile-nav-links');
+                if (!mobileNavLinksContainer) return;
+
+                mobileNavLinksContainer.innerHTML = ''; // Clear existing links
+
+                // General links always present
+                const generalLinksData = [
+                    { text: 'Beranda', href: 'index.html#beranda', icon: 'fas fa-home' },
+                    { text: 'Tentang Kami', href: 'index.html#tentang', icon: 'fas fa-info-circle' },
+                    { text: 'Berita', href: 'index.html#berita', icon: 'fas fa-newspaper' },
+                    { text: '📚 Digilib', href: 'digilib.html', icon: 'fas fa-book' },
+                    { text: 'Kegiatan', href: 'index.html#kegiatan', icon: 'fas fa-calendar-alt' },
+                    { text: 'Galeri', href: 'index.html#galeri', icon: 'fas fa-images' }
+                ];
+
+                generalLinksData.forEach(linkData => {
+                    const link = document.createElement('a');
+                    link.href = linkData.href;
+                    link.classList.add('mobile-nav-link');
+                    link.innerHTML = `<i class="${linkData.icon}"></i><span>${linkData.text}</span>`;
+                    link.addEventListener('click', toggleMobileMenu);
+                    mobileNavLinksContainer.appendChild(link);
+                });
+
+                // Add System Internal dropdown based on user role's visible desktop links
+                if (loggedInUser && (loggedInUser.role === 'komisariat' || loggedInUser.role === 'rayon' || loggedInUser.role === 'kader')) {
+                    const systemInternalTitle = document.createElement('div');
+                    systemInternalTitle.classList.add('mobile-submenu-title');
+                    systemInternalTitle.textContent = loggedInUser.role === 'kader' ? 'Profil Kader' : 'Sistem Internal';
+                    mobileNavLinksContainer.appendChild(systemInternalTitle);
+
+                    for (const key in adminMenuLinks) {
+                        const desktopLink = adminMenuLinks[key].desktop;
+                        if (desktopLink && desktopLink.style.display !== 'none') {
+                            const link = document.createElement('a');
+                            link.href = desktopLink.href;
+                            link.classList.add('mobile-submenu-item');
+                            link.innerHTML = desktopLink.innerHTML;
+                            link.addEventListener('click', toggleMobileMenu);
+                            mobileNavLinksContainer.appendChild(link);
+                        }
+                    }
+                }
+
+                const kontakLink = document.createElement('a');
+                kontakLink.href = 'index.html#kontak';
+                kontakLink.classList.add('mobile-nav-link');
+                kontakLink.innerHTML = `<i class="fas fa-address-book"></i><span>Kontak</span>`;
+                kontakLink.addEventListener('click', toggleMobileMenu);
+                mobileNavLinksContainer.appendChild(kontakLink);
+
+                const authLink = document.getElementById('mobile-logout-link');
+                if (authLink) {
+                    authLink.removeEventListener('click', handleAuthClick);
+                    authLink.addEventListener('click', handleAuthClick);
+
+                    if (loggedInUser) {
+                        authLink.classList.add('bg-red-500', 'hover:bg-red-600', 'logout-active');
+                        authLink.classList.remove('logged-out-styles');
+                        authLink.innerHTML = `<i class="fas fa-sign-out-alt"></i><span>Logout</span>`;
+                        authLink.dataset.action = "logout";
+                    } else {
+                        authLink.classList.remove('bg-red-500', 'hover:bg-red-600', 'logout-active');
+                        authLink.classList.add('logged-out-styles');
+                        authLink.innerHTML = `<i class="fas fa-sign-in-alt"></i><span>Login</span>`;
+                        authLink.dataset.action = "login";
+                    }
+                }
+            }
+
+
+            function toggleMobileMenu() {
+                const mobileMenuContent = document.getElementById('mobile-menu-content');
+                const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+
+                const isOpen = mobileMenuContent.classList.contains('menu-active');
+                if (!isOpen) {
+                    populateMobileMenu();
+                    mobileMenuContent.classList.add('menu-active');
+                    mobileMenuOverlay.classList.add('menu-active');
+                    document.body.classList.add('overflow-hidden');
+                } else {
+                    mobileMenuContent.classList.remove('menu-active');
+                    mobileMenuOverlay.classList.remove('menu-active');
+                    document.body.classList.remove('overflow-hidden');
+                }
+            }
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const closeMobileMenuButton = document.getElementById('close-mobile-menu-button');
+            const mobileMenuOverlayElement = document.getElementById('mobile-menu-overlay');
+
+            if (mobileMenuButton) mobileMenuButton.addEventListener('click', toggleMobileMenu);
+            if (closeMobileMenuButton) closeMobileMenuButton.addEventListener('click', toggleMobileMenu);
+            if (mobileMenuOverlayElement) mobileMenuOverlayElement.addEventListener('click', toggleMobileMenu);
+
+            try {
+                const storedUser = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
+                if (storedUser) {
+                    loggedInUser = JSON.parse(storedUser);
+                    if (typeof loggedInUser !== 'object' || loggedInUser === null || !loggedInUser.role) {
+                        loggedInUser = null;
+                        localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+                    }
+                }
+            } catch (e) {
+                console.error("Error parsing loggedInUser from localStorage:", e);
+                loggedInUser = null;
+                localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+            }
+
+            updatePageSpecificUI();
+
+            const scrollToTopBtnDashboard = document.getElementById('scrollToTopBtnDashboard');
+            if (scrollToTopBtnDashboard) {
+                window.addEventListener('scroll', () => {
+                    if (window.pageYOffset > 200) {
+                        scrollToTopBtnDashboard.classList.remove('hidden');
+                        scrollToTopBtnDashboard.classList.add('flex');
+                    } else {
+                        scrollToTopBtnDashboard.classList.add('hidden');
+                        scrollToTopBtnDashboard.classList.remove('flex');
+                    }
+                });
+                scrollToTopBtnDashboard.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            // Update footer year
+            const tahunFooterDashboard = document.getElementById('tahun-footer-dashboard');
+            if (tahunFooterDashboard) {
+                tahunFooterDashboard.textContent = new Date().getFullYear();
+            }
+
+            /**
+             * Parses URL query parameters.
+             * @returns {Object} An object containing query parameters.
+             */
+            function getQueryParams() {
+                const params = {};
+                const queryString = window.location.search.substring(1);
+                const regex = /([^&=]+)=([^&]*)/g;
+                let m;
+                while ((m = regex.exec(queryString))) {
+                    params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+                }
+                return params;
+            }
+
+            // Populate page with data from URL parameters
+            const queryParams = getQueryParams();
+
+            displayNomorSurat.textContent = queryParams.nomorSurat || 'Tidak Tersedia';
+            displayDitandatanganiOleh.textContent = queryParams.ditandatanganiOleh || 'Tidak Tersedia';
+            displayJabatan.textContent = queryParams.jabatan || 'Tidak Tersedia';
+            displayTanggalSurat.textContent = queryParams.tanggal || 'Tidak Tersedia';
+            displayPerihalSurat.textContent = queryParams.perihal || 'Tidak Tersedia';
+
+            // Show Komisariat logo if parameter exists
+            if (queryParams.komisariatLogo === 'true' && komisariatLogoDisplay) {
+                komisariatLogoDisplay.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

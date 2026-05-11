@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Buku Referensi - PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="img/logo-pmii.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pmii-blue: #005c97;
+            --pmii-darkblue: #004a7c;
+            --pmii-yellow: #fdd835;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --input-bg: #f9fafb;
+            --background-light: #f9fafb;
+            --background-page: #f3f4f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --danger-color: #ef4444;
+            --danger-hover-color: #dc2626;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Poppins', 'Inter', sans-serif;
+            overflow-x: hidden;
+            background-color: var(--background-page);
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: background-color 0.3s, opacity 0.5s ease-out;
+            line-height: 1.6;
+        }
+        .main-content-wrapper {
+            flex-grow: 1;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: pageFadeInUp 0.7s 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+            padding-top: 1.5rem; /* Space for sticky header */
+        }
+        @keyframes pageFadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+        .internal-header {
+            background-color: white;
+            box-shadow: var(--shadow-md);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .internal-header .logo-text { color: var(--pmii-blue); font-weight: 700; }
+        .internal-header #admin-name-header { color: var(--text-secondary); font-weight: 500; }
+        .internal-header #auth-info-header {
+            background-color: var(--pmii-blue); color: white;
+            padding: 0.6rem 1.2rem; border-radius: 0.5rem;
+            transition: background-color 0.25s, transform 0.2s, box-shadow 0.25s;
+            text-decoration: none; font-weight: 500; box-shadow: var(--shadow-sm);
+        }
+        .internal-header #auth-info-header:hover {
+            background-color: var(--pmii-darkblue); transform: translateY(-2px); box-shadow: var(--shadow-md);
+        }
+        .internal-header #auth-info-header.logout-active { background-color: #ef4444 !important; }
+        .internal-header #auth-info-header.logout-active:hover { background-color: #dc2626 !important; }
+
+        .page-title { color: var(--pmii-darkblue); font-weight: 800; text-shadow: 1px 1px 2px rgba(0,0,0,0.05); }
+
+        .content-section {
+            background-color: white; padding: 2rem; border-radius: 0.75rem;
+            box-shadow: var(--shadow-md); border: 1px solid var(--border-color);
+        }
+        .content-section h2, .content-section h3 {
+            color: var(--pmii-darkblue); border-bottom: 2px solid var(--pmii-yellow);
+            padding-bottom: 0.5rem; display: inline-block; font-weight: 700;
+        }
+
+        .input-group-modern { position: relative; margin-bottom: 1.5rem; }
+        .form-input-modern, select.form-input-modern, textarea.form-input-modern, input[type="file"].form-input-modern {
+            width: 100%; padding: 0.875rem 1rem; padding-top: 1.25rem;
+            border: 1px solid var(--border-color); border-radius: 0.5rem;
+            font-size: 0.875rem; color: var(--text-primary);
+            background-color: var(--input-bg);
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+        }
+        select.form-input-modern {
+             padding-top: 0.875rem; padding-bottom: 0.875rem; appearance: none;
+             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+             background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.25em 1.25em;
+        }
+        textarea.form-input-modern { padding-top: 1.25rem; min-height: 80px; resize: vertical; }
+        .form-input-modern:focus, select.form-input-modern:focus, textarea.form-input-modern:focus, input[type="file"].form-input-modern:focus {
+            border-color: var(--pmii-blue); background-color: white;
+            box-shadow: 0 0 0 3px rgba(0, 92, 151, 0.15); outline: none;
+        }
+        .form-label-modern {
+            position: absolute; left: 1rem; top: 0.875rem;
+            color: var(--text-muted); font-size: 0.875rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none; background-color: transparent; padding: 0 0.25rem;
+        }
+        .form-input-modern:focus + .form-label-modern,
+        .form-input-modern.has-value + .form-label-modern,
+        select.form-input-modern:focus + .form-label-modern,
+        select.form-input-modern.has-value + .form-label-modern,
+        textarea.form-input-modern:focus + .form-label-modern,
+        textarea.form-input-modern.has-value + .form-label-modern,
+        input[type="file"].form-input-modern:focus + .form-label-modern,
+        input[type="file"].form-input-modern.has-value + .form-label-modern {
+            top: 0.375rem; left: 0.75rem; font-size: 0.75rem;
+            color: var(--pmii-blue); background-color: white; border-radius: 0.25rem;
+        }
+
+        .btn-modern {
+            padding: 0.625rem 1.25rem; border-radius: 0.5rem; font-weight: 500;
+            font-size: 0.875rem; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex; align-items: center; justify-content: center;
+            cursor: pointer; border: none; text-decoration: none;
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-modern:hover { transform: translateY(-2px) scale(1.02); box-shadow: var(--shadow-md); }
+        .btn-modern:active { transform: translateY(0px) scale(0.98); }
+        .btn-primary-modern { background-color: var(--pmii-blue); color: white; }
+        .btn-primary-modern:hover { background-color: var(--pmii-darkblue); }
+        .btn-danger-modern { background-color: var(--danger-color); color: white; }
+        .btn-danger-modern:hover { background-color: var(--danger-hover-color); }
+        .btn-outline-modern {
+            background-color: transparent; color: var(--pmii-blue); border: 1px solid var(--pmii-blue);
+        }
+        .btn-outline-modern:hover { background-color: rgba(0,92,151,0.05); }
+
+        .form-message-success { background-color: #dcfce7; color: #166534; border: 1px solid #86efac; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; }
+        .form-message-error { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 0.75rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; }
+
+        .item-list-entry {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s, transform 0.2s;
+            border: 1px solid transparent;
+            margin-bottom: 0.5rem;
+        }
+        .item-list-entry:nth-child(odd) { background-color: var(--background-light); }
+        .item-list-entry:hover { background-color: #e9ecef; }
+        .item-list-entry .item-info { flex-grow: 1; }
+        .item-list-entry .item-title { font-weight: 600; color: var(--pmii-darkblue); }
+        .item-list-entry .item-meta { font-size: 0.8rem; color: var(--text-muted); }
+        .item-list-entry .item-actions button { margin-left: 0.5rem; }
+
+        .internal-footer {
+            background-color: var(--pmii-darkblue);
+            color: #cbd5e1;
+            padding: 2.5rem 1rem;
+        }
+        .internal-footer p { color: #e5e7eb; }
+        .internal-footer .footer-title { color: white; font-weight: 600; }
+        .internal-footer img { filter: brightness(0) invert(1) opacity(0.8); }
+
+        #scrollToTopBtn {
+            background-color: var(--pmii-yellow);
+            color: var(--pmii-darkblue);
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 50%;
+            box-shadow: var(--shadow-lg);
+            transition: background-color 0.2s, transform 0.2s;
+        }
+        #scrollToTopBtn:hover {
+            background-color: #fbc02d;
+            transform: scale(1.1) translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="internal-header py-3 sticky top-0 z-50">
+        <div class="container mx-auto px-4 lg:px-8 flex justify-between items-center">
+            <a href="index.html" class="flex items-center space-x-2.5">
+                <img src="img/logo-pmii.png" alt="Logo PMII" class="h-9 w-9 rounded-full">
+                <span class="text-sm md:text-base font-semibold logo-text">PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung - Sistem Internal</span>
+            </a>
+            <div class="flex items-center space-x-3 md:space-x-4">
+                <span id="admin-name-header" class="text-xs sm:text-sm font-medium hidden"></span>
+                <a href="#" id="auth-info-header" class="text-xs sm:text-sm">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content-wrapper">
+        <main class="container mx-auto px-4 py-8 lg:py-12">
+            <!-- Tombol Kembali -->
+            <div class="mb-6">
+                <a href="admin-dashboard-komisariat.html" class="btn-modern btn-outline-modern">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Kembali ke Dashboard
+                </a>
+            </div>
+
+            <section id="manajemen-buku-referensi-content">
+                <div class="text-center mb-10 md:mb-14">
+                    <h1 class="text-3xl lg:text-4xl page-title">Manajemen Buku Referensi</h1>
+                    <p class="text-md text-text-muted mt-2">Kelola koleksi buku referensi digital perpustakaan.</p>
+                </div>
+
+                <div class="content-section mb-8 max-w-2xl mx-auto">
+                    <h3 class="text-lg font-semibold mb-6">Formulir Input Buku Baru</h3>
+                    <div id="form-response" class="hidden form-message-success"></div>
+                    <form id="bukuForm" class="space-y-6">
+                        <div class="input-group-modern">
+                            <input type="text" id="bukuJudul" name="judul" class="form-input-modern" required placeholder=" ">
+                            <label for="bukuJudul" class="form-label-modern">Judul Buku</label>
+                        </div>
+                        <div class="input-group-modern">
+                            <input type="text" id="bukuPenulis" name="penulis" class="form-input-modern" required placeholder=" ">
+                            <label for="bukuPenulis" class="form-label-modern">Penulis / Editor</label>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="input-group-modern">
+                                <input type="number" id="bukuTahun" name="tahun" class="form-input-modern" required min="1000" max="2100" placeholder=" ">
+                                <label for="bukuTahun" class="form-label-modern">Tahun Terbit</label>
+                            </div>
+                            <div class="input-group-modern">
+                                <input type="text" id="bukuPenerbit" name="penerbit" class="form-input-modern" required placeholder=" ">
+                                <label for="bukuPenerbit" class="form-label-modern">Penerbit</label>
+                            </div>
+                        </div>
+                        <div class="input-group-modern">
+                            <input type="text" id="bukuISBN" name="isbn" class="form-input-modern" placeholder=" ">
+                            <label for="bukuISBN" class="form-label-modern">ISBN (Opsional)</label>
+                        </div>
+                        <div class="input-group-modern">
+                            <textarea id="bukuRingkasan" name="ringkasan" class="form-input-modern" rows="4" placeholder=" "></textarea>
+                            <label for="bukuRingkasan" class="form-label-modern">Ringkasan Singkat / Deskripsi</label>
+                        </div>
+                        <div>
+                            <label for="bukuFile" class="block text-sm font-medium text-gray-700 mb-1">Unggah File Buku (PDF/ePub - Opsional)</label>
+                            <input type="file" id="bukuFile" name="file" class="form-input-modern" accept=".pdf,.epub">
+                            <p class="text-xs text-text-muted mt-1">Maks. 10MB. Format: .pdf, .epub. ATAU gunakan link eksternal.</p>
+                        </div>
+                        <div class="input-group-modern">
+                            <input type="url" id="bukuLinkEksternal" name="link_eksternal" class="form-input-modern" placeholder=" ">
+                            <label for="bukuLinkEksternal" class="form-label-modern">Link Eksternal (Opsional)</label>
+                        </div>
+                        <div class="flex justify-end space-x-3">
+                            <button type="reset" class="btn-modern btn-outline-modern">Reset Form</button>
+                            <button type="submit" class="btn-modern btn-primary-modern">
+                                <i class="fas fa-save mr-2"></i> Simpan Buku
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="content-section">
+                    <h3 class="text-lg font-semibold mb-6">Daftar Buku Referensi</h3>
+                    <div id="buku-list" class="space-y-2">
+                        <!-- Buku akan dirender di sini -->
+                        <p class="text-text-muted text-center py-4">Belum ada buku yang ditambahkan.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="internal-footer py-10 mt-auto">
+        <div class="container mx-auto px-4 text-center">
+            <img src="img/logo-pmii.png" alt="Logo PMII Footer" class="h-12 w-12 mx-auto mb-2.5 rounded-full">
+            <p class="text-md font-semibold footer-title">PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung</p>
+            <p class="text-xs mt-3">&copy; <span id="tahun-footer"></span> PK PMII UIN Sunan Gunung Djati Cabang Kota Bandung. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <button id="scrollToTopBtn" title="Kembali ke atas" class="hidden fixed bottom-6 right-6 z-50 items-center justify-center hover:bg-yellow-300 focus:outline-none">
+        <i class="fas fa-arrow-up text-lg"></i>
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Autentikasi Admin Komisariat
+            let isAdminLoggedIn = false;
+            let loggedInUser = null;
+            const adminNameHeader = document.getElementById('admin-name-header');
+            const authInfoHeader = document.getElementById('auth-info-header');
+
+            if (localStorage.getItem('isAdminLoggedIn') === 'true') {
+                isAdminLoggedIn = true;
+                loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+            }
+
+            function updateAdminAuthUI() {
+                if (isAdminLoggedIn && loggedInUser && loggedInUser.role === 'komisariat') {
+                    if(adminNameHeader) {
+                        adminNameHeader.textContent = `Halo, ${loggedInUser.nama || 'Admin'}`;
+                        adminNameHeader.classList.remove('hidden');
+                    }
+                    if(authInfoHeader) {
+                        authInfoHeader.textContent = 'Logout';
+                        authInfoHeader.href = '#';
+                        authInfoHeader.classList.add('logout-active');
+                        authInfoHeader.addEventListener('click', handlePageLogout);
+                    }
+                } else {
+                    alert('Anda tidak memiliki hak akses ke halaman ini. Silakan login sebagai Admin Komisariat.');
+                    window.location.assign('login.html');
+                }
+            }
+
+            function handlePageLogout(e) {
+                e.preventDefault();
+                localStorage.removeItem('isAdminLoggedIn');
+                localStorage.removeItem('loggedInUser');
+                alert('Anda telah logout.');
+                window.location.assign('index.html');
+            }
+
+            updateAdminAuthUI();
+
+            // Logika Halaman Manajemen Buku Referensi
+            const bukuForm = document.getElementById('bukuForm');
+            const bukuList = document.getElementById('buku-list');
+            const formResponse = document.getElementById('form-response');
+
+            // Data simulasi untuk buku (akan diganti dengan data dari backend)
+            let bukuData = JSON.parse(localStorage.getItem('bukuReferensi')) || [];
+
+            // Fungsi untuk mengupdate kelas floating label
+            function updateLabelClass(input) {
+                const label = input.nextElementSibling;
+                if (label && label.classList.contains('form-label-modern')) {
+                    if (input.value.trim() !== '' || (input.tagName === 'SELECT' && input.value !== '') || (input.type === 'file' && input.files.length > 0)) {
+                        input.classList.add('has-value');
+                    } else {
+                        input.classList.remove('has-value');
+                    }
+                }
+            }
+
+            // Inisialisasi floating labels untuk semua input saat DOMContentLoaded
+            const allInputs = document.querySelectorAll('.form-input-modern');
+            allInputs.forEach(input => {
+                updateLabelClass(input);
+                input.addEventListener('input', () => updateLabelClass(input));
+                input.addEventListener('change', () => updateLabelClass(input));
+                input.addEventListener('blur', () => updateLabelClass(input));
+                input.addEventListener('focus', () => {
+                    const label = input.nextElementSibling;
+                    if(label && label.classList.contains('form-label-modern')) label.classList.add('active-label-style');
+                });
+                input.addEventListener('blur', () => {
+                    const label = input.nextElementSibling;
+                    updateLabelClass(input);
+                    if(label && label.classList.contains('form-label-modern')) label.classList.remove('active-label-style');
+                });
+            });
+
+            function renderBukuList() {
+                bukuList.innerHTML = '';
+                if (bukuData.length === 0) {
+                    bukuList.innerHTML = '<p class="text-text-muted text-center py-4">Belum ada buku yang ditambahkan.</p>';
+                    return;
+                }
+                bukuData.forEach(buku => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'item-list-entry';
+                    itemElement.innerHTML = `
+                        <div class="item-info">
+                            <div class="item-title">${buku.judul}</div>
+                            <div class="item-meta">Oleh: ${buku.penulis} (${buku.tahun}) - Penerbit: ${buku.penerbit} ${buku.isbn ? `(ISBN: ${buku.isbn})` : ''}</div>
+                            <div class="item-meta">File: ${buku.fileName ? `<a href="${buku.fileUrl}" target="_blank" class="text-pmii-blue hover:underline">${buku.fileName}</a>` : 'Tidak ada'} ${buku.linkEksternal ? ` | Link Eksternal: <a href="${buku.linkEksternal}" target="_blank" class="text-pmii-blue hover:underline">Lihat</a>` : ''}</div>
+                        </div>
+                        <div class="item-actions">
+                            <button data-id="${buku.id}" class="btn-modern btn-outline-modern btn-sm edit-btn">Edit</button>
+                            <button data-id="${buku.id}" class="btn-modern btn-danger-modern btn-sm delete-btn">Hapus</button>
+                        </div>
+                    `;
+                    bukuList.appendChild(itemElement);
+                });
+
+                bukuList.querySelectorAll('.edit-btn').forEach(button => {
+                    button.addEventListener('click', editBuku);
+                });
+                bukuList.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', deleteBuku);
+                });
+            }
+
+            function displayMessage(element, message, type) {
+                element.textContent = message;
+                element.className = `form-message-success mb-5 ${type === 'success' ? 'form-message-success' : 'form-message-error'}`;
+                element.classList.remove('hidden');
+                setTimeout(() => {
+                    element.classList.add('hidden');
+                }, 5000);
+            }
+
+            bukuForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const newBuku = {
+                    id: Date.now().toString(),
+                    judul: document.getElementById('bukuJudul').value,
+                    penulis: document.getElementById('bukuPenulis').value,
+                    tahun: document.getElementById('bukuTahun').value,
+                    penerbit: document.getElementById('bukuPenerbit').value,
+                    isbn: document.getElementById('bukuISBN').value,
+                    ringkasan: document.getElementById('bukuRingkasan').value,
+                    fileName: document.getElementById('bukuFile').files[0] ? document.getElementById('bukuFile').files[0].name : '',
+                    fileUrl: document.getElementById('bukuFile').files[0] ? URL.createObjectURL(document.getElementById('bukuFile').files[0]) : '',
+                    linkEksternal: document.getElementById('bukuLinkEksternal').value
+                };
+
+                const existingIndex = bukuData.findIndex(item => item.id === newBuku.id);
+                if (existingIndex > -1) {
+                    bukuData[existingIndex] = newBuku;
+                    displayMessage(formResponse, 'Data buku berhasil diperbarui!', 'success');
+                } else {
+                    bukuData.push(newBuku);
+                    displayMessage(formResponse, 'Data buku berhasil ditambahkan!', 'success');
+                }
+
+                localStorage.setItem('bukuReferensi', JSON.stringify(bukuData));
+                renderBukuList();
+                bukuForm.reset();
+                allInputs.forEach(input => updateLabelClass(input));
+            });
+
+            function editBuku(e) {
+                const idToEdit = e.target.dataset.id;
+                const bukuToEdit = bukuData.find(m => m.id === idToEdit);
+
+                if (bukuToEdit) {
+                    document.getElementById('bukuJudul').value = bukuToEdit.judul;
+                    document.getElementById('bukuPenulis').value = bukuToEdit.penulis;
+                    document.getElementById('bukuTahun').value = bukuToEdit.tahun;
+                    document.getElementById('bukuPenerbit').value = bukuToEdit.penerbit;
+                    document.getElementById('bukuISBN').value = bukuToEdit.isbn;
+                    document.getElementById('bukuRingkasan').value = bukuToEdit.ringkasan;
+                    document.getElementById('bukuLinkEksternal').value = bukuToEdit.linkEksternal;
+                    
+                    bukuForm.setAttribute('data-editing-id', bukuToEdit.id);
+                    document.getElementById('bukuJudul').focus();
+                    allInputs.forEach(input => updateLabelClass(input));
+                }
+            }
+
+            function deleteBuku(e) {
+                const idToDelete = e.target.dataset.id;
+                if (confirm('Apakah Anda yakin ingin menghapus buku ini?')) {
+                    bukuData = bukuData.filter(m => m.id !== idToDelete);
+                    localStorage.setItem('bukuReferensi', JSON.stringify(bukuData));
+                    renderBukuList();
+                    displayMessage(formResponse, 'Buku berhasil dihapus!', 'success');
+                }
+            }
+
+            renderBukuList();
+
+            // Scroll to Top Button
+            const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+            if (scrollToTopBtn) {
+                window.addEventListener('scroll', () => {
+                    if (window.pageYOffset > 200) {
+                        scrollToTopBtn.classList.remove('hidden');
+                        scrollToTopBtn.classList.add('flex');
+                    } else {
+                        scrollToTopBtn.classList.add('hidden');
+                        scrollToTopBtn.classList.remove('flex');
+                    }
+                });
+                scrollToTopBtn.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            const tahunFooter = document.getElementById('tahun-footer');
+            if (tahunFooter) {
+                tahunFooter.textContent = new Date().getFullYear();
+            }
+        });
+    </script>
+</body>
+</html>
